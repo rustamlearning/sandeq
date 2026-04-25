@@ -10,4 +10,4 @@ export default async function MateriPage({ params }: Props) {
       <h1>Materi {id}</h1>
     </div>
   );
-}
+}export const runtime = 'edge';

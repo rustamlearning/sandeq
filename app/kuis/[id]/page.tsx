@@ -433,4 +433,4 @@ export default function KuisDetailPage() {
       </div>
     </AppShell>
   );
-}
+}export const runtime = 'edge';
