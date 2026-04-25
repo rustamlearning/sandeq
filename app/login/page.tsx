@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/auth';
 import SandeqLogo from '@/components/SandeqLogo';
-import { Eye, EyeOff, LogIn, Info } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,7 +15,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) router.replace('/beranda');
@@ -34,10 +33,6 @@ export default function LoginPage() {
     }
   };
 
-  const quickLogin = (nis: string) => {
-    setNisNip(nis);
-    setPassword('sandeq123');
-  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -148,38 +143,8 @@ export default function LoginPage() {
             </form>
 
             <button
-              onClick={() => setShowHint(!showHint)}
-              className="w-full mt-4 text-xs text-[#2E86C1] hover:underline flex items-center justify-center gap-1"
-            >
-              <Info size={12} />
-              {showHint ? 'Sembunyikan' : 'Tampilkan'} akun demo
             </button>
 
-            {showHint && (
-              <div className="mt-3 p-3 bg-[#F4F9FF] rounded-lg text-xs space-y-2">
-                <p className="text-gray-600 font-medium">Password semua akun: <code className="bg-white px-1.5 py-0.5 rounded">sandeq123</code></p>
-                <div className="grid grid-cols-1 gap-1.5">
-                  <button
-                    onClick={() => quickLogin('2024001')}
-                    className="text-left px-3 py-2 bg-white border border-gray-200 rounded hover:border-[#2E86C1] transition"
-                  >
-                    <span className="font-medium text-[#1A4A7A]">Siswa:</span> 2024001 (Andi Pratama)
-                  </button>
-                  <button
-                    onClick={() => quickLogin('198501012010011001')}
-                    className="text-left px-3 py-2 bg-white border border-gray-200 rounded hover:border-[#2E86C1] transition"
-                  >
-                    <span className="font-medium text-[#1A4A7A]">Guru:</span> 198501012010011001
-                  </button>
-                  <button
-                    onClick={() => quickLogin('admin')}
-                    className="text-left px-3 py-2 bg-white border border-gray-200 rounded hover:border-[#2E86C1] transition"
-                  >
-                    <span className="font-medium text-[#1A4A7A]">Admin:</span> admin
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           <p className="text-center text-xs text-gray-500 mt-6">
