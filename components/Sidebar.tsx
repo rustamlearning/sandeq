@@ -1,11 +1,9 @@
-// components/Sidebar.tsx
 'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home, BookOpen, ClipboardList, Calendar, User, Megaphone,
-  Award, MessageSquare, LogOut, Users
+  Award, MessageSquare, LogOut, Users, ShieldCheck
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth';
 import SandeqLogo from './SandeqLogo';
@@ -30,6 +28,10 @@ export default function Sidebar() {
     { href: '/pengumuman', label: 'Pengumuman', icon: Megaphone },
     { href: '/forum', label: 'Forum Diskusi', icon: MessageSquare },
     { href: '/profil', label: 'Profil', icon: User },
+  ];
+
+  const adminItems = [
+    { href: '/admin/pengguna', label: 'Manajemen Pengguna', icon: ShieldCheck },
   ];
 
   const handleLogout = () => {
@@ -70,6 +72,32 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        {user?.role === 'admin' && (
+          <>
+            <div className="px-5 pt-4 pb-1">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Admin</p>
+            </div>
+            {adminItems.map((item) => {
+              const Icon = item.icon;
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+                    active
+                      ? 'bg-[#F4F9FF] text-[#1A4A7A] font-semibold border-r-4 border-[#1A4A7A]'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon size={18} strokeWidth={active ? 2.5 : 2} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       <div className="p-4 border-t border-gray-200">
