@@ -1,13 +1,13 @@
-import { notFound } from 'next/navigation';
-
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function MateriPage({ params }: Props) {
+export default async function MateriPage({ params }: Props) {
+  const { id } = await params;
+  
   return (
     <div>
-      <h1>Materi {params.id}</h1>
+      <h1>Materi {id}</h1>
     </div>
   );
 }
