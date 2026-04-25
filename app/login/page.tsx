@@ -110,9 +110,6 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -126,9 +123,6 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
                 className="w-full bg-[#1A4A7A] hover:bg-[#153c61] text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {loading ? (
@@ -141,9 +135,6 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
-
-            <button
-            </button>
 
           </div>
 
