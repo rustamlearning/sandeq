@@ -33,22 +33,13 @@ export default function LoginPage() {
     }
   };
 
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left branding */}
       <div className="md:w-1/2 bg-gradient-to-br from-[#1A4A7A] via-[#2E86C1] to-[#1A4A7A] text-white p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <svg viewBox="0 0 400 400" className="w-full h-full">
-            <path
-              d="M 0 300 Q 100 280 200 300 T 400 300 L 400 400 L 0 400 Z"
-              fill="white"
-            />
-            <path
-              d="M 0 340 Q 100 320 200 340 T 400 340 L 400 400 L 0 400 Z"
-              fill="white"
-              opacity="0.5"
-            />
+            <path d="M 0 300 Q 100 280 200 300 T 400 300 L 400 400 L 0 400 Z" fill="white" />
+            <path d="M 0 340 Q 100 320 200 340 T 400 340 L 400 400 L 0 400 Z" fill="white" opacity="0.5" />
           </svg>
         </div>
         <div className="relative z-10 max-w-md mx-auto md:mx-0">
@@ -67,7 +58,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right form */}
       <div className="md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-[#F4F9FF]">
         <div className="w-full max-w-md">
           <div className="md:hidden flex flex-col items-center mb-6">
@@ -82,9 +72,7 @@ export default function LoginPage() {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  NIS / NIP
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">NIS / NIP</label>
                 <input
                   type="text"
                   value={nisNip}
@@ -97,9 +85,7 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Password
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -110,6 +96,9 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -123,19 +112,14 @@ export default function LoginPage() {
                 </div>
               )}
 
+              <button
+                type="submit"
+                disabled={loading}
                 className="w-full bg-[#1A4A7A] hover:bg-[#153c61] text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                {loading ? (
-                  'Memuat...'
-                ) : (
-                  <>
-                    <LogIn size={18} />
-                    Masuk
-                  </>
-                )}
+                {loading ? 'Memuat...' : <><LogIn size={18} />Masuk</>}
               </button>
             </form>
-
           </div>
 
           <p className="text-center text-xs text-gray-500 mt-6">
