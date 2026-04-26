@@ -1,132 +1,151 @@
-// app/login/page.tsx
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/store/auth';
-import SandeqLogo from '@/components/SandeqLogo';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { login } from '@/lib/auth'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login, isAuthenticated } = useAuthStore();
-  const [nisNip, setNisNip] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const [nisNip, setNisNip] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (isAuthenticated) router.replace('/beranda');
-  }, [isAuthenticated, router]);
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    const result = await login(nisNip.trim(), password);
-    setLoading(false);
-    if (result.success) {
-      router.replace('/beranda');
-    } else {
-      setError(result.message);
+    try {
+      const user = await login(nisNip, password)
+
+      if (user.role === 'admin') {
+        router.push('/admin')
+      } else if (user.role === 'guru') {
+        router.push('/guru')
+      } else {
+        router.push('/siswa')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login gagal. Periksa NIS/NIP dan password.')
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="md:w-1/2 bg-gradient-to-br from-[#1A4A7A] via-[#2E86C1] to-[#1A4A7A] text-white p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <svg viewBox="0 0 400 400" className="w-full h-full">
-            <path d="M 0 300 Q 100 280 200 300 T 400 300 L 400 400 L 0 400 Z" fill="white" />
-            <path d="M 0 340 Q 100 320 200 340 T 400 340 L 400 400 L 0 400 Z" fill="white" opacity="0.5" />
+      {/* Hero kiri */}
+      <div className="md:w-1/2 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
+        <div className="relative z-10">
+          {/* Ilustrasi perahu Sandeq */}
+          <svg
+            viewBox="0 0 200 200"
+            className="w-32 h-32 md:w-40 md:h-40 mb-6"
+            fill="none"
+          >
+            <line x1="100" y1="20" x2="100" y2="140" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round" />
+            <path d="M 100 30 L 100 130 L 160 130 Z" fill="rgba(255,255,255,0.95)" />
+            <path d="M 100 30 L 100 130 L 50 130 Z" fill="rgba(255,255,255,0.70)" />
+            <path d="M 30 145 Q 100 165 170 145 L 155 160 Q 100 175 45 160 Z" fill="rgba(255,255,255,0.95)" />
+            <line x1="55" y1="158" x2="55" y2="168" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="70" y1="162" x2="70" y2="170" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="30" y1="169" x2="88" y2="169" stroke="rgba(255,255,255,0.90)" strokeWidth="2.2" strokeLinecap="round" />
+            <line x1="130" y1="162" x2="130" y2="170" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="145" y1="158" x2="145" y2="168" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="112" y1="169" x2="170" y2="169" stroke="rgba(255,255,255,0.90)" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M 0 180 Q 50 175 100 180 T 200 180" stroke="rgba(255,255,255,0.40)" strokeWidth="2" fill="none" />
+            <path d="M 0 190 Q 50 185 100 190 T 200 190" stroke="rgba(255,255,255,0.25)" strokeWidth="2" fill="none" />
           </svg>
-        </div>
-        <div className="relative z-10 max-w-md mx-auto md:mx-0">
-          <SandeqLogo className="w-20 h-20 md:w-24 md:h-24 mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">SANDEQ</h1>
-          <p className="text-lg md:text-xl italic mb-6 opacity-90">Layarkan Ilmumu</p>
-          <p className="text-sm md:text-base opacity-80 leading-relaxed mb-6">
+
+          <h1 className="text-5xl md:text-6xl font-bold mb-3">SANDEQ</h1>
+          <p className="text-xl md:text-2xl italic font-light mb-8 opacity-95">
+            Layarkan Ilmumu
+          </p>
+
+          <p className="text-base md:text-lg leading-relaxed opacity-90 max-w-md">
             Aplikasi belajar digital SMA Negeri 6 Pangkajene dan Kepulauan.
             Seperti perahu Sandeq yang tak pernah gentar menghadapi ombak,
             mari terus melaju meraih ilmu tanpa batas jarak dan sinyal.
           </p>
-          <div className="flex items-center gap-2 text-xs opacity-75">
-            <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            Bekerja offline — sinkronisasi otomatis saat online
-          </div>
         </div>
+
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
       </div>
 
-      <div className="md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-[#F4F9FF]">
+      {/* Form login kanan */}
+      <div className="md:w-1/2 bg-gray-50 flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
-          <div className="md:hidden flex flex-col items-center mb-6">
-            <SandeqLogo className="w-16 h-16 mb-2" />
-            <h1 className="text-2xl font-bold text-[#1A4A7A]">SANDEQ</h1>
-            <p className="text-sm text-gray-500 italic">Layarkan Ilmumu</p>
-          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Masuk</h2>
+          <p className="text-gray-500 mb-8">Silakan masuk dengan NIS/NIP Anda</p>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <h2 className="text-xl md:text-2xl font-bold text-[#1A4A7A] mb-1">Masuk</h2>
-            <p className="text-sm text-gray-500 mb-6">Silakan masuk dengan NIS/NIP Anda</p>
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                NIS / NIP
+              </label>
+              <input
+                type="text"
+                value={nisNip}
+                onChange={(e) => setNisNip(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                placeholder="Masukkan NIS atau NIP"
+              />
+            </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">NIS / NIP</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Password
+              </label>
+              <div className="relative">
                 <input
-                  type="text"
-                  value={nisNip}
-                  onChange={(e) => setNisNip(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none transition"
-                  placeholder="Masukkan NIS atau NIP"
-                  autoComplete="username"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="w-full px-4 py-3 pr-12 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? '🙈' : '👁'}
+                </button>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 pr-11 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none transition"
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
+                {error}
               </div>
+            )}
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-lg text-sm">
-                  {error}
-                </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition disabled:bg-blue-400 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                'Memuat...'
+              ) : (
+                <>
+                  <span>→</span>
+                  <span>Masuk</span>
+                </>
               )}
+            </button>
+          </form>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#1A4A7A] hover:bg-[#153c61] text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-60"
-              >
-                {loading ? 'Memuat...' : <><LogIn size={18} />Masuk</>}
-              </button>
-            </form>
-          </div>
-
-          <p className="text-center text-xs text-gray-500 mt-6">
-            © 2025 SMA Negeri 6 Pangkajene dan Kepulauan
+          <p className="text-center text-xs text-gray-400 mt-8">
+            © {new Date().getFullYear()} SMA Negeri 6 Pangkajene dan Kepulauan
           </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

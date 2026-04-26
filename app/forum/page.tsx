@@ -1,265 +1,378 @@
-// app/forum/page.tsx
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import AppShell from '@/components/AppShell';
-import { useAuthStore } from '@/lib/store/auth';
-import { useOnlineStatus } from '@/lib/hooks/useOnlineStatus';
-import { db, ForumPost } from '@/lib/db/schema';
-import { MessageSquare, Send, Heart, Award, Plus, X, CloudOff } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { getCurrentUser } from '@/lib/auth'
+import { supabase, User } from '@/lib/supabase'
+
+const MAPEL_LIST = [
+  'Umum', 'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
+  'Biologi', 'Sejarah', 'Geografi', 'Ekonomi', 'Sosiologi',
+  'PPKn', 'Pendidikan Agama', 'Seni Budaya', 'Penjaskes', 'Informatika',
+]
+
+interface ForumPost {
+  id: string
+  mapel: string
+  judul: string | null
+  konten: string
+  author_id: string
+  author_nama: string
+  parent_id: string | null
+  is_jawaban_terbaik: boolean
+  likes: number
+  created_at: string
+  replies?: ForumPost[]
+}
 
 export default function ForumPage() {
-  const { user } = useAuthStore();
-  const isOnline = useOnlineStatus();
-  const [posts, setPosts] = useState<ForumPost[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newContent, setNewContent] = useState('');
-  const [newMapel, setNewMapel] = useState('Fisika');
-  const [replyTo, setReplyTo] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState('');
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState<ForumPost[]>([])
+  const [filterMapel, setFilterMapel] = useState('Semua')
+  const [showForm, setShowForm] = useState(false)
 
-  const loadPosts = async () => {
-    const data = await db.forum.orderBy('createdAt').reverse().toArray();
-    setPosts(data);
-  };
+  // Form pertanyaan baru
+  const [judul, setJudul] = useState('')
+  const [konten, setKonten] = useState('')
+  const [mapel, setMapel] = useState(MAPEL_LIST[0])
+  const [submitting, setSubmitting] = useState(false)
+
+  // Form reply
+  const [replyTo, setReplyTo] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState('')
 
   useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const handleCreate = async () => {
-    if (!user || !newTitle.trim() || !newContent.trim()) return;
-    const post: ForumPost = {
-      id: `f-${Date.now()}`,
-      mapel: newMapel,
-      judul: newTitle.trim(),
-      konten: newContent.trim(),
-      authorId: user.id,
-      authorNama: user.nama,
-      likes: 0,
-      createdAt: new Date().toISOString(),
-      syncedAt: isOnline ? new Date().toISOString() : undefined,
-    };
-    await db.forum.put(post);
-    if (!isOnline) {
-      await db.syncQueue.add({
-        type: 'forum',
-        action: 'create',
-        data: post,
-        createdAt: new Date().toISOString(),
-      });
+    async function init() {
+      const u = await getCurrentUser()
+      if (!u) {
+        router.replace('/login')
+        return
+      }
+      setUser(u)
+      await load()
+      setLoading(false)
     }
-    setNewTitle('');
-    setNewContent('');
-    setShowForm(false);
-    loadPosts();
-  };
+    init()
+  }, [router])
 
-  const handleReply = async (parentId: string) => {
-    if (!user || !replyContent.trim()) return;
-    const parent = await db.forum.get(parentId);
-    if (!parent) return;
-    const reply: ForumPost = {
-      id: `f-${Date.now()}`,
-      mapel: parent.mapel,
-      judul: '',
-      konten: replyContent.trim(),
-      authorId: user.id,
-      authorNama: user.nama,
-      parentId,
-      likes: 0,
-      createdAt: new Date().toISOString(),
-      syncedAt: isOnline ? new Date().toISOString() : undefined,
-    };
-    await db.forum.put(reply);
-    if (!isOnline) {
-      await db.syncQueue.add({
-        type: 'forum',
-        action: 'create',
-        data: reply,
-        createdAt: new Date().toISOString(),
-      });
+  async function load() {
+    const { data } = await supabase
+      .from('forum')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    const all = (data || []) as ForumPost[]
+    // Group: parent_id null = pertanyaan utama, sisanya = reply
+    const main = all.filter((p) => !p.parent_id)
+    const replies = all.filter((p) => p.parent_id)
+
+    main.forEach((m) => {
+      m.replies = replies
+        .filter((r) => r.parent_id === m.id)
+        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+    })
+
+    setPosts(main)
+  }
+
+  async function handleSubmitPertanyaan(e: React.FormEvent) {
+    e.preventDefault()
+    if (!user) return
+    setSubmitting(true)
+
+    const { error } = await supabase.from('forum').insert({
+      mapel,
+      judul,
+      konten,
+      author_id: user.id,
+      author_nama: user.nama,
+      parent_id: null,
+    })
+
+    setSubmitting(false)
+    if (error) {
+      alert('Gagal: ' + error.message)
+      return
     }
-    setReplyContent('');
-    setReplyTo(null);
-    loadPosts();
-  };
 
-  const handleLike = async (id: string) => {
-    const post = await db.forum.get(id);
-    if (!post) return;
-    await db.forum.update(id, { likes: (post.likes || 0) + 1 });
-    loadPosts();
-  };
+    setJudul('')
+    setKonten('')
+    setMapel(MAPEL_LIST[0])
+    setShowForm(false)
+    await load()
+  }
 
-  const threads = posts.filter((p) => !p.parentId);
-  const replies = (id: string) => posts.filter((p) => p.parentId === id);
+  async function handleSubmitReply(parentId: string, parentMapel: string) {
+    if (!user || !replyText.trim()) return
+
+    const { error } = await supabase.from('forum').insert({
+      mapel: parentMapel,
+      konten: replyText,
+      author_id: user.id,
+      author_nama: user.nama,
+      parent_id: parentId,
+    })
+
+    if (error) {
+      alert('Gagal: ' + error.message)
+      return
+    }
+
+    setReplyText('')
+    setReplyTo(null)
+    await load()
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Hapus post ini? Semua balasan ikut terhapus.')) return
+    // Hapus replies dulu
+    await supabase.from('forum').delete().eq('parent_id', id)
+    await supabase.from('forum').delete().eq('id', id)
+    await load()
+  }
+
+  async function toggleLike(post: ForumPost) {
+    await supabase.from('forum').update({ likes: post.likes + 1 }).eq('id', post.id)
+    await load()
+  }
+
+  async function tandaiJawabanTerbaik(replyId: string, parentId: string) {
+    // Reset semua reply lain ke false
+    await supabase.from('forum').update({ is_jawaban_terbaik: false }).eq('parent_id', parentId)
+    // Set yang ini ke true
+    await supabase.from('forum').update({ is_jawaban_terbaik: true }).eq('id', replyId)
+    await load()
+  }
+
+  function backToHome() {
+    if (user?.role === 'guru') router.push('/guru')
+    else if (user?.role === 'admin') router.push('/admin')
+    else router.push('/siswa')
+  }
+
+  const filtered = filterMapel === 'Semua' ? posts : posts.filter((p) => p.mapel === filterMapel)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Memuat...</p>
+      </div>
+    )
+  }
 
   return (
-    <AppShell title="Forum Diskusi">
-      <div className="p-4 md:p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div className="md:hidden">
-            <h1 className="text-2xl font-bold text-[#1A4A7A]">Forum Diskusi</h1>
-            <p className="text-sm text-gray-500">Bertanya & berdiskusi bersama</p>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={backToHome} className="text-gray-500 hover:text-gray-700">
+              ← Kembali
+            </button>
+            <h1 className="text-xl font-bold text-gray-800">Forum Diskusi</h1>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="ml-auto bg-[#1A4A7A] hover:bg-[#153c61] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition"
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
-            {showForm ? <X size={16} /> : <Plus size={16} />}
-            {showForm ? 'Batal' : 'Tanya'}
+            {showForm ? 'Tutup' : '+ Tanya'}
           </button>
         </div>
+      </header>
 
-        {/* Form baru */}
+      <main className="max-w-4xl mx-auto px-4 py-8">
         {showForm && (
-          <div className="bg-white rounded-xl p-4 border border-gray-100 mb-4">
-            <h3 className="font-bold text-[#1A4A7A] mb-3">Mulai Diskusi Baru</h3>
-            <div className="space-y-3">
-              <select
-                value={newMapel}
-                onChange={(e) => setNewMapel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#2E86C1]"
-              >
-                <option>Fisika</option>
-                <option>Matematika</option>
-                <option>Sejarah</option>
-                <option>Biologi</option>
-                <option>Kimia</option>
-                <option>Umum</option>
-              </select>
-              <input
-                type="text"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Judul pertanyaan..."
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#2E86C1]"
-              />
-              <textarea
-                value={newContent}
-                onChange={(e) => setNewContent(e.target.value)}
-                placeholder="Jelaskan pertanyaanmu..."
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#2E86C1] resize-none"
-              />
-              <button
-                onClick={handleCreate}
-                disabled={!newTitle.trim() || !newContent.trim()}
-                className="w-full bg-[#1A4A7A] text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                <Send size={14} />
-                Kirim Pertanyaan
-                {!isOnline && <CloudOff size={12} />}
-              </button>
+          <form onSubmit={handleSubmitPertanyaan} className="bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-100">
+            <h3 className="font-semibold text-gray-800 mb-4">Buat Pertanyaan Baru</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                <select
+                  value={mapel}
+                  onChange={(e) => setMapel(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {MAPEL_LIST.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
+                <input
+                  type="text"
+                  value={judul}
+                  onChange={(e) => setJudul(e.target.value)}
+                  required
+                  placeholder="Contoh: Bagaimana cara menyelesaikan persamaan kuadrat?"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                <textarea
+                  value={konten}
+                  onChange={(e) => setKonten(e.target.value)}
+                  required
+                  rows={5}
+                  placeholder="Jelaskan pertanyaan kamu dengan detail..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             </div>
-          </div>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400"
+            >
+              {submitting ? 'Mengirim...' : 'Kirim Pertanyaan'}
+            </button>
+          </form>
         )}
 
-        {/* Thread */}
-        {threads.length === 0 ? (
-          <div className="bg-white rounded-xl p-10 text-center border border-gray-100">
-            <MessageSquare className="mx-auto mb-3 text-gray-300" size={48} />
-            <p className="text-gray-500">Belum ada diskusi</p>
-            <p className="text-xs text-gray-400 mt-1 italic">Jadilah nakhoda pertama yang bertanya!</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {threads.map((t) => {
-              const r = replies(t.id);
-              return (
-                <div key={t.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-[#F4F9FF] text-[#2E86C1] rounded-full">
-                        {t.mapel}
-                      </span>
-                      <span className="text-[10px] text-gray-400">
-                        {new Date(t.createdAt).toLocaleDateString('id-ID')}
-                      </span>
-                      {!t.syncedAt && (
-                        <CloudOff size={12} className="text-orange-400" />
+        {/* Filter mapel */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {['Semua', ...MAPEL_LIST].map((m) => (
+            <button
+              key={m}
+              onClick={() => setFilterMapel(m)}
+              className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition ${
+                filterMapel === m
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-600 border border-gray-200'
+              }`}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          {filtered.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+              <p className="text-gray-500">Belum ada pertanyaan. Jadilah yang pertama!</p>
+            </div>
+          ) : (
+            filtered.map((post) => (
+              <div key={post.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                {/* Pertanyaan */}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+                      {post.mapel}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(post.created_at).toLocaleDateString('id-ID', {
+                        day: 'numeric', month: 'short', year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                  {post.judul && (
+                    <h4 className="font-semibold text-gray-800 mb-2">{post.judul}</h4>
+                  )}
+                  <p className="text-gray-700 whitespace-pre-wrap mb-3">{post.konten}</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <p className="text-gray-500">— {post.author_nama}</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => toggleLike(post)}
+                        className="text-gray-500 hover:text-blue-600"
+                      >
+                        👍 {post.likes}
+                      </button>
+                      <button
+                        onClick={() => setReplyTo(replyTo === post.id ? null : post.id)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        💬 Balas ({post.replies?.length || 0})
+                      </button>
+                      {(user?.id === post.author_id || user?.role === 'admin' || user?.role === 'guru') && (
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Hapus
+                        </button>
                       )}
                     </div>
-                    <h3 className="font-bold text-gray-800 mb-1">{t.judul}</h3>
-                    <p className="text-sm text-gray-600 mb-3 whitespace-pre-wrap">{t.konten}</p>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">Oleh: <span className="font-medium text-gray-700">{t.authorNama}</span></span>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => handleLike(t.id)}
-                          className="flex items-center gap-1 text-gray-500 hover:text-red-500"
-                        >
-                          <Heart size={14} /> {t.likes}
-                        </button>
-                        <button
-                          onClick={() => setReplyTo(replyTo === t.id ? null : t.id)}
-                          className="flex items-center gap-1 text-gray-500 hover:text-[#1A4A7A]"
-                        >
-                          <MessageSquare size={14} /> {r.length}
-                        </button>
+                  </div>
+                </div>
+
+                {/* Replies */}
+                {post.replies && post.replies.length > 0 && (
+                  <div className="bg-gray-50 border-t divide-y divide-gray-100">
+                    {post.replies.map((reply) => (
+                      <div
+                        key={reply.id}
+                        className={`p-4 pl-8 ${reply.is_jawaban_terbaik ? 'bg-green-50' : ''}`}
+                      >
+                        {reply.is_jawaban_terbaik && (
+                          <span className="text-xs font-medium text-green-700 mb-1 inline-block">
+                            ✓ Jawaban Terbaik
+                          </span>
+                        )}
+                        <p className="text-gray-700 whitespace-pre-wrap text-sm mb-2">{reply.konten}</p>
+                        <div className="flex items-center justify-between text-xs">
+                          <p className="text-gray-500">— {reply.author_nama}</p>
+                          <div className="flex items-center gap-3">
+                            {user?.id === post.author_id && !reply.is_jawaban_terbaik && (
+                              <button
+                                onClick={() => tandaiJawabanTerbaik(reply.id, post.id)}
+                                className="text-green-600 hover:text-green-800"
+                              >
+                                Tandai Terbaik
+                              </button>
+                            )}
+                            {(user?.id === reply.author_id || user?.role === 'admin' || user?.role === 'guru') && (
+                              <button
+                                onClick={() => handleDelete(reply.id)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                Hapus
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Form reply */}
+                {replyTo === post.id && (
+                  <div className="p-4 bg-gray-50 border-t">
+                    <textarea
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      rows={3}
+                      placeholder="Tulis balasan kamu..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => handleSubmitReply(post.id, post.mapel)}
+                        className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        Kirim
+                      </button>
+                      <button
+                        onClick={() => {
+                          setReplyTo(null)
+                          setReplyText('')
+                        }}
+                        className="px-4 py-1.5 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                      >
+                        Batal
+                      </button>
                     </div>
                   </div>
-
-                  {/* Replies */}
-                  {r.length > 0 && (
-                    <div className="bg-[#F4F9FF] p-3 space-y-2">
-                      {r.map((reply) => (
-                        <div key={reply.id} className="bg-white rounded-lg p-3 text-sm">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-xs text-[#1A4A7A]">
-                              {reply.authorNama}
-                            </span>
-                            {reply.isJawabanTerbaik && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-[#27AE60] font-semibold bg-green-50 px-1.5 py-0.5 rounded">
-                                <Award size={10} /> Jawaban Terbaik
-                              </span>
-                            )}
-                            <span className="text-[10px] text-gray-400 ml-auto">
-                              {new Date(reply.createdAt).toLocaleDateString('id-ID')}
-                            </span>
-                          </div>
-                          <p className="text-gray-700 text-xs whitespace-pre-wrap">{reply.konten}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Reply form */}
-                  {replyTo === t.id && (
-                    <div className="p-3 border-t border-gray-100 bg-gray-50">
-                      <textarea
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder="Tulis balasanmu..."
-                        rows={2}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#2E86C1] resize-none"
-                      />
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => handleReply(t.id)}
-                          disabled={!replyContent.trim()}
-                          className="flex-1 bg-[#1A4A7A] text-white text-sm py-2 rounded-lg font-medium flex items-center justify-center gap-1 disabled:opacity-50"
-                        >
-                          <Send size={12} /> Kirim
-                        </button>
-                        <button
-                          onClick={() => { setReplyTo(null); setReplyContent(''); }}
-                          className="px-3 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg"
-                        >
-                          Batal
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </AppShell>
-  );
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </main>
+    </div>
+  )
 }
