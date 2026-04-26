@@ -1,163 +1,267 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
-import { supabase, User, Materi } from '@/lib/supabase'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { getCurrentUser } from '@/lib/auth';
+import BlockRenderer from '@/components/BlockRenderer';
 
-interface MateriWithGuru extends Materi {
-  guru?: { nama: string }
-}
-
-export default function MateriSiswaPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [materiList, setMateriList] = useState<MateriWithGuru[]>([])
-  const [selected, setSelected] = useState<MateriWithGuru | null>(null)
-  const [filterMapel, setFilterMapel] = useState('')
+export default function SiswaMateriPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [materiList, setMateriList] = useState<any[]>([]);
+  const [selectedMateri, setSelectedMateri] = useState<any>(null);
+  const [progress, setProgress] = useState<Record<string, any>>({});
+  const [mastery, setMastery] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    async function init() {
-      const currentUser = await getCurrentUser()
-      if (!currentUser || currentUser.role !== 'siswa') {
-        router.replace('/login')
-        return
-      }
-      setUser(currentUser)
-      await loadMateri(currentUser)
-      setLoading(false)
-    }
-    init()
-  }, [router])
+    init();
+  }, []);
 
-  async function loadMateri(currentUser: User) {
+  const init = async () => {
+    const u = await getCurrentUser();
+    if (!u || u.role !== 'siswa') {
+      router.push('/login');
+      return;
+    }
+    setUser(u);
+    await loadMateri(u);
+    await loadProgress(u.id);
+    await loadMastery(u.id);
+  };
+
+  const loadMateri = async (u: any) => {
+    if (!u.kelas_id) {
+      setMateriList([]);
+      return;
+    }
     const { data } = await supabase
       .from('materi')
-      .select('*, guru:guru_id(nama)')
-      .eq('kelas_id', currentUser.kelas_id)
-      .order('created_at', { ascending: false })
-    setMateriList((data as MateriWithGuru[]) || [])
-  }
+      .select('*, users:guru_id(nama)')
+      .eq('kelas_id', u.kelas_id)
+      .order('created_at', { ascending: false });
+    setMateriList(data || []);
+  };
 
-  const mapelUnik = Array.from(new Set(materiList.map((m) => m.mapel)))
-  const filteredMateri = filterMapel
-    ? materiList.filter((m) => m.mapel === filterMapel)
-    : materiList
+  const loadProgress = async (userId: string) => {
+    const { data } = await supabase.from('progress_materi').select('*').eq('user_id', userId);
+    const map: Record<string, any> = {};
+    (data || []).forEach((p) => (map[p.materi_id] = p));
+    setProgress(map);
+  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Memuat...</p>
-      </div>
-    )
-  }
+  const loadMastery = async (userId: string) => {
+    const { data } = await supabase.from('mastery_progress').select('*').eq('user_id', userId);
+    const map: Record<string, any> = {};
+    (data || []).forEach((m) => (map[m.materi_id] = m));
+    setMastery(map);
+  };
 
-  // Detail view
-  if (selected) {
+  const openMateri = async (materi: any) => {
+    setSelectedMateri(materi);
+    await supabase
+      .from('progress_materi')
+      .upsert(
+        {
+          user_id: user.id,
+          materi_id: materi.id,
+          terakhir_dibaca: new Date().toISOString(),
+        },
+        { onConflict: 'user_id,materi_id' }
+      );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const markComplete = async () => {
+    await supabase
+      .from('progress_materi')
+      .upsert(
+        {
+          user_id: user.id,
+          materi_id: selectedMateri.id,
+          selesai: true,
+          persen_dibaca: 100,
+          terakhir_dibaca: new Date().toISOString(),
+        },
+        { onConflict: 'user_id,materi_id' }
+      );
+    alert('✅ Materi ditandai selesai!');
+    await loadProgress(user.id);
+    setSelectedMateri(null);
+  };
+
+  if (!user) return <div className="p-8">Loading...</div>;
+
+  // ===== DETAIL VIEW =====
+  if (selectedMateri) {
+    const m = selectedMateri;
+    const masteryLevel = mastery[m.id]?.level || 'belum_mulai';
+    const masteryColors: Record<string, string> = {
+      belum_mulai: 'bg-gray-100 text-gray-600',
+      familiar: 'bg-yellow-100 text-yellow-700',
+      mahir: 'bg-blue-100 text-blue-700',
+      dikuasai: 'bg-green-100 text-green-700',
+    };
+    const masteryLabels: Record<string, string> = {
+      belum_mulai: '⚪ Belum mulai',
+      familiar: '🟡 Familiar',
+      mahir: '🔵 Mahir',
+      dikuasai: '🟢 Dikuasai',
+    };
+
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-            <button onClick={() => setSelected(null)} className="text-gray-500 hover:text-gray-700">
-              ← Kembali ke daftar
+        <header className="bg-white border-b sticky top-0 z-20">
+          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+            <button
+              onClick={() => setSelectedMateri(null)}
+              className="text-blue-600 text-sm"
+            >
+              ← Kembali
             </button>
+            <span className={`text-xs px-2 py-1 rounded-full ${masteryColors[masteryLevel]} ml-auto`}>
+              {masteryLabels[masteryLevel]}
+            </span>
           </div>
         </header>
-        <main className="max-w-4xl mx-auto px-4 py-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+        <main className="max-w-3xl mx-auto px-4 py-6">
+          {/* Header Materi */}
+          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
-                {selected.mapel}
+              <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
+                {m.mapel}
               </span>
-              {selected.bab && (
-                <span className="text-xs text-gray-500">{selected.bab}</span>
+              {m.bab && (
+                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                  {m.bab}
+                </span>
+              )}
+              {m.estimasi_menit && (
+                <span className="text-xs text-gray-500">⏱ {m.estimasi_menit} menit</span>
+              )}
+              {m.tingkat_kesulitan && (
+                <span className="text-xs">
+                  {m.tingkat_kesulitan === 'mudah' && '🟢 Mudah'}
+                  {m.tingkat_kesulitan === 'sedang' && '🟡 Sedang'}
+                  {m.tingkat_kesulitan === 'sulit' && '🔴 Sulit'}
+                </span>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">{selected.judul}</h1>
-            <p className="text-sm text-gray-500 mb-6">
-              Oleh {selected.guru?.nama || 'Guru'} ·{' '}
-              {new Date(selected.created_at).toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </p>
-            <div className="prose max-w-none">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{selected.konten}</p>
-            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{m.judul}</h1>
+            {m.users?.nama && (
+              <p className="text-sm text-gray-500 mb-4">Oleh: {m.users.nama}</p>
+            )}
+
+            {m.tujuan_pembelajaran && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-400">
+                <h3 className="text-sm font-semibold text-blue-900 mb-2">🎯 Tujuan Pembelajaran</h3>
+                <p className="text-sm text-blue-800 whitespace-pre-line">{m.tujuan_pembelajaran}</p>
+              </div>
+            )}
+
+            {m.ringkasan && (
+              <p className="mt-4 text-gray-600 italic">{m.ringkasan}</p>
+            )}
+          </div>
+
+          {/* Konten Blocks */}
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            {m.konten_blocks && m.konten_blocks.length > 0 ? (
+              <BlockRenderer
+                blocks={m.konten_blocks}
+                materiId={m.id}
+                userId={user.id}
+              />
+            ) : (
+              <p className="text-gray-500 text-center py-8">Belum ada konten</p>
+            )}
+          </div>
+
+          {/* Footer: Mark Complete */}
+          <div className="mt-6 flex gap-3">
+            <button
+              onClick={markComplete}
+              className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+            >
+              ✅ Tandai Selesai
+            </button>
+            <button
+              onClick={() => setSelectedMateri(null)}
+              className="px-6 py-3 border rounded-lg hover:bg-gray-50"
+            >
+              Kembali ke List
+            </button>
           </div>
         </main>
       </div>
-    )
+    );
   }
 
-  // List view
+  // ===== LIST VIEW =====
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.push('/siswa')} className="text-gray-500 hover:text-gray-700">
-            ← Kembali
+      <header className="bg-white border-b">
+        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+          <button onClick={() => router.push('/siswa')} className="text-blue-600 text-sm">
+            ← Dashboard
           </button>
-          <h1 className="text-xl font-bold text-gray-800">Materi Pelajaran</h1>
+          <h1 className="text-xl font-bold">📚 Materi Pelajaran</h1>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Filter mapel */}
-        {mapelUnik.length > 0 && (
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button
-              onClick={() => setFilterMapel('')}
-              className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition ${
-                filterMapel === '' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'
-              }`}
-            >
-              Semua
-            </button>
-            {mapelUnik.map((m) => (
-              <button
-                key={m}
-                onClick={() => setFilterMapel(m)}
-                className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition ${
-                  filterMapel === m ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'
-                }`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {filteredMateri.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-            <p className="text-gray-500">Belum ada materi untuk kelas kamu.</p>
+      <main className="max-w-3xl mx-auto px-4 py-6">
+        {materiList.length === 0 ? (
+          <div className="bg-white rounded-lg p-12 text-center">
+            <p className="text-gray-500">Belum ada materi tersedia untuk kelasmu.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredMateri.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => setSelected(m)}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
-                    {m.mapel}
-                  </span>
-                  {m.bab && <span className="text-xs text-gray-500">{m.bab}</span>}
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-1">{m.judul}</h4>
-                <p className="text-sm text-gray-500 line-clamp-2">{m.konten}</p>
-                <p className="text-xs text-gray-400 mt-3">
-                  Oleh {m.guru?.nama || 'Guru'}
-                </p>
-              </button>
-            ))}
+          <div className="space-y-3">
+            {materiList.map((m) => {
+              const p = progress[m.id];
+              const mast = mastery[m.id];
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => openMateri(m)}
+                  className="w-full text-left bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition"
+                >
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
+                      {m.mapel}
+                    </span>
+                    {m.bab && (
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                        {m.bab}
+                      </span>
+                    )}
+                    {m.estimasi_menit && (
+                      <span className="text-xs text-gray-500">⏱ {m.estimasi_menit} mnt</span>
+                    )}
+                    {p?.selesai && <span className="text-xs text-green-600">✅ Selesai</span>}
+                    {mast?.level === 'dikuasai' && (
+                      <span className="text-xs text-green-700 font-semibold">🏆 Dikuasai</span>
+                    )}
+                    {mast?.level === 'mahir' && (
+                      <span className="text-xs text-blue-700">🔵 Mahir</span>
+                    )}
+                    {mast?.level === 'familiar' && (
+                      <span className="text-xs text-yellow-700">🟡 Familiar</span>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-gray-900">{m.judul}</h3>
+                  {m.ringkasan && (
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{m.ringkasan}</p>
+                  )}
+                  {m.users?.nama && (
+                    <p className="text-xs text-gray-400 mt-2">Oleh: {m.users.nama}</p>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </main>
     </div>
-  )
+  );
 }
