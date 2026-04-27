@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { supabase } from '@/lib/supabase';
 import { Block } from '@/lib/blocks';
-import { generateTutorResponse, getStarterMessages, TutorContext } from '@/lib/aiTutor';
+import { getStarterMessages } from '@/lib/aiTutor';
 
 interface TutorChatProps {
   materi: any;
@@ -47,7 +47,6 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
   const initSession = async () => {
     setLoading(true);
     try {
-      // Cari session existing
       const { data: existing } = await supabase
         .from('tutor_sessions')
         .select('*')
@@ -59,7 +58,6 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
 
       let sid = existing?.id;
 
-      // Bikin baru kalau belum ada
       if (!sid) {
         const { data: newSession, error } = await supabase
           .from('tutor_sessions')
@@ -72,7 +70,6 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
 
       setSessionId(sid);
 
-      // Load history
       const { data: history } = await supabase
         .from('tutor_messages')
         .select('*')
@@ -89,9 +86,8 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
           }))
         );
       } else {
-        // Greeting otomatis pertama kali
-        const greeting = generateTutorResponse('halo', buildContext());
-        await sendAssistantMessage(sid, greeting.text, greeting.suggestions);
+        // Greeting via Llama 4
+        await callGroqAndRespond(sid, [], true);
       }
     } catch (e: any) {
       console.error('Init session error:', e);
@@ -100,37 +96,65 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
     }
   };
 
-  const buildContext = (): TutorContext => ({
-    materi,
-    blocks,
-    user,
-  });
+  const callGroqAndRespond = async (
+    sid: string,
+    currentMessages: Message[],
+    isGreeting = false
+  ) => {
+    setThinking(true);
+    try {
+      const messagesToSend = isGreeting
+        ? [{ role: 'user', content: `Sapa saya dan perkenalkan diri kamu sebagai Tutor SANDEQ. Materi yang akan kita pelajari: "${materi?.judul}". Berikan sambutan yang hangat dan singkat.` }]
+        : currentMessages.map((m) => ({ role: m.role, content: m.content }));
 
-  const sendAssistantMessage = async (sid: string, content: string, suggestions?: string[]) => {
-    const newMsg: Message = {
-      role: 'assistant',
-      content,
-      suggestions,
-    };
-    setMessages((prev) => [...prev, newMsg]);
+      const res = await fetch('/api/tutor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messagesToSend,
+          materi,
+          blocks,
+        }),
+      });
 
-    await supabase.from('tutor_messages').insert({
-      session_id: sid,
-      user_id: user.id,
-      role: 'assistant',
-      content,
-    });
+      if (!res.ok) throw new Error('API error');
+
+      const data = await res.json();
+      const assistantMsg: Message = {
+        role: 'assistant',
+        content: data.text,
+        suggestions: data.suggestions,
+      };
+
+      setMessages((prev) => [...prev, assistantMsg]);
+
+      await supabase.from('tutor_messages').insert({
+        session_id: sid,
+        user_id: user.id,
+        role: 'assistant',
+        content: data.text,
+      });
+    } catch (e) {
+      const fallback: Message = {
+        role: 'assistant',
+        content: `Halo! Aku **Tutor SANDEQ** 🤖\n\nAda kendala koneksi sebentar. Coba tanya lagi ya — aku siap bantu kamu belajar **${materi?.judul || 'materi ini'}**!`,
+        suggestions: ['Jelaskan materi', 'Kasih contoh', 'Buatkan soal'],
+      };
+      setMessages((prev) => [...prev, fallback]);
+    } finally {
+      setThinking(false);
+    }
   };
 
   const handleSend = async (text?: string) => {
     const messageText = (text || input).trim();
-    if (!messageText || !sessionId) return;
+    if (!messageText || !sessionId || thinking) return;
 
     setInput('');
     const userMsg: Message = { role: 'user', content: messageText };
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
 
-    // Save user message
     await supabase.from('tutor_messages').insert({
       session_id: sessionId,
       user_id: user.id,
@@ -138,13 +162,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
       content: messageText,
     });
 
-    // Generate AI response with thinking delay
-    setThinking(true);
-    setTimeout(async () => {
-      const response = generateTutorResponse(messageText, buildContext());
-      setThinking(false);
-      await sendAssistantMessage(sessionId, response.text, response.suggestions);
-    }, 700 + Math.random() * 600);
+    await callGroqAndRespond(sessionId, updatedMessages);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -155,13 +173,11 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
   };
 
   const clearSession = async () => {
-    if (!confirm('Hapus semua percakapan? Tidak bisa dibatalkan.')) return;
+    if (!confirm('Hapus semua percakapan?')) return;
     if (!sessionId) return;
     await supabase.from('tutor_messages').delete().eq('session_id', sessionId);
     setMessages([]);
-    // Re-greet
-    const greeting = generateTutorResponse('halo', buildContext());
-    await sendAssistantMessage(sessionId, greeting.text, greeting.suggestions);
+    await callGroqAndRespond(sessionId, [], true);
   };
 
   if (!isOpen) return null;
@@ -171,10 +187,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
   return (
     <>
       {/* Backdrop */}
-      <div
-        onClick={onClose}
-        className="fixed inset-0 bg-black/30 z-40 transition-opacity"
-      />
+      <div onClick={onClose} className="fixed inset-0 bg-black/30 z-40 transition-opacity" />
 
       {/* Chat Panel */}
       <div className="fixed right-0 top-0 bottom-0 w-full sm:w-[450px] bg-white z-50 shadow-2xl flex flex-col">
@@ -187,7 +200,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
             <div className="min-w-0">
               <h3 className="font-bold truncate">Tutor SANDEQ</h3>
               <p className="text-xs text-white/80 truncate">
-                Asisten belajarmu • {materi?.mapel || 'SANDEQ'}
+                Llama 4 · {materi?.mapel || 'SANDEQ'}
               </p>
             </div>
           </div>
@@ -215,10 +228,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
           )}
 
           {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                   msg.role === 'user'
@@ -228,15 +238,13 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
               >
                 {msg.role === 'assistant' ? (
                   <div className="tutor-markdown text-sm leading-relaxed">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {msg.content}
-                    </ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                   </div>
                 ) : (
                   <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                 )}
 
-                {/* Suggestions chips - hanya untuk assistant message terakhir */}
+                {/* Suggestions — hanya di pesan assistant terakhir */}
                 {msg.role === 'assistant' &&
                   idx === messages.length - 1 &&
                   msg.suggestions &&
@@ -260,21 +268,17 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
           {/* Thinking indicator */}
           {thinking && (
             <div className="flex justify-start">
-              <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+              <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm flex items-center gap-2">
                 <div className="flex gap-1">
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: '0ms' }}
-                  />
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: '150ms' }}
-                  />
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: '300ms' }}
-                  />
+                  {[0, 150, 300].map((delay) => (
+                    <div
+                      key={delay}
+                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                      style={{ animationDelay: `${delay}ms` }}
+                    />
+                  ))}
                 </div>
+                <span className="text-xs text-gray-400">Llama 4 sedang berpikir...</span>
               </div>
             </div>
           )}
@@ -322,61 +326,21 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
             </button>
           </div>
           <p className="text-[10px] text-gray-400 text-center mt-2">
-            🤖 Tutor SANDEQ • Rule-based AI khusus kurikulum SMA
+            🦙 Llama 4 Scout by Meta · Tutor SANDEQ
           </p>
         </div>
       </div>
 
-      {/* Custom markdown styling */}
       <style jsx global>{`
-        .tutor-markdown p {
-          margin: 0.4rem 0;
-        }
-        .tutor-markdown p:first-child {
-          margin-top: 0;
-        }
-        .tutor-markdown p:last-child {
-          margin-bottom: 0;
-        }
-        .tutor-markdown strong {
-          font-weight: 600;
-          color: #1f2937;
-        }
-        .tutor-markdown em {
-          font-style: italic;
-        }
-        .tutor-markdown ul,
-        .tutor-markdown ol {
-          margin: 0.4rem 0;
-          padding-left: 1.5rem;
-        }
-        .tutor-markdown li {
-          margin: 0.2rem 0;
-        }
-        .tutor-markdown code {
-          background: #f3f4f6;
-          padding: 0.1rem 0.3rem;
-          border-radius: 0.25rem;
-          font-size: 0.85em;
-          font-family: ui-monospace, monospace;
-        }
-        .tutor-markdown h1,
-        .tutor-markdown h2,
-        .tutor-markdown h3 {
-          font-weight: 600;
-          margin: 0.5rem 0 0.3rem 0;
-        }
-        .tutor-markdown a {
-          color: #2563eb;
-          text-decoration: underline;
-        }
-        .tutor-markdown blockquote {
-          border-left: 3px solid #d1d5db;
-          padding-left: 0.75rem;
-          margin: 0.4rem 0;
-          color: #6b7280;
-          font-style: italic;
-        }
+        .tutor-markdown p { margin: 0.4rem 0; }
+        .tutor-markdown p:first-child { margin-top: 0; }
+        .tutor-markdown p:last-child { margin-bottom: 0; }
+        .tutor-markdown strong { font-weight: 600; color: #1f2937; }
+        .tutor-markdown ul, .tutor-markdown ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+        .tutor-markdown li { margin: 0.2rem 0; }
+        .tutor-markdown code { background: #f3f4f6; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-size: 0.85em; font-family: ui-monospace, monospace; }
+        .tutor-markdown h1, .tutor-markdown h2, .tutor-markdown h3 { font-weight: 600; margin: 0.5rem 0 0.3rem 0; }
+        .tutor-markdown blockquote { border-left: 3px solid #d1d5db; padding-left: 0.75rem; margin: 0.4rem 0; color: #6b7280; font-style: italic; }
       `}</style>
     </>
   );
