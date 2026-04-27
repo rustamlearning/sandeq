@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import BlockRenderer from '@/components/BlockRenderer';
 import TutorChat from '@/components/TutorChat';
+import XPNotification, { useXPNotifications } from '@/components/XPNotification';
+import { recordActivity } from '@/lib/gamification';
 
 export default function SiswaMateriPage() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function SiswaMateriPage() {
   const [progress, setProgress] = useState<Record<string, any>>({});
   const [mastery, setMastery] = useState<Record<string, any>>({});
   const [tutorOpen, setTutorOpen] = useState(false);
+  const { notifications, dismiss, showActivityResult } = useXPNotifications();
 
   useEffect(() => {
     init();
@@ -61,6 +64,10 @@ export default function SiswaMateriPage() {
 
   const openMateri = async (materi: any) => {
     setSelectedMateri(materi);
+
+    // Cek apakah ini pertama kali baca
+    const isFirstRead = !progress[materi.id];
+
     await supabase
       .from('progress_materi')
       .upsert(
@@ -71,10 +78,20 @@ export default function SiswaMateriPage() {
         },
         { onConflict: 'user_id,materi_id' }
       );
+
+    // Award XP kalau pertama kali baca
+    if (isFirstRead) {
+      const result = await recordActivity(user.id, 'read_material', { materiId: materi.id });
+      showActivityResult(result);
+      await loadProgress(user.id);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const markComplete = async () => {
+    const wasAlreadyComplete = progress[selectedMateri.id]?.selesai;
+
     await supabase
       .from('progress_materi')
       .upsert(
@@ -87,7 +104,17 @@ export default function SiswaMateriPage() {
         },
         { onConflict: 'user_id,materi_id' }
       );
-    alert('✅ Materi ditandai selesai!');
+
+    // Award XP kalau pertama kali mark complete
+    if (!wasAlreadyComplete) {
+      const result = await recordActivity(user.id, 'complete_material', {
+        materiId: selectedMateri.id,
+      });
+      showActivityResult(result);
+    } else {
+      alert('✅ Materi ditandai selesai!');
+    }
+
     await loadProgress(user.id);
     setSelectedMateri(null);
   };
@@ -121,14 +148,15 @@ export default function SiswaMateriPage() {
             >
               ← Kembali
             </button>
-            <span className={`text-xs px-2 py-1 rounded-full ${masteryColors[masteryLevel]} ml-auto`}>
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${masteryColors[masteryLevel]} ml-auto`}
+            >
               {masteryLabels[masteryLevel]}
             </span>
           </div>
         </header>
 
         <main className="max-w-3xl mx-auto px-4 py-6">
-          {/* Header Materi */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
@@ -157,17 +185,18 @@ export default function SiswaMateriPage() {
 
             {m.tujuan_pembelajaran && (
               <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-400">
-                <h3 className="text-sm font-semibold text-blue-900 mb-2">🎯 Tujuan Pembelajaran</h3>
-                <p className="text-sm text-blue-800 whitespace-pre-line">{m.tujuan_pembelajaran}</p>
+                <h3 className="text-sm font-semibold text-blue-900 mb-2">
+                  🎯 Tujuan Pembelajaran
+                </h3>
+                <p className="text-sm text-blue-800 whitespace-pre-line">
+                  {m.tujuan_pembelajaran}
+                </p>
               </div>
             )}
 
-            {m.ringkasan && (
-              <p className="mt-4 text-gray-600 italic">{m.ringkasan}</p>
-            )}
+            {m.ringkasan && <p className="mt-4 text-gray-600 italic">{m.ringkasan}</p>}
           </div>
 
-          {/* Konten Blocks */}
           <div className="bg-white rounded-lg p-6 shadow-sm">
             {m.konten_blocks && m.konten_blocks.length > 0 ? (
               <BlockRenderer
@@ -179,24 +208,7 @@ export default function SiswaMateriPage() {
               <p className="text-gray-500 text-center py-8">Belum ada konten</p>
             )}
           </div>
-{/* Floating AI Tutor Button */}
-          <button
-            onClick={() => setTutorOpen(true)}
-            className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
-          >
-            <span className="text-2xl">🤖</span>
-            <span className="font-medium">Tanya Tutor</span>
-          </button>
 
-          {/* Tutor Chat Panel */}
-          <TutorChat
-            materi={selectedMateri}
-            blocks={selectedMateri.konten_blocks || []}
-            user={user}
-            isOpen={tutorOpen}
-            onClose={() => setTutorOpen(false)}
-          />
-          {/* Footer: Mark Complete */}
           <div className="mt-6 flex gap-3">
             <button
               onClick={markComplete}
@@ -211,6 +223,25 @@ export default function SiswaMateriPage() {
               Kembali ke List
             </button>
           </div>
+
+          {/* Floating AI Tutor Button */}
+          <button
+            onClick={() => setTutorOpen(true)}
+            className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+          >
+            <span className="text-2xl">🤖</span>
+            <span className="font-medium">Tanya Tutor</span>
+          </button>
+
+          <TutorChat
+            materi={selectedMateri}
+            blocks={selectedMateri.konten_blocks || []}
+            user={user}
+            isOpen={tutorOpen}
+            onClose={() => setTutorOpen(false)}
+          />
+
+          <XPNotification notifications={notifications} onDismiss={dismiss} />
         </main>
       </div>
     );

@@ -8,6 +8,7 @@ import rehypeKatex from 'rehype-katex';
 import { InlineMath, BlockMath } from 'react-katex';
 import { supabase } from '@/lib/supabase';
 import { Block } from '@/lib/blocks';
+import { recordActivity } from '@/lib/gamification';
 import 'katex/dist/katex.min.css';
 
 interface BlockRendererProps {
@@ -20,26 +21,13 @@ export default function BlockRenderer({ blocks, materiId, userId }: BlockRendere
   return (
     <div className="space-y-6">
       {blocks.map((block) => (
-        <SingleBlock
-          key={block.id}
-          block={block}
-          materiId={materiId}
-          userId={userId}
-        />
+        <SingleBlock key={block.id} block={block} materiId={materiId} userId={userId} />
       ))}
     </div>
   );
 }
 
-function SingleBlock({
-  block,
-  materiId,
-  userId,
-}: {
-  block: Block;
-  materiId: string;
-  userId: string;
-}) {
+function SingleBlock({ block, materiId, userId }: { block: Block; materiId: string; userId: string }) {
   if (block.type === 'heading') {
     if (block.level === 1) return <h1 className="text-3xl font-bold mt-8 mb-4 text-gray-900">{block.text}</h1>;
     if (block.level === 2) return <h2 className="text-2xl font-bold mt-6 mb-3 text-gray-900">{block.text}</h2>;
@@ -193,6 +181,7 @@ function CheckBlockRender({ block, materiId, userId }: { block: any; materiId: s
     if (selected === null) return;
     setSubmitted(true);
     const isCorrect = selected === block.correctIndex;
+
     await supabase.from('embedded_quiz_attempts').insert({
       user_id: userId,
       materi_id: materiId,
@@ -200,6 +189,13 @@ function CheckBlockRender({ block, materiId, userId }: { block: any; materiId: s
       jawaban: block.options[selected],
       benar: isCorrect,
     });
+
+    // Award XP for quiz attempt
+    try {
+      await recordActivity(userId, isCorrect ? 'quiz_correct' : 'quiz_wrong', { materiId });
+    } catch (e) {
+      console.error('Award XP error:', e);
+    }
   };
 
   const handleRetry = () => {
