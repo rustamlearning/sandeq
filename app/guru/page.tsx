@@ -5,34 +5,31 @@ import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 
+const menuItems = [
+  { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', color: 'from-blue-500 to-blue-600' },
+  { title: 'Buat Kuis', description: 'Buat ulangan & latihan', icon: '✏️', path: '/guru/kuis', color: 'from-violet-500 to-violet-600' },
+  { title: 'Absensi', description: 'Catat kehadiran siswa', icon: '📋', path: '/guru/absensi', color: 'from-emerald-500 to-emerald-600' },
+  { title: 'Input Nilai', description: 'Masukkan nilai siswa', icon: '🏅', path: '/guru/nilai', color: 'from-amber-500 to-amber-600' },
+  { title: 'Forum', description: 'Diskusi dengan siswa', icon: '💬', path: '/forum', color: 'from-sky-500 to-sky-600' },
+  { title: 'Pengumuman', description: 'Buat pengumuman kelas', icon: '📢', path: '/guru/pengumuman', color: 'from-rose-500 to-rose-600' },
+  { title: 'Analytics Kelas', description: 'Lihat progress & data siswa', icon: '📊', path: '/guru/analytics', color: 'from-indigo-600 to-blue-700' },
+]
+
 export default function GuruDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({
-    totalMateri: 0,
-    totalKuis: 0,
-  })
+  const [stats, setStats] = useState({ totalMateri: 0, totalKuis: 0 })
 
   useEffect(() => {
     async function init() {
       const currentUser = await getCurrentUser()
-
-      if (!currentUser) {
-        router.replace('/login')
-        return
-      }
-
-      if (currentUser.role !== 'guru') {
-        router.replace('/')
-        return
-      }
-
+      if (!currentUser) { router.replace('/login'); return }
+      if (currentUser.role !== 'guru') { router.replace('/'); return }
       setUser(currentUser)
       await loadStats(currentUser.id)
       setLoading(false)
     }
-
     init()
   }, [router])
 
@@ -41,11 +38,7 @@ export default function GuruDashboard() {
       supabase.from('materi').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
       supabase.from('kuis').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
     ])
-
-    setStats({
-      totalMateri: materi.count || 0,
-      totalKuis: kuis.count || 0,
-    })
+    setStats({ totalMateri: materi.count || 0, totalKuis: kuis.count || 0 })
   }
 
   async function handleLogout() {
@@ -53,104 +46,98 @@ export default function GuruDashboard() {
     router.replace('/login')
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Memuat...</p>
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 text-sm">Memuat dashboard...</p>
       </div>
-    )
-  }
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">SANDEQ Guru</h1>
-            <p className="text-sm text-gray-500">Selamat mengajar, {user?.nama}</p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+        <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">
+              S
+            </div>
+            <div>
+              <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
+              <p className="text-blue-200 text-xs">Portal Guru</p>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-          >
-            Keluar
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium">{user?.nama}</p>
+              <p className="text-blue-200 text-xs">Guru</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
+            >
+              Keluar
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
+      <main className="max-w-5xl mx-auto px-4 py-6">
+        {/* Welcome */}
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-slate-800">Selamat mengajar, {user?.nama?.split(' ')[0]} 👋</h2>
+          <p className="text-slate-500 text-sm mt-0.5">Hari ini ada yang perlu diperbarui?</p>
+        </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-blue-50 text-blue-700 rounded-xl p-4">
-            <p className="text-sm font-medium opacity-80">Materi Saya</p>
-            <p className="text-3xl font-bold mt-1">{stats.totalMateri}</p>
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-2xl">📖</span>
+              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-medium">Total</span>
+            </div>
+            <p className="text-3xl font-bold text-slate-800">{stats.totalMateri}</p>
+            <p className="text-sm text-slate-500 mt-1">Materi dibuat</p>
           </div>
-          <div className="bg-green-50 text-green-700 rounded-xl p-4">
-            <p className="text-sm font-medium opacity-80">Kuis Saya</p>
-            <p className="text-3xl font-bold mt-1">{stats.totalKuis}</p>
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-2xl">✏️</span>
+              <span className="text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">Total</span>
+            </div>
+            <p className="text-3xl font-bold text-slate-800">{stats.totalKuis}</p>
+            <p className="text-sm text-slate-500 mt-1">Kuis dibuat</p>
           </div>
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Menu</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <MenuCard
-            title="Buat Materi"
-            description="Tambah materi pelajaran"
-            onClick={() => router.push('/guru/materi')}
-          />
-          <MenuCard
-            title="Buat Kuis"
-            description="Buat ulangan & latihan"
-            onClick={() => router.push('/guru/kuis')}
-          />
-          <MenuCard
-            title="Absensi"
-            description="Catat kehadiran siswa"
-            onClick={() => router.push('/guru/absensi')}
-          />
-          <MenuCard
-            title="Input Nilai"
-            description="Masukkan nilai siswa"
-            onClick={() => router.push('/guru/nilai')}
-          />
-          <MenuCard
-            title="Forum"
-            description="Diskusi dengan siswa"
-            onClick={() => router.push('/forum')}
-          />
-          <MenuCard
-            title="Pengumuman"
-            description="Buat pengumuman kelas"
-            onClick={() => router.push('/guru/pengumuman')}
-          />
-          <MenuCard
-            title="📊 Analytics Kelas"
-            description="Lihat progress & data siswa"
-            onClick={() => router.push('/guru/analytics')}
-          />
+        {/* Menu */}
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu Utama</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {menuItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => router.push(item.path)}
+              className={`group relative p-5 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
+                item.featured
+                  ? `bg-gradient-to-br ${item.color} text-white shadow-md md:col-span-1`
+                  : 'bg-white border border-slate-100 shadow-sm hover:border-blue-100'
+              }`}
+            >
+              <span className="text-2xl mb-3 block">{item.icon}</span>
+              <h4 className={`font-semibold text-sm ${item.featured ? 'text-white' : 'text-slate-800'}`}>
+                {item.title}
+              </h4>
+              <p className={`text-xs mt-0.5 ${item.featured ? 'text-white/75' : 'text-slate-400'}`}>
+                {item.description}
+              </p>
+              {item.featured && (
+                <div className="absolute top-3 right-3 w-2 h-2 bg-yellow-400 rounded-full" />
+              )}
+            </button>
+          ))}
         </div>
       </main>
     </div>
-  )
-}
-
-function MenuCard({
-  title,
-  description,
-  onClick,
-}: {
-  title: string
-  description: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition text-left border border-gray-100"
-    >
-      <h4 className="font-semibold text-gray-800">{title}</h4>
-      <p className="text-sm text-gray-500 mt-1">{description}</p>
-    </button>
   )
 }

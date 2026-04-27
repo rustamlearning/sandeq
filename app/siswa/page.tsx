@@ -6,195 +6,146 @@ import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 
+const menuItems = [
+  { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
+  { icon: '✏️', title: 'Kuis', description: 'Kerjakan latihan & ulangan', path: '/siswa/kuis', color: 'text-violet-600 bg-violet-50' },
+  { icon: '📊', title: 'Nilai', description: 'Lihat nilai & rapor', path: '/siswa/nilai', color: 'text-emerald-600 bg-emerald-50' },
+  { icon: '📅', title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-600 bg-amber-50' },
+  { icon: '📢', title: 'Pengumuman', description: 'Info dari sekolah', path: '/siswa/pengumuman', color: 'text-rose-600 bg-rose-50' },
+  { icon: '💬', title: 'Forum', description: 'Diskusi dengan teman & guru', path: '/forum', color: 'text-sky-600 bg-sky-50' },
+  { icon: '⭐', title: 'Profil & Stats', description: 'XP, level, badges', path: '/profil', color: 'text-yellow-600 bg-yellow-50', highlight: true },
+  { icon: '🏆', title: 'Leaderboard', description: 'Ranking kelas', path: '/siswa/leaderboard', color: 'text-orange-600 bg-orange-50', highlight: true },
+]
+
 export default function SiswaDashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [stats, setStats] = useState({
-    materiCount: 0,
-    kuisCount: 0,
-    pengumumanCount: 0,
-  });
+  const [stats, setStats] = useState({ materiCount: 0, kuisCount: 0, pengumumanCount: 0 });
 
-  useEffect(() => {
-    init();
-  }, []);
+  useEffect(() => { init(); }, []);
 
   const init = async () => {
     const u = await getCurrentUser();
-    if (!u || u.role !== 'siswa') {
-      router.push('/login');
-      return;
-    }
+    if (!u || u.role !== 'siswa') { router.push('/login'); return; }
     setUser(u);
-
     if (u.kelas_id) {
       const [materiRes, kuisRes, pengumumanRes] = await Promise.all([
         supabase.from('materi').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id),
         supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id),
         supabase.from('pengumuman').select('id', { count: 'exact', head: true }),
       ]);
-
-      setStats({
-        materiCount: materiRes.count || 0,
-        kuisCount: kuisRes.count || 0,
-        pengumumanCount: pengumumanRes.count || 0,
-      });
+      setStats({ materiCount: materiRes.count || 0, kuisCount: kuisRes.count || 0, pengumumanCount: pengumumanRes.count || 0 });
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    router.push('/login');
-  };
+  const handleLogout = async () => { await logout(); router.push('/login'); };
 
-  if (!user) return <div className="p-8">Loading...</div>;
+  if (!user) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   const xp = user.xp || 0;
   const levelInfo = getLevelInfo(xp);
+  const xpToNext = levelInfo.xpForNext - xp;
+  const xpProgress = Math.min(100, Math.round(((xp - levelInfo.xpForCurrent) / (levelInfo.xpForNext - levelInfo.xpForCurrent)) * 100)) || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">SANDEQ Siswa</h1>
-            <p className="text-sm text-gray-500">Selamat belajar, {user.nama}</p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
+            <div>
+              <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
+              <p className="text-blue-200 text-xs">Portal Siswa</p>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
+          <button onClick={handleLogout} className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
             Keluar
           </button>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-        {/* Gamification Card */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-5 mb-6 shadow-lg">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-4xl">
+        {/* Gamification Hero Card */}
+        <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
+          {/* Decorative circles */}
+          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
+          <div className="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full" />
+
+          <div className="relative flex items-start gap-4">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
               {levelInfo.emoji}
             </div>
-            <div className="flex-1">
-              <p className="text-xs text-white/80">Level {levelInfo.level}</p>
-              <p className="font-bold text-lg">{levelInfo.title}</p>
-              <p className="text-sm text-white/90">⭐ {xp.toLocaleString()} XP</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-white/70 text-xs mb-0.5">Selamat belajar, {user.nama?.split(' ')[0]}!</p>
+              <p className="font-bold text-xl leading-tight">{levelInfo.title}</p>
+              <p className="text-white/80 text-sm">Level {levelInfo.level} · {xp.toLocaleString()} XP</p>
+
+              {/* XP Progress bar */}
+              <div className="mt-3">
+                <div className="flex justify-between text-xs text-white/60 mb-1">
+                  <span>Progress ke Level {levelInfo.level + 1}</span>
+                  <span>{xpToNext > 0 ? `${xpToNext} XP lagi` : 'Max!'}</span>
+                </div>
+                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
+                </div>
+              </div>
             </div>
             {user.current_streak > 0 && (
-              <div className="bg-orange-500/40 px-3 py-2 rounded-lg text-center">
+              <div className="bg-orange-500/30 border border-orange-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
                 <div className="text-2xl">🔥</div>
-                <div className="text-xs font-semibold">{user.current_streak} hari</div>
+                <div className="text-xs font-bold">{user.current_streak}</div>
+                <div className="text-xs text-white/60">hari</div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+        {/* Stats Row */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <p className="text-sm text-blue-700">Materi</p>
-            <p className="text-2xl font-bold text-blue-900">{stats.materiCount}</p>
-          </div>
-          <div className="bg-green-50 rounded-lg p-4">
-            <p className="text-sm text-green-700">Kuis</p>
-            <p className="text-2xl font-bold text-green-900">{stats.kuisCount}</p>
-          </div>
-          <div className="bg-purple-50 rounded-lg p-4">
-            <p className="text-sm text-purple-700">Pengumuman</p>
-            <p className="text-2xl font-bold text-purple-900">{stats.pengumumanCount}</p>
-          </div>
+          {[
+            { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-blue-600' },
+            { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-violet-600' },
+            { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-rose-600' },
+          ].map(s => (
+            <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
+              <span className="text-xl">{s.icon}</span>
+              <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Menu */}
-        <h2 className="text-lg font-semibold mb-3">Menu</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <MenuCard
-            icon="📚"
-            title="Materi"
-            description="Pelajari materi pelajaran"
-            onClick={() => router.push('/siswa/materi')}
-          />
-          <MenuCard
-            icon="✏️"
-            title="Kuis"
-            description="Kerjakan latihan & ulangan"
-            onClick={() => router.push('/siswa/kuis')}
-          />
-          <MenuCard
-            icon="📊"
-            title="Nilai"
-            description="Lihat nilai & rapor"
-            onClick={() => router.push('/siswa/nilai')}
-          />
-          <MenuCard
-            icon="📅"
-            title="Absensi"
-            description="Riwayat kehadiran"
-            onClick={() => router.push('/siswa/absensi')}
-          />
-          <MenuCard
-            icon="📢"
-            title="Pengumuman"
-            description="Info dari sekolah"
-            onClick={() => router.push('/siswa/pengumuman')}
-          />
-          <MenuCard
-            icon="💬"
-            title="Forum"
-            description="Diskusi dengan teman & guru"
-            onClick={() => router.push('/forum')}
-          />
-          <MenuCard
-            icon="⭐"
-            title="Profil & Stats"
-            description="XP, level, badges"
-            onClick={() => router.push('/profil')}
-            highlight
-          />
-          <MenuCard
-            icon="🏆"
-            title="Leaderboard"
-            description="Ranking kelas"
-            onClick={() => router.push('/siswa/leaderboard')}
-            highlight
-          />
+        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {menuItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => router.push(item.path)}
+              className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                item.highlight
+                  ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 shadow-sm'
+                  : 'bg-white border border-slate-100 shadow-sm hover:border-blue-100'
+              }`}
+            >
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
+                {item.icon}
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
+                <p className="text-xs text-slate-400 mt-0.5 truncate">{item.description}</p>
+              </div>
+              <span className="ml-auto text-slate-300 group-hover:text-blue-400 transition text-lg">›</span>
+            </button>
+          ))}
         </div>
       </main>
     </div>
-  );
-}
-
-function MenuCard({
-  icon,
-  title,
-  description,
-  onClick,
-  highlight = false,
-}: {
-  icon: string;
-  title: string;
-  description: string;
-  onClick: () => void;
-  highlight?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`p-4 rounded-lg shadow-sm hover:shadow-md transition text-left ${
-        highlight
-          ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-orange-200'
-          : 'bg-white'
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <span className="text-3xl">{icon}</span>
-        <div>
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
-        </div>
-      </div>
-    </button>
   );
 }
