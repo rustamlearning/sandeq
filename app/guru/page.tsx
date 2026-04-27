@@ -124,6 +124,11 @@ export default function GuruDashboard() {
             description="Buat pengumuman kelas"
             onClick={() => router.push('/guru/pengumuman')}
           />
+          <MenuCard
+            title="📊 Analytics Kelas"
+            description="Lihat progress & data siswa"
+            onClick={() => router.push('/guru/analytics')}
+          />
         </div>
       </main>
     </div>
