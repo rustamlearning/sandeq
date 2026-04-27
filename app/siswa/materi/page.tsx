@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import BlockRenderer from '@/components/BlockRenderer';
+import TutorChat from '@/components/TutorChat';
 
 export default function SiswaMateriPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function SiswaMateriPage() {
   const [selectedMateri, setSelectedMateri] = useState<any>(null);
   const [progress, setProgress] = useState<Record<string, any>>({});
   const [mastery, setMastery] = useState<Record<string, any>>({});
+  const [tutorOpen, setTutorOpen] = useState(false);
 
   useEffect(() => {
     init();
@@ -177,7 +179,23 @@ export default function SiswaMateriPage() {
               <p className="text-gray-500 text-center py-8">Belum ada konten</p>
             )}
           </div>
+{/* Floating AI Tutor Button */}
+          <button
+            onClick={() => setTutorOpen(true)}
+            className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+          >
+            <span className="text-2xl">🤖</span>
+            <span className="font-medium">Tanya Tutor</span>
+          </button>
 
+          {/* Tutor Chat Panel */}
+          <TutorChat
+            materi={selectedMateri}
+            blocks={selectedMateri.konten_blocks || []}
+            user={user}
+            isOpen={tutorOpen}
+            onClose={() => setTutorOpen(false)}
+          />
           {/* Footer: Mark Complete */}
           <div className="mt-6 flex gap-3">
             <button

@@ -28,7 +28,7 @@ export default function LoginPage() {
         router.push('/siswa')
       }
     } catch (err: any) {
-      setError(err.message || 'Login gagal. Periksa NIS/NIP dan password.')
+      setError(err.message || 'Login gagal. Periksa username dan password.')
     } finally {
       setLoading(false)
     }
@@ -79,12 +79,12 @@ export default function LoginPage() {
       <div className="md:w-1/2 bg-gray-50 flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Masuk</h2>
-          <p className="text-gray-500 mb-8">Silakan masuk dengan NIS/NIP Anda</p>
+          <p className="text-gray-500 mb-8">Silakan masuk dengan username Anda</p>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                NIS / NIP
+                Username
               </label>
               <input
                 type="text"
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 onChange={(e) => setNisNip(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                placeholder="Masukkan NIS atau NIP"
+                placeholder="Masukkan username"
               />
             </div>
 
