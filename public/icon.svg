@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#1e40af"/>
+  <g transform="translate(256, 280)">
+    <path d="M -120 60 L 120 60 L 100 100 L -100 100 Z" fill="#60a5fa"/>
+    <line x1="0" y1="-130" x2="0" y2="60" stroke="white" stroke-width="6"/>
+    <path d="M 5 -125 L 5 50 L 100 30 Z" fill="white"/>
+    <path d="M -5 -100 L -5 50 L -85 35 Z" fill="white" opacity="0.7"/>
+    <line x1="-140" y1="40" x2="140" y2="40" stroke="white" stroke-width="3" opacity="0.6"/>
+  </g>
+  <text x="256" y="450" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">SANDEQ</text>
+</svg>

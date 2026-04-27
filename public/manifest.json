@@ -1,18 +1,52 @@
 {
-  "name": "SANDEQ - Layarkan Ilmumu",
+  "name": "SANDEQ - SMA Negeri 6 Pangkep",
   "short_name": "SANDEQ",
   "description": "Aplikasi belajar digital SMA Negeri 6 Pangkajene dan Kepulauan",
+  "id": "/",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#F4F9FF",
+  "background_color": "#1A4A7A",
   "theme_color": "#1A4A7A",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "id-ID",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Materi",
+      "url": "/siswa/materi",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tutor AI",
+      "url": "/siswa",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
