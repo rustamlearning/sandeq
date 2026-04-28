@@ -1,214 +1,381 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
-import { supabase, User, Kuis, Kelas } from '@/lib/supabase'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { getCurrentUser } from '@/lib/auth';
 
-const MAPEL_LIST = [
-  'Matematika','Bahasa Indonesia','Bahasa Inggris','Fisika','Kimia',
-  'Biologi','Sejarah','Geografi','Ekonomi','Sosiologi',
-  'PPKn','Pendidikan Agama','Seni Budaya','Penjaskes','Informatika',
-]
+interface KuisItem {
+  id: string;
+  judul: string;
+  mapel: string;
+  kelas_id: string;
+  durasi_menit: number;
+  jumlah_soal: number;
+  total_poin: number;
+  kkm: number;
+  is_published: boolean;
+  tipe?: string;
+  deskripsi?: string;
+  created_at: string;
+  kelas?: { nama: string };
+  _attempts_count?: number;
+  _avg_score?: number;
+}
 
-export default function KuisGuruPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [kuisList, setKuisList] = useState<Kuis[]>([])
-  const [kelasList, setKelasList] = useState<Kelas[]>([])
-  const [showForm, setShowForm] = useState(false)
+const MAPEL_ICONS: Record<string, string> = {
+  'Matematika': '🧮',
+  'Bahasa Indonesia': '📖',
+  'Bahasa Inggris': '🌐',
+  'Fisika': '⚛️',
+  'Kimia': '🧪',
+  'Biologi': '🧬',
+  'Sejarah Indonesia': '📜',
+  'Geografi': '🗺️',
+  'Ekonomi': '💰',
+  'Sosiologi': '👥',
+  'PPKn': '🏛️',
+  'PAI': '🕌',
+  'Seni Budaya': '🎨',
+  'Penjaskes': '⚽',
+  'Informatika': '💻',
+};
 
-  const [judul, setJudul] = useState('')
-  const [mapel, setMapel] = useState(MAPEL_LIST[0])
-  const [kelasId, setKelasId] = useState('')
-  const [tipe, setTipe] = useState<'latihan' | 'ulangan'>('latihan')
-  const [durasi, setDurasi] = useState('30')
-  const [submitting, setSubmitting] = useState(false)
+export default function KuisListPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [kuisList, setKuisList] = useState<KuisItem[]>([]);
+  const [kelasList, setKelasList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filterKelas, setFilterKelas] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
 
   useEffect(() => {
-    async function init() {
-      const u = await getCurrentUser()
-      if (!u || u.role !== 'guru') { router.replace('/login'); return }
-      setUser(u)
-      await Promise.all([loadKuis(u.id), loadKelas()])
-      setLoading(false)
+    init();
+  }, []);
+
+  const init = async () => {
+    const u = await getCurrentUser();
+    if (!u || u.role !== 'guru') {
+      router.push('/login');
+      return;
     }
-    init()
-  }, [router])
+    setUser(u);
 
-  async function loadKuis(guruId: string) {
-    const { data } = await supabase.from('kuis').select('*').eq('guru_id', guruId).order('created_at', { ascending: false })
-    setKuisList(data || [])
-  }
+    const [kuisRes, kelasRes] = await Promise.all([
+      supabase
+        .from('kuis')
+        .select('*, kelas:kelas_id(nama)')
+        .eq('guru_id', u.id)
+        .order('created_at', { ascending: false }),
+      supabase.from('kelas').select('*').order('nama'),
+    ]);
 
-  async function loadKelas() {
-    const { data } = await supabase.from('kelas').select('*').order('tingkat', { ascending: true })
-    setKelasList(data || [])
-  }
+    const kuisData = kuisRes.data || [];
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!user) return
-    setSubmitting(true)
-    const { data, error } = await supabase.from('kuis').insert({ judul, mapel, kelas_id: kelasId, guru_id: user.id, tipe, durasi_menit: parseInt(durasi), aktif: true }).select().single()
-    setSubmitting(false)
-    if (error || !data) { alert('Gagal membuat kuis: ' + (error?.message || '')); return }
-    router.push(`/guru/kuis/${data.id}`)
-  }
+    const enriched = await Promise.all(
+      kuisData.map(async (k: any) => {
+        const { data: attempts } = await supabase
+          .from('kuis_attempts')
+          .select('nilai_persen')
+          .eq('kuis_id', k.id)
+          .eq('selesai', true);
 
-  async function toggleAktif(id: string, aktif: boolean) {
-    await supabase.from('kuis').update({ aktif: !aktif }).eq('id', id)
-    if (user) await loadKuis(user.id)
-  }
+        const completed = attempts || [];
+        const avgScore = completed.length > 0
+          ? completed.reduce((s: number, a: any) => s + (a.nilai_persen || 0), 0) / completed.length
+          : 0;
 
-  async function handleDelete(id: string) {
-    if (!confirm('Hapus kuis ini? Semua soal akan ikut terhapus.')) return
-    await supabase.from('kuis').delete().eq('id', id)
-    if (user) await loadKuis(user.id)
-  }
+        return {
+          ...k,
+          _attempts_count: completed.length,
+          _avg_score: Math.round(avgScore * 10) / 10,
+        };
+      })
+    );
 
-  function getKelasNama(id: string) {
-    return kelasList.find((k) => k.id === id)?.nama || '-'
-  }
+    setKuisList(enriched);
+    setKelasList(kelasRes.data || []);
+    setLoading(false);
+  };
+
+  const handleDelete = async (kuis: KuisItem) => {
+    if (!confirm(`Hapus kuis "${kuis.judul}"?\n\nSemua soal dan jawaban siswa akan ikut terhapus.`)) {
+      return;
+    }
+    const { error } = await supabase.from('kuis').delete().eq('id', kuis.id);
+    if (error) {
+      alert('Gagal hapus: ' + error.message);
+      return;
+    }
+    setKuisList((prev) => prev.filter((k) => k.id !== kuis.id));
+  };
+
+  const togglePublish = async (kuis: KuisItem) => {
+    const newStatus = !kuis.is_published;
+    const { error } = await supabase
+      .from('kuis')
+      .update({ is_published: newStatus })
+      .eq('id', kuis.id);
+    if (error) {
+      alert('Gagal update: ' + error.message);
+      return;
+    }
+    setKuisList((prev) =>
+      prev.map((k) => (k.id === kuis.id ? { ...k, is_published: newStatus } : k))
+    );
+  };
+
+  const filtered = kuisList.filter((k) => {
+    if (search && !k.judul.toLowerCase().includes(search.toLowerCase())) return false;
+    if (filterKelas !== 'all' && k.kelas_id !== filterKelas) return false;
+    if (filterStatus === 'published' && !k.is_published) return false;
+    if (filterStatus === 'draft' && k.is_published) return false;
+    return true;
+  });
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 text-sm">Memuat kuis...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-3 animate-pulse">⛵</div>
+          <p className="text-gray-600">Memuat kuis...</p>
         </div>
       </div>
-    )
+    );
   }
-
-  const aktifCount = kuisList.filter((k) => k.aktif).length
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              onClick={() => router.push('/guru')}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold flex-shrink-0"
-            >
-              ←
-            </button>
-            <div className="min-w-0">
-              <h1 className="text-lg font-bold leading-tight">Kuis & Ulangan</h1>
-              <p className="text-orange-100 text-xs">{kuisList.length} kuis · {aktifCount} aktif</p>
-            </div>
-          </div>
+      <header className="bg-gradient-to-r from-orange-500 to-pink-500 shadow-lg">
+        <div className="max-w-6xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex-shrink-0 px-4 py-2 bg-white text-orange-700 rounded-xl text-sm font-bold hover:bg-orange-50 transition shadow-sm"
+            onClick={() => router.push('/guru')}
+            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            {showForm ? '✕ Tutup' : '+ Buat Kuis'}
+            ←
           </button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-white">Kuis & Ulangan</h1>
+            <p className="text-white/90 text-sm">
+              {kuisList.length} kuis • {kuisList.filter((k) => k.is_published).length} aktif
+            </p>
+          </div>
+          <Link
+            href="/guru/kuis/builder/new"
+            className="bg-white text-orange-600 hover:bg-orange-50 px-5 py-2.5 rounded-xl font-semibold shadow-md transition flex items-center gap-2"
+          >
+            <span className="text-xl">+</span>
+            <span>Buat Kuis Baru</span>
+          </Link>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-5">
-        {/* Form */}
-        {showForm && (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-5">
-            <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-3">
-              <h3 className="text-white font-bold">Buat Kuis Baru</h3>
+      <main className="max-w-6xl mx-auto px-4 py-6">
+        {kuisList.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="md:col-span-2">
+              <label className="text-xs font-medium text-gray-600 block mb-1">🔍 Cari</label>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cari berdasarkan judul..."
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
             </div>
-            <form onSubmit={handleSubmit} className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Judul <span className="text-red-500">*</span></label>
-                  <input
-                    type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
-                    placeholder="Contoh: Ulangan Harian Bab 3"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-orange-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Mata Pelajaran</label>
-                  <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-orange-400">
-                    {MAPEL_LIST.map((m) => <option key={m} value={m}>{m}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kelas <span className="text-red-500">*</span></label>
-                  <select value={kelasId} onChange={(e) => setKelasId(e.target.value)} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-orange-400">
-                    <option value="">Pilih kelas</option>
-                    {kelasList.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Tipe</label>
-                  <select value={tipe} onChange={(e) => setTipe(e.target.value as any)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-orange-400">
-                    <option value="latihan">📝 Latihan (tanpa nilai)</option>
-                    <option value="ulangan">📊 Ulangan (masuk nilai)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Durasi (menit)</label>
-                  <input type="number" value={durasi} onChange={(e) => setDurasi(e.target.value)} required min={1} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-orange-400" />
-                </div>
-              </div>
-              <button
-                type="submit" disabled={submitting}
-                className="mt-5 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold text-sm hover:from-orange-600 hover:to-amber-600 transition disabled:opacity-50 shadow-sm"
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Kelas</label>
+              <select
+                value={filterKelas}
+                onChange={(e) => setFilterKelas(e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
               >
-                {submitting ? '⏳ Membuat...' : '🚀 Buat & Tambah Soal'}
+                <option value="all">Semua Kelas</option>
+                {kelasList.map((k) => (
+                  <option key={k.id} value={k.id}>{k.nama}</option>
+                ))}
+              </select>
+            </div>
+            <div className="md:col-span-3 flex gap-2 flex-wrap">
+              <button
+                onClick={() => setFilterStatus('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                  filterStatus === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Semua ({kuisList.length})
               </button>
-            </form>
+              <button
+                onClick={() => setFilterStatus('published')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                  filterStatus === 'published' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                ✅ Aktif ({kuisList.filter((k) => k.is_published).length})
+              </button>
+              <button
+                onClick={() => setFilterStatus('draft')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                  filterStatus === 'draft' ? 'bg-yellow-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                📝 Draft ({kuisList.filter((k) => !k.is_published).length})
+              </button>
+            </div>
           </div>
         )}
 
-        {/* List */}
         {kuisList.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
-            <div className="text-5xl mb-3">📋</div>
-            <p className="font-semibold text-gray-600 mb-1">Belum ada kuis</p>
-            <p className="text-sm text-gray-400">Klik "+ Buat Kuis" untuk mulai.</p>
+          <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+            <div className="text-6xl mb-4">📝</div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Belum ada kuis</h2>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              Mulai dengan membuat kuis pertama. Kamu bisa generate soal otomatis dengan AI atau buat manual.
+            </p>
+            <Link
+              href="/guru/kuis/builder/new"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
+            >
+              <span className="text-xl">🚀</span>
+              <span>Buat Kuis Pertama</span>
+            </Link>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+            <div className="text-5xl mb-3">🔍</div>
+            <p className="text-gray-600">Tidak ada kuis yang cocok dengan filter</p>
+            <button
+              onClick={() => {
+                setSearch('');
+                setFilterKelas('all');
+                setFilterStatus('all');
+              }}
+              className="mt-3 text-blue-600 hover:underline text-sm"
+            >
+              Reset filter
+            </button>
           </div>
         ) : (
-          <div className="space-y-2">
-            {kuisList.map((k) => (
-              <div key={k.id} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
-                <div className={`h-1 ${k.aktif ? 'bg-green-400' : 'bg-gray-200'}`} />
-                <div className="p-4 flex items-start gap-3">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${k.tipe === 'ulangan' ? 'bg-orange-50' : 'bg-sky-50'}`}>
-                    {k.tipe === 'ulangan' ? '📊' : '📝'}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                      <span className="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">{k.mapel}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${k.tipe === 'ulangan' ? 'bg-orange-100 text-orange-700' : 'bg-sky-100 text-sky-700'}`}>
-                        {k.tipe}
-                      </span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${k.aktif ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                        {k.aktif ? '● Aktif' : '○ Nonaktif'}
-                      </span>
-                    </div>
-                    <h4 className="font-bold text-gray-800 text-sm">{k.judul}</h4>
-                    <p className="text-xs text-gray-500 mt-0.5">Kelas {getKelasNama(k.kelas_id)} · {k.durasi_menit} menit</p>
-                  </div>
-                  <div className="flex flex-col gap-1.5 flex-shrink-0 text-right">
-                    <button onClick={() => router.push(`/guru/kuis/${k.id}`)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">
-                      Kelola Soal
-                    </button>
-                    <button onClick={() => toggleAktif(k.id, k.aktif)} className="text-xs text-gray-600 hover:text-gray-800 font-semibold bg-gray-50 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition">
-                      {k.aktif ? 'Nonaktifkan' : 'Aktifkan'}
-                    </button>
-                    <button onClick={() => handleDelete(k.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition">
-                      Hapus
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((kuis) => (
+              <KuisCard
+                key={kuis.id}
+                kuis={kuis}
+                onDelete={() => handleDelete(kuis)}
+                onTogglePublish={() => togglePublish(kuis)}
+              />
             ))}
           </div>
         )}
       </main>
     </div>
-  )
+  );
+}
+
+function KuisCard({
+  kuis,
+  onDelete,
+  onTogglePublish,
+}: {
+  kuis: KuisItem;
+  onDelete: () => void;
+  onTogglePublish: () => void;
+}) {
+  const icon = MAPEL_ICONS[kuis.mapel] || '📚';
+  const tanggalDibuat = new Date(kuis.created_at).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100">
+      <div className={`h-1.5 ${kuis.is_published ? 'bg-green-500' : 'bg-gray-300'}`} />
+
+      <div className="p-4">
+        <div className="flex items-start gap-3 mb-3">
+          <div className="text-3xl flex-shrink-0">{icon}</div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-gray-900 truncate">{kuis.judul}</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {kuis.mapel} • {kuis.kelas?.nama || '-'}
+            </p>
+          </div>
+          <span
+            className={`text-xs px-2 py-1 rounded-full font-medium flex-shrink-0 ${
+              kuis.is_published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+            }`}
+          >
+            {kuis.is_published ? '● Aktif' : '◌ Draft'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 my-3 py-3 border-y border-gray-100">
+          <div className="text-center">
+            <div className="text-lg font-bold text-blue-600">{kuis.jumlah_soal || 0}</div>
+            <div className="text-xs text-gray-500">Soal</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-purple-600">{kuis._attempts_count || 0}</div>
+            <div className="text-xs text-gray-500">Peserta</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-green-600">
+              {(kuis._attempts_count || 0) > 0 ? (kuis._avg_score || 0).toFixed(0) : '-'}
+            </div>
+            <div className="text-xs text-gray-500">Rata-rata</div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-gray-500 mb-3 flex-wrap gap-1">
+          <span>⏱ {kuis.durasi_menit} menit</span>
+          <span>🎯 KKM {kuis.kkm}</span>
+          <span>📅 {tanggalDibuat}</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mb-2">
+          <Link
+            href={`/guru/kuis/builder/${kuis.id}`}
+            className="text-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition"
+          >
+            ✏️ Kelola
+          </Link>
+          <Link
+            href={`/guru/kuis/${kuis.id}/analytics`}
+            className="text-center px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm font-medium transition"
+          >
+            📊 Analytics
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <Link
+            href={`/guru/kuis/${kuis.id}/grading`}
+            className="text-center px-2 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-medium transition"
+          >
+            📝 Grading
+          </Link>
+          <button
+            onClick={onTogglePublish}
+            className={`px-2 py-1.5 rounded-lg text-xs font-medium transition ${
+              kuis.is_published
+                ? 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700'
+                : 'bg-green-50 hover:bg-green-100 text-green-700'
+            }`}
+          >
+            {kuis.is_published ? '⏸ Pause' : '▶️ Publish'}
+          </button>
+          <button
+            onClick={onDelete}
+            className="px-2 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium transition"
+          >
+            🗑 Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

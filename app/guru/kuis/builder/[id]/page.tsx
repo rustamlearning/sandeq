@@ -46,12 +46,28 @@ export default function KuisBuilderPage() {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
+  // AI Generator state
+  const [showAIPanel, setShowAIPanel] = useState(false);
+  const [aiTopik, setAiTopik] = useState('');
+  const [aiJumlah, setAiJumlah] = useState(5);
+  const [aiTipe, setAiTipe] = useState<SoalTipe>('pg');
+  const [aiTingkat, setAiTingkat] = useState<'mudah' | 'sedang' | 'sulit'>('sedang');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string>('');
+
   const MAPEL_LIST = [
     'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris',
     'Fisika', 'Kimia', 'Biologi',
     'Sejarah Indonesia', 'Geografi', 'Ekonomi', 'Sosiologi',
     'PPKn', 'PAI', 'Seni Budaya', 'Penjaskes', 'Informatika',
   ];
+
+  // Sync URL setelah kuis baru pertama kali tersimpan
+  useEffect(() => {
+    if (kuis.id && kuisId === 'new') {
+      window.history.replaceState({}, '', `/guru/kuis/builder/${kuis.id}`);
+    }
+  }, [kuis.id, kuisId]);
 
   useEffect(() => {
     init();
@@ -173,6 +189,98 @@ export default function KuisBuilderPage() {
   // ============================================
   // SOAL ACTIONS
   // ============================================
+  // ── AI Generate ──
+  const handleAIGenerate = async () => {
+    if (!aiTopik.trim()) {
+      setAiError('Topik wajib diisi');
+      return;
+    }
+    if (!kuis.id) {
+      setAiError('Simpan kuis dulu (klik tombol Simpan di header)');
+      return;
+    }
+
+    setAiLoading(true);
+    setAiError('');
+
+    try {
+      const tipeLabel: Record<SoalTipe, string> = {
+        pg: 'pilihan ganda (4 opsi A/B/C/D)',
+        true_false: 'benar/salah',
+        isian: 'isian singkat',
+        matching: 'menjodohkan (5 pasang)',
+        essay: 'esai',
+      };
+
+      const formatPG = `{ "teks": "pertanyaan?", "pilihan": ["opsi A","opsi B","opsi C","opsi D"], "jawaban_benar": "opsi A", "penjelasan": "alasan singkat", "poin": 10 }`;
+      const formatTF = `{ "teks": "pernyataan", "jawaban_benar": "Benar", "penjelasan": "alasan", "poin": 10 }`;
+      const formatIsian = `{ "teks": "pertanyaan dengan ___ untuk diisi", "jawaban_benar": "jawaban utama", "kunci_jawaban_alt": ["sinonim1","sinonim2"], "penjelasan": "alasan", "poin": 10 }`;
+      const formatMatching = `{ "teks": "Pasangkan istilah", "matching_pairs": {"A1":"B3","A2":"B1","A3":"B2"}, "pilihan": {"kolom_a":[{"id":"A1","text":"item 1"}], "kolom_b":[{"id":"B1","text":"def 1"}]}, "poin": 20 }`;
+      const formatEssay = `{ "teks": "pertanyaan esai terbuka", "penjelasan": "rubrik penilaian", "poin": 20 }`;
+
+      const formatMap: Record<SoalTipe, string> = {
+        pg: formatPG,
+        true_false: formatTF,
+        isian: formatIsian,
+        matching: formatMatching,
+        essay: formatEssay,
+      };
+
+      const prompt = `Buat ${aiJumlah} soal ${tipeLabel[aiTipe]} dengan tingkat kesulitan ${aiTingkat} untuk topik: "${aiTopik}".\n\nMata pelajaran: ${kuis.mapel || 'umum'}.\n\nKembalikan HANYA array JSON valid (tanpa penjelasan, tanpa markdown), dengan format setiap soal:\n${formatMap[aiTipe]}\n\nKembalikan array dengan ${aiJumlah} soal. Jangan ada teks lain selain array JSON.`;
+
+      const res = await fetch('/api/generate-soal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'AI request gagal');
+
+      let raw = (data.text || '').trim();
+      raw = raw.replace(/^```json\n?/g, '').replace(/^```\n?/g, '').replace(/```$/g, '').trim();
+
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('AI tidak mengembalikan array JSON yang valid');
+
+      const parsed = JSON.parse(match[0]);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        throw new Error('AI mengembalikan data kosong');
+      }
+
+      let savedCount = 0;
+      for (let i = 0; i < parsed.length; i++) {
+        const item = parsed[i];
+        const newSoal: Partial<Soal> = {
+          kuis_id: kuis.id,
+          tipe: aiTipe,
+          teks: item.teks || item.pertanyaan || '',
+          pilihan: item.pilihan || null,
+          jawaban_benar: item.jawaban_benar || item.jawaban || '',
+          kunci_jawaban_alt: item.kunci_jawaban_alt || [],
+          matching_pairs: item.matching_pairs || null,
+          penjelasan: item.penjelasan || '',
+          poin: item.poin || 10,
+          urutan: soalList.length + i,
+        };
+        const saved = await saveSoal(newSoal);
+        if (saved) savedCount++;
+      }
+
+      const result = await getKuisWithSoal(kuis.id);
+      if (result) setSoalList(result.soal);
+
+      alert(`✅ ${savedCount} soal berhasil di-generate AI!`);
+      setShowAIPanel(false);
+      setAiTopik('');
+    } catch (e: any) {
+      console.error('AI generate error:', e);
+      setAiError(e.message || 'Terjadi kesalahan');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const addSoal = (tipe: SoalTipe) => {
     const newSoal = createEmptySoal(tipe, kuis.id || '', soalList.length);
     setSoalList([...soalList, newSoal]);
@@ -398,6 +506,93 @@ export default function KuisBuilderPage() {
         </div>
 
         {/* Soal List */}
+        {/* AI Generator Panel */}
+        <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-4">
+          <button
+            onClick={() => setShowAIPanel(!showAIPanel)}
+            className="w-full flex items-center justify-between gap-2"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🤖</span>
+              <div className="text-left">
+                <p className="font-bold text-purple-900">Generate Soal dengan AI</p>
+                <p className="text-xs text-purple-600">Powered by Llama 4 via Groq</p>
+              </div>
+            </div>
+            <span className="text-purple-600">{showAIPanel ? '▲' : '▼'}</span>
+          </button>
+
+          {showAIPanel && (
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="text-xs font-medium text-gray-700 block mb-1">Topik *</label>
+                <input
+                  type="text"
+                  value={aiTopik}
+                  onChange={(e) => setAiTopik(e.target.value)}
+                  placeholder="Contoh: Conjunctions, Past Tense, Persamaan Linear"
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="text-xs font-medium text-gray-700 block mb-1">Jumlah</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={aiJumlah}
+                    onChange={(e) => setAiJumlah(parseInt(e.target.value) || 5)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-700 block mb-1">Tipe</label>
+                  <select
+                    value={aiTipe}
+                    onChange={(e) => setAiTipe(e.target.value as SoalTipe)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                  >
+                    <option value="pg">Pilihan Ganda</option>
+                    <option value="true_false">Benar/Salah</option>
+                    <option value="isian">Isian</option>
+                    <option value="matching">Menjodohkan</option>
+                    <option value="essay">Esai</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-700 block mb-1">Tingkat</label>
+                  <select
+                    value={aiTingkat}
+                    onChange={(e) => setAiTingkat(e.target.value as any)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                  >
+                    <option value="mudah">Mudah</option>
+                    <option value="sedang">Sedang</option>
+                    <option value="sulit">Sulit</option>
+                  </select>
+                </div>
+              </div>
+              {aiError && (
+                <div className="bg-red-50 border-l-4 border-red-400 p-2 text-xs text-red-700 rounded">
+                  ⚠️ {aiError}
+                </div>
+              )}
+              <button
+                onClick={handleAIGenerate}
+                disabled={aiLoading || !aiTopik.trim()}
+                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {aiLoading ? '⏳ Generating...' : `🚀 Generate ${aiJumlah} Soal dengan AI`}
+              </button>
+              <p className="text-xs text-gray-500 italic">
+                💡 Pastikan kuis sudah disimpan (judul + kelas + mapel terisi) sebelum generate.
+              </p>
+            </div>
+          )}
+        </div>
+
+
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold">📝 Soal-Soal ({soalList.length})</h2>
