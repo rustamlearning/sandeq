@@ -150,7 +150,13 @@ export default function InputNilaiPage() {
           <button onClick={() => router.push('/guru')} className="text-gray-500 hover:text-gray-700">
             ← Kembali
           </button>
-          <h1 className="text-xl font-bold text-gray-800">Input Nilai</h1>
+          <h1 className="text-xl font-bold text-gray-800 flex-1">Input Nilai</h1>
+          <button
+            onClick={() => router.push('/guru/nilai/export')}
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition"
+          >
+            📄 Export Rapor
+          </button>
         </div>
       </header>
 

@@ -89,6 +89,17 @@ export interface Nilai {
   created_at: string
 }
 
+export interface Jadwal {
+  id: string
+  kelas_id: string
+  guru_id: string
+  mapel: string
+  hari: number // 1=Senin ... 5=Jumat
+  jam_mulai: string
+  jam_selesai: string
+  created_at?: string
+}
+
 export interface Pengumuman {
   id: string
   judul: string

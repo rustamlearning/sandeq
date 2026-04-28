@@ -111,6 +111,11 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/kelas')}
           />
           <MenuCard
+            title="Kelola Jadwal"
+            description="Atur jadwal pelajaran per kelas"
+            onClick={() => router.push('/admin/jadwal')}
+          />
+          <MenuCard
             title="Pengumuman"
             description="Buat pengumuman sekolah"
             onClick={() => router.push('/admin/pengumuman')}
