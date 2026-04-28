@@ -5,36 +5,35 @@ import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 
+const MENU = [
+  { title: 'Kelola Pengguna', description: 'Tambah & atur akun siswa, guru', icon: '👤', path: '/admin/users', color: 'from-blue-500 to-blue-600' },
+  { title: 'Kelola Kelas', description: 'Buat & atur kelas', icon: '🏫', path: '/admin/kelas', color: 'from-violet-500 to-violet-600' },
+  { title: 'Kelola Jadwal', description: 'Atur jadwal pelajaran per kelas', icon: '📅', path: '/admin/jadwal', color: 'from-indigo-500 to-indigo-600' },
+  { title: 'Pengumuman', description: 'Buat pengumuman untuk semua siswa', icon: '📢', path: '/admin/pengumuman', color: 'from-rose-500 to-rose-600' },
+]
+
+const STATS = [
+  { key: 'totalSiswa', label: 'Siswa', icon: '🎓', bg: 'bg-blue-50', text: 'text-blue-700' },
+  { key: 'totalGuru', label: 'Guru', icon: '👨‍🏫', bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  { key: 'totalKelas', label: 'Kelas', icon: '🏫', bg: 'bg-violet-50', text: 'text-violet-700' },
+  { key: 'totalMateri', label: 'Materi', icon: '📚', bg: 'bg-orange-50', text: 'text-orange-700' },
+]
+
 export default function AdminDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({
-    totalSiswa: 0,
-    totalGuru: 0,
-    totalKelas: 0,
-    totalMateri: 0,
-  })
+  const [stats, setStats] = useState({ totalSiswa: 0, totalGuru: 0, totalKelas: 0, totalMateri: 0 })
 
   useEffect(() => {
     async function init() {
       const currentUser = await getCurrentUser()
-
-      if (!currentUser) {
-        router.replace('/login')
-        return
-      }
-
-      if (currentUser.role !== 'admin') {
-        router.replace('/')
-        return
-      }
-
+      if (!currentUser) { router.replace('/login'); return }
+      if (currentUser.role !== 'admin') { router.replace('/'); return }
       setUser(currentUser)
       await loadStats()
       setLoading(false)
     }
-
     init()
   }, [router])
 
@@ -45,13 +44,7 @@ export default function AdminDashboard() {
       supabase.from('kelas').select('*', { count: 'exact', head: true }),
       supabase.from('materi').select('*', { count: 'exact', head: true }),
     ])
-
-    setStats({
-      totalSiswa: siswa.count || 0,
-      totalGuru: guru.count || 0,
-      totalKelas: kelas.count || 0,
-      totalMateri: materi.count || 0,
-    })
+    setStats({ totalSiswa: siswa.count || 0, totalGuru: guru.count || 0, totalKelas: kelas.count || 0, totalMateri: materi.count || 0 })
   }
 
   async function handleLogout() {
@@ -61,103 +54,66 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Memuat...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-4xl mb-3 animate-pulse">⚙️</div>
+          <p className="text-gray-500">Memuat dashboard...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">SANDEQ Admin</h1>
-            <p className="text-sm text-gray-500">Selamat datang, {user?.nama}</p>
+      <header className="bg-gradient-to-r from-slate-700 to-slate-800 shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">⚙️</div>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-white">SANDEQ Admin</h1>
+            <p className="text-white/70 text-sm">Selamat datang, {user?.nama}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium transition"
           >
             Keluar
           </button>
         </div>
+
+        {/* Stats in header */}
+        <div className="max-w-4xl mx-auto px-4 pb-5">
+          <div className="grid grid-cols-4 gap-2">
+            {STATS.map((s) => (
+              <div key={s.key} className="bg-white/10 rounded-xl p-3 text-center">
+                <p className="text-lg">{s.icon}</p>
+                <p className="text-2xl font-bold text-white">{stats[s.key as keyof typeof stats]}</p>
+                <p className="text-white/70 text-xs">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </header>
 
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Total Siswa" value={stats.totalSiswa} color="blue" />
-          <StatCard label="Total Guru" value={stats.totalGuru} color="green" />
-          <StatCard label="Total Kelas" value={stats.totalKelas} color="purple" />
-          <StatCard label="Total Materi" value={stats.totalMateri} color="orange" />
-        </div>
-
-        {/* Menu */}
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Manajemen</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <MenuCard
-            title="Kelola Pengguna"
-            description="Tambah & atur akun siswa, guru"
-            onClick={() => router.push('/admin/users')}
-          />
-          <MenuCard
-            title="Kelola Kelas"
-            description="Buat & atur kelas"
-            onClick={() => router.push('/admin/kelas')}
-          />
-          <MenuCard
-            title="Kelola Jadwal"
-            description="Atur jadwal pelajaran per kelas"
-            onClick={() => router.push('/admin/jadwal')}
-          />
-          <MenuCard
-            title="Pengumuman"
-            description="Buat pengumuman sekolah"
-            onClick={() => router.push('/admin/pengumuman')}
-          />
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">Manajemen</p>
+        <div className="grid grid-cols-2 gap-3">
+          {MENU.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => router.push(item.path)}
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition text-left overflow-hidden group"
+            >
+              <div className={`bg-gradient-to-r ${item.color} px-4 py-3 flex items-center gap-2`}>
+                <span className="text-2xl">{item.icon}</span>
+                <h4 className="font-bold text-white text-sm">{item.title}</h4>
+              </div>
+              <div className="px-4 py-3">
+                <p className="text-xs text-gray-500">{item.description}</p>
+              </div>
+            </button>
+          ))}
         </div>
       </main>
     </div>
-  )
-}
-
-function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
-  const colorMap: Record<string, string> = {
-    blue: 'bg-blue-50 text-blue-700',
-    green: 'bg-green-50 text-green-700',
-    purple: 'bg-purple-50 text-purple-700',
-    orange: 'bg-orange-50 text-orange-700',
-  }
-
-  return (
-    <div className={`${colorMap[color]} rounded-xl p-4`}>
-      <p className="text-sm font-medium opacity-80">{label}</p>
-      <p className="text-3xl font-bold mt-1">{value}</p>
-    </div>
-  )
-}
-
-function MenuCard({
-  title,
-  description,
-  onClick,
-}: {
-  title: string
-  description: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition text-left border border-gray-100"
-    >
-      <h4 className="font-semibold text-gray-800">{title}</h4>
-      <p className="text-sm text-gray-500 mt-1">{description}</p>
-    </button>
   )
 }

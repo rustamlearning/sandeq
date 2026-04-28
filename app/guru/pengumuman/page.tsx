@@ -5,8 +5,15 @@ import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Pengumuman } from '@/lib/supabase'
 
-const KATEGORI = ['akademik', 'kegiatan', 'darurat', 'umum'] as const
+const KATEGORI = ['umum', 'akademik', 'kegiatan', 'darurat'] as const
 type Kategori = (typeof KATEGORI)[number]
+
+const KATEGORI_CONFIG: Record<Kategori, { label: string; icon: string; bg: string; text: string; border: string }> = {
+  umum:     { label: 'Umum',     icon: '📢', bg: 'bg-gray-100',   text: 'text-gray-700',   border: 'border-gray-200'   },
+  akademik: { label: 'Akademik', icon: '📚', bg: 'bg-blue-100',   text: 'text-blue-700',   border: 'border-blue-200'   },
+  kegiatan: { label: 'Kegiatan', icon: '🎯', bg: 'bg-green-100',  text: 'text-green-700',  border: 'border-green-200'  },
+  darurat:  { label: 'Darurat',  icon: '🚨', bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-300'    },
+}
 
 export default function PengumumanGuruPage() {
   const router = useRouter()
@@ -14,7 +21,6 @@ export default function PengumumanGuruPage() {
   const [loading, setLoading] = useState(true)
   const [list, setList] = useState<Pengumuman[]>([])
   const [showForm, setShowForm] = useState(false)
-
   const [judul, setJudul] = useState('')
   const [konten, setKonten] = useState('')
   const [kategori, setKategori] = useState<Kategori>('umum')
@@ -24,10 +30,7 @@ export default function PengumumanGuruPage() {
   useEffect(() => {
     async function init() {
       const u = await getCurrentUser()
-      if (!u || u.role !== 'guru') {
-        router.replace('/login')
-        return
-      }
+      if (!u || u.role !== 'guru') { router.replace('/login'); return }
       setUser(u)
       await load(u.id)
       setLoading(false)
@@ -36,12 +39,8 @@ export default function PengumumanGuruPage() {
   }, [router])
 
   async function load(guruId: string) {
-    const { data } = await supabase
-      .from('pengumuman')
-      .select('*')
-      .eq('created_by', guruId)
-      .order('dipin', { ascending: false })
-      .order('created_at', { ascending: false })
+    const { data } = await supabase.from('pengumuman').select('*').eq('created_by', guruId)
+      .order('dipin', { ascending: false }).order('created_at', { ascending: false })
     setList(data || [])
   }
 
@@ -49,166 +48,183 @@ export default function PengumumanGuruPage() {
     e.preventDefault()
     if (!user) return
     setSubmitting(true)
-    await supabase.from('pengumuman').insert({
-      judul,
-      konten,
-      kategori,
-      target: 'semua',
-      dipin,
-      created_by: user.id,
-    })
-    setJudul('')
-    setKonten('')
-    setKategori('umum')
-    setDipin(false)
-    setShowForm(false)
-    setSubmitting(false)
+    await supabase.from('pengumuman').insert({ judul, konten, kategori, target: 'semua', dipin, created_by: user.id })
+    setJudul(''); setKonten(''); setKategori('umum'); setDipin(false)
+    setShowForm(false); setSubmitting(false)
     await load(user.id)
   }
 
   async function handleDelete(id: string) {
-    if (!user) return
     if (!confirm('Hapus pengumuman ini?')) return
     await supabase.from('pengumuman').delete().eq('id', id)
-    await load(user.id)
+    setList((prev) => prev.filter((p) => p.id !== id))
+  }
+
+  async function togglePin(item: Pengumuman) {
+    await supabase.from('pengumuman').update({ dipin: !item.dipin }).eq('id', item.id)
+    await load(user!.id)
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Memuat...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-4xl mb-3 animate-pulse">📢</div>
+          <p className="text-gray-500">Memuat pengumuman...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.push('/guru')} className="text-gray-500 hover:text-gray-700">
-              ← Kembali
-            </button>
-            <h1 className="text-xl font-bold text-gray-800">Pengumuman Saya</h1>
+      <header className="bg-gradient-to-r from-rose-600 to-pink-500 shadow-lg">
+        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
+          <button
+            onClick={() => router.push('/guru')}
+            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
+          >
+            ←
+          </button>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white">Pengumuman</h1>
+            <p className="text-white/80 text-sm">{list.length} pengumuman diterbitkan</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="bg-white text-rose-600 hover:bg-rose-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
           >
-            {showForm ? 'Tutup' : '+ Buat Pengumuman'}
+            {showForm ? '✕ Tutup' : '+ Buat'}
           </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
+        {/* Form buat pengumuman */}
         {showForm && (
-          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-100">
-            <h3 className="font-semibold text-gray-800 mb-4">Buat Pengumuman</h3>
-            <div className="space-y-4">
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-3 flex items-center justify-between">
+              <h2 className="text-white font-bold">Buat Pengumuman Baru</h2>
+            </div>
+            <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
+                <label className="text-xs font-semibold text-gray-600 block mb-1">Judul</label>
                 <input
-                  type="text"
-                  value={judul}
-                  onChange={(e) => setJudul(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
+                  placeholder="Judul pengumuman..."
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none"
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Kategori</label>
                   <select
-                    value={kategori}
-                    onChange={(e) => setKategori(e.target.value as Kategori)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    value={kategori} onChange={(e) => setKategori(e.target.value as Kategori)}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 outline-none"
                   >
                     {KATEGORI.map((k) => (
-                      <option key={k} value={k}>{k.charAt(0).toUpperCase() + k.slice(1)}</option>
+                      <option key={k} value={k}>{KATEGORI_CONFIG[k].icon} {KATEGORI_CONFIG[k].label}</option>
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center pt-6">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                <div className="flex items-end pb-1">
+                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                     <input
-                      type="checkbox"
-                      checked={dipin}
-                      onChange={(e) => setDipin(e.target.checked)}
-                      className="w-4 h-4"
+                      type="checkbox" checked={dipin} onChange={(e) => setDipin(e.target.checked)}
+                      className="w-4 h-4 rounded accent-rose-500"
                     />
-                    Pin di atas
+                    <span>📌 Pin di atas</span>
                   </label>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Isi Pengumuman</label>
+                <label className="text-xs font-semibold text-gray-600 block mb-1">Isi Pengumuman</label>
                 <textarea
-                  value={konten}
-                  onChange={(e) => setKonten(e.target.value)}
-                  required
-                  rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  value={konten} onChange={(e) => setKonten(e.target.value)} required rows={5}
+                  placeholder="Tulis isi pengumuman di sini..."
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none resize-none"
                 />
               </div>
-            </div>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400"
-            >
-              {submitting ? 'Menyimpan...' : 'Publikasikan'}
-            </button>
-          </form>
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="submit" disabled={submitting}
+                  className="flex-1 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl font-semibold text-sm hover:from-rose-600 hover:to-pink-600 transition disabled:opacity-50"
+                >
+                  {submitting ? '⏳ Menerbitkan...' : '📤 Publikasikan'}
+                </button>
+                <button
+                  type="button" onClick={() => setShowForm(false)}
+                  className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition"
+                >
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
         )}
 
-        <div className="space-y-3">
-          {list.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-              <p className="text-gray-500">Belum ada pengumuman yang kamu buat.</p>
-            </div>
-          ) : (
-            list.map((p) => (
-              <PengumumanCard key={p.id} item={p} onDelete={handleDelete} />
-            ))
-          )}
-        </div>
-      </main>
-    </div>
-  )
-}
-
-function PengumumanCard({ item, onDelete }: { item: Pengumuman; onDelete: (id: string) => void }) {
-  const colorMap: Record<string, string> = {
-    akademik: 'bg-blue-100 text-blue-700',
-    kegiatan: 'bg-green-100 text-green-700',
-    darurat: 'bg-red-100 text-red-700',
-    umum: 'bg-gray-100 text-gray-700',
-  }
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            {item.dipin && <span className="text-xs">📌</span>}
-            <span className={`text-xs font-medium px-2 py-0.5 rounded ${colorMap[item.kategori]}`}>
-              {item.kategori}
-            </span>
-            <span className="text-xs text-gray-500">
-              {new Date(item.created_at).toLocaleDateString('id-ID', {
-                day: 'numeric', month: 'short', year: 'numeric',
-              })}
-            </span>
+        {/* List pengumuman */}
+        {list.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+            <div className="text-5xl mb-3">📭</div>
+            <p className="font-semibold text-gray-700">Belum ada pengumuman</p>
+            <p className="text-sm text-gray-400 mt-1">Buat pengumuman pertama untuk siswa</p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="mt-4 px-5 py-2 bg-rose-500 text-white rounded-xl text-sm font-semibold hover:bg-rose-600 transition"
+            >
+              + Buat Pengumuman
+            </button>
           </div>
-          <h4 className="font-semibold text-gray-800 mb-1">{item.judul}</h4>
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">{item.konten}</p>
-        </div>
-        <button
-          onClick={() => onDelete(item.id)}
-          className="text-red-600 hover:text-red-800 text-sm shrink-0"
-        >
-          Hapus
-        </button>
-      </div>
+        ) : (
+          <div className="space-y-3">
+            {list.map((p) => {
+              const cfg = KATEGORI_CONFIG[p.kategori as Kategori] || KATEGORI_CONFIG.umum
+              return (
+                <div
+                  key={p.id}
+                  className={`bg-white rounded-xl shadow-sm border-l-4 ${cfg.border} overflow-hidden`}
+                >
+                  <div className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className={`w-9 h-9 rounded-lg ${cfg.bg} flex items-center justify-center text-lg flex-shrink-0`}>
+                        {cfg.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          {p.dipin && <span className="text-xs font-semibold text-rose-500">📌 Dipin</span>}
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>
+                            {cfg.label}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {new Date(p.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-gray-800 mb-1">{p.judul}</h4>
+                        <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{p.konten}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-3 pt-3 border-t border-gray-50">
+                      <button
+                        onClick={() => togglePin(p)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition"
+                      >
+                        {p.dipin ? '📌 Unpin' : '📌 Pin'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition ml-auto"
+                      >
+                        🗑 Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </main>
     </div>
   )
 }

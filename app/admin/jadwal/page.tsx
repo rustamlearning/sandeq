@@ -1,45 +1,45 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { getCurrentUser } from '@/lib/auth';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
+import { getCurrentUser } from '@/lib/auth'
 
 interface JadwalItem {
-  id: string;
-  kelas_id: string;
-  guru_id: string;
-  mapel: string;
-  hari: number;
-  jam_mulai: string;
-  jam_selesai: string;
-  guru?: { nama: string };
-  kelas?: { nama: string };
+  id: string
+  kelas_id: string
+  guru_id: string
+  mapel: string
+  hari: number
+  jam_mulai: string
+  jam_selesai: string
+  guru?: { nama: string }
+  kelas?: { nama: string }
 }
 
 const HARI_LIST = [
-  { num: 1, label: 'Senin' },
-  { num: 2, label: 'Selasa' },
-  { num: 3, label: 'Rabu' },
-  { num: 4, label: 'Kamis' },
-  { num: 5, label: 'Jumat' },
-];
+  { num: 1, label: 'Senin',  color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  { num: 2, label: 'Selasa', color: 'bg-violet-50 text-violet-700 border-violet-200' },
+  { num: 3, label: 'Rabu',   color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { num: 4, label: 'Kamis',  color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  { num: 5, label: 'Jumat',  color: 'bg-rose-50 text-rose-700 border-rose-200' },
+]
 
 const MAPEL_LIST = [
   'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
   'Biologi', 'Sejarah Indonesia', 'Geografi', 'Ekonomi', 'Sosiologi',
   'PPKn', 'PAI', 'Seni Budaya', 'Penjaskes', 'Informatika',
-];
+]
 
 export default function AdminJadwalPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [jadwalList, setJadwalList] = useState<JadwalItem[]>([]);
-  const [kelasList, setKelasList] = useState<any[]>([]);
-  const [guruList, setGuruList] = useState<any[]>([]);
-  const [selectedKelas, setSelectedKelas] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [jadwalList, setJadwalList] = useState<JadwalItem[]>([])
+  const [kelasList, setKelasList] = useState<any[]>([])
+  const [guruList, setGuruList] = useState<any[]>([])
+  const [selectedKelas, setSelectedKelas] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [showForm, setShowForm] = useState(false)
 
   const [form, setForm] = useState({
     kelas_id: '',
@@ -48,47 +48,40 @@ export default function AdminJadwalPage() {
     hari: 1,
     jam_mulai: '07:00',
     jam_selesai: '08:00',
-  });
+  })
 
-  useEffect(() => {
-    init();
-  }, []);
+  useEffect(() => { init() }, [])
+  useEffect(() => { if (selectedKelas) loadJadwal(selectedKelas) }, [selectedKelas])
 
-  useEffect(() => {
-    if (selectedKelas) loadJadwal(selectedKelas);
-  }, [selectedKelas]);
-
-  const init = async () => {
-    const u = await getCurrentUser();
-    if (!u || u.role !== 'admin') { router.push('/login'); return; }
-
+  async function init() {
+    const u = await getCurrentUser()
+    if (!u || u.role !== 'admin') { router.push('/login'); return }
     const [{ data: kelas }, { data: guru }] = await Promise.all([
       supabase.from('kelas').select('*').order('nama'),
       supabase.from('users').select('id, nama').eq('role', 'guru').order('nama'),
-    ]);
-
-    setKelasList(kelas || []);
-    setGuruList(guru || []);
+    ])
+    setKelasList(kelas || [])
+    setGuruList(guru || [])
     if (kelas && kelas.length > 0) {
-      setSelectedKelas(kelas[0].id);
-      setForm((f) => ({ ...f, kelas_id: kelas[0].id, guru_id: guru?.[0]?.id || '' }));
+      setSelectedKelas(kelas[0].id)
+      setForm((f) => ({ ...f, kelas_id: kelas[0].id, guru_id: guru?.[0]?.id || '' }))
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
-  const loadJadwal = async (kelasId: string) => {
+  async function loadJadwal(kelasId: string) {
     const { data } = await supabase
       .from('jadwal')
       .select('*, guru:guru_id(nama), kelas:kelas_id(nama)')
       .eq('kelas_id', kelasId)
       .order('hari')
-      .order('jam_mulai');
-    setJadwalList(data || []);
-  };
+      .order('jam_mulai')
+    setJadwalList(data || [])
+  }
 
-  const handleAdd = async () => {
-    if (!form.kelas_id || !form.guru_id) return;
-    setSaving(true);
+  async function handleAdd() {
+    if (!form.kelas_id || !form.guru_id) return
+    setSaving(true)
     const { error } = await supabase.from('jadwal').insert({
       kelas_id: form.kelas_id,
       guru_id: form.guru_id,
@@ -96,150 +89,157 @@ export default function AdminJadwalPage() {
       hari: form.hari,
       jam_mulai: form.jam_mulai,
       jam_selesai: form.jam_selesai,
-    });
-    setSaving(false);
-    if (error) { alert('Gagal simpan: ' + error.message); return; }
-    setShowForm(false);
-    loadJadwal(selectedKelas);
-  };
+    })
+    setSaving(false)
+    if (error) { alert('Gagal simpan: ' + error.message); return }
+    setShowForm(false)
+    loadJadwal(selectedKelas)
+  }
 
-  const handleDelete = async (id: string, mapel: string) => {
-    if (!confirm(`Hapus jadwal ${mapel}?`)) return;
-    await supabase.from('jadwal').delete().eq('id', id);
-    setJadwalList((prev) => prev.filter((j) => j.id !== id));
-  };
+  async function handleDelete(id: string, mapel: string) {
+    if (!confirm(`Hapus jadwal ${mapel}?`)) return
+    await supabase.from('jadwal').delete().eq('id', id)
+    setJadwalList((prev) => prev.filter((j) => j.id !== id))
+  }
+
+  const selectedKelasNama = kelasList.find((k) => k.id === selectedKelas)?.nama || ''
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Memuat...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-4xl mb-3 animate-pulse">📅</div>
+          <p className="text-gray-500">Memuat jadwal...</p>
+        </div>
       </div>
-    );
+    )
   }
 
   const grouped = HARI_LIST.map((h) => ({
     ...h,
     items: jadwalList.filter((j) => j.hari === h.num),
-  }));
+  }))
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
-          <button onClick={() => router.push('/admin')} className="text-blue-600 text-sm hover:underline">
-            ← Admin
+      <header className="bg-gradient-to-r from-indigo-700 to-slate-700 shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
+          <button
+            onClick={() => router.push('/admin')}
+            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
+          >
+            ←
           </button>
-          <h1 className="text-xl font-bold flex-1">📅 Kelola Jadwal</h1>
-          <div className="flex items-center gap-2">
-            <select
-              value={selectedKelas}
-              onChange={(e) => setSelectedKelas(e.target.value)}
-              className="px-3 py-2 border rounded-lg text-sm"
-            >
-              {kelasList.map((k) => (
-                <option key={k.id} value={k.id}>{k.nama}</option>
-              ))}
-            </select>
-            <button
-              onClick={() => {
-                setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' }));
-                setShowForm(true);
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-            >
-              + Tambah
-            </button>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white">Kelola Jadwal</h1>
+            <p className="text-white/70 text-sm">{selectedKelasNama ? `Kelas ${selectedKelasNama} · ${jadwalList.length} pelajaran` : 'Pilih kelas'}</p>
+          </div>
+          <button
+            onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(!showForm) }}
+            className="bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
+          >
+            {showForm ? '✕ Tutup' : '+ Tambah'}
+          </button>
+        </div>
+
+        {/* Kelas selector in header */}
+        <div className="max-w-4xl mx-auto px-4 pb-4">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {kelasList.map((k) => (
+              <button
+                key={k.id}
+                onClick={() => setSelectedKelas(k.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                  selectedKelas === k.id ? 'bg-white text-indigo-700' : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                {k.nama}
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-4">
+      <main className="max-w-4xl mx-auto px-4 py-5 space-y-4">
         {/* Form tambah jadwal */}
         {showForm && (
-          <div className="bg-white rounded-xl shadow-sm border p-5">
-            <h2 className="font-semibold text-gray-800 mb-4">Tambah Jadwal Baru</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Kelas</label>
-                <select
-                  value={form.kelas_id}
-                  onChange={(e) => setForm((f) => ({ ...f, kelas_id: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  {kelasList.map((k) => (
-                    <option key={k.id} value={k.id}>{k.nama}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Guru</label>
-                <select
-                  value={form.guru_id}
-                  onChange={(e) => setForm((f) => ({ ...f, guru_id: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  {guruList.map((g) => (
-                    <option key={g.id} value={g.id}>{g.nama}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Mata Pelajaran</label>
-                <select
-                  value={form.mapel}
-                  onChange={(e) => setForm((f) => ({ ...f, mapel: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  {MAPEL_LIST.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Hari</label>
-                <select
-                  value={form.hari}
-                  onChange={(e) => setForm((f) => ({ ...f, hari: Number(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  {HARI_LIST.map((h) => (
-                    <option key={h.num} value={h.num}>{h.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Jam Mulai</label>
-                <input
-                  type="time"
-                  value={form.jam_mulai}
-                  onChange={(e) => setForm((f) => ({ ...f, jam_mulai: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Jam Selesai</label>
-                <input
-                  type="time"
-                  value={form.jam_selesai}
-                  onChange={(e) => setForm((f) => ({ ...f, jam_selesai: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 to-slate-600 px-5 py-3">
+              <h2 className="text-white font-bold">Tambah Jadwal Baru</h2>
             </div>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={handleAdd}
-                disabled={saving}
-                className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-              >
-                {saving ? 'Menyimpan...' : 'Simpan'}
-              </button>
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
-              >
-                Batal
-              </button>
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Kelas</label>
+                  <select
+                    value={form.kelas_id}
+                    onChange={(e) => setForm((f) => ({ ...f, kelas_id: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  >
+                    {kelasList.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Guru</label>
+                  <select
+                    value={form.guru_id}
+                    onChange={(e) => setForm((f) => ({ ...f, guru_id: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  >
+                    {guruList.map((g) => <option key={g.id} value={g.id}>{g.nama}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Mata Pelajaran</label>
+                  <select
+                    value={form.mapel}
+                    onChange={(e) => setForm((f) => ({ ...f, mapel: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  >
+                    {MAPEL_LIST.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Hari</label>
+                  <select
+                    value={form.hari}
+                    onChange={(e) => setForm((f) => ({ ...f, hari: Number(e.target.value) }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  >
+                    {HARI_LIST.map((h) => <option key={h.num} value={h.num}>{h.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Jam Mulai</label>
+                  <input
+                    type="time" value={form.jam_mulai}
+                    onChange={(e) => setForm((f) => ({ ...f, jam_mulai: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Jam Selesai</label>
+                  <input
+                    type="time" value={form.jam_selesai}
+                    onChange={(e) => setForm((f) => ({ ...f, jam_selesai: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={handleAdd} disabled={saving}
+                  className="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-slate-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-slate-700 transition disabled:opacity-50"
+                >
+                  {saving ? '⏳ Menyimpan...' : '💾 Simpan Jadwal'}
+                </button>
+                <button
+                  onClick={() => setShowForm(false)}
+                  className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition"
+                >
+                  Batal
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -249,53 +249,49 @@ export default function AdminJadwalPage() {
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
             <div className="text-5xl mb-3">📭</div>
             <p className="font-semibold text-gray-700">Belum ada jadwal untuk kelas ini</p>
+            <p className="text-sm text-gray-400 mt-1">Tambah jadwal pelajaran untuk kelas {selectedKelasNama}</p>
             <button
-              onClick={() => {
-                setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' }));
-                setShowForm(true);
-              }}
-              className="mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium"
+              onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(true) }}
+              className="mt-4 px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
             >
               + Tambah Jadwal Pertama
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {grouped.map((h) => (
-              <div key={h.num} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="bg-gray-50 px-4 py-2 border-b flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-700">{h.label}</h3>
-                  <span className="text-xs text-gray-400">{h.items.length} pelajaran</span>
-                </div>
-                {h.items.length === 0 ? (
-                  <p className="px-4 py-3 text-sm text-gray-400 italic">Tidak ada jadwal</p>
-                ) : (
-                  <div className="divide-y">
+              h.items.length > 0 && (
+                <div key={h.num} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className={`px-4 py-2.5 border-b flex items-center justify-between ${h.color} border`}>
+                    <h3 className="font-bold text-sm">{h.label}</h3>
+                    <span className="text-xs opacity-70">{h.items.length} pelajaran</span>
+                  </div>
+                  <div className="divide-y divide-gray-50">
                     {h.items.map((j) => (
                       <div key={j.id} className="px-4 py-3 flex items-center gap-3">
-                        <div className="text-center min-w-[80px]">
+                        <div className="text-center min-w-[72px] shrink-0">
                           <p className="text-sm font-bold text-gray-800">{j.jam_mulai}</p>
-                          <p className="text-xs text-gray-400">s/d {j.jam_selesai}</p>
+                          <p className="text-xs text-gray-400">– {j.jam_selesai}</p>
                         </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-gray-800">{j.mapel}</p>
-                          <p className="text-xs text-gray-500">{j.guru?.nama || '-'}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-800 text-sm">{j.mapel}</p>
+                          <p className="text-xs text-gray-500">{j.guru?.nama || '–'}</p>
                         </div>
                         <button
                           onClick={() => handleDelete(j.id, j.mapel)}
-                          className="text-red-400 hover:text-red-600 text-xs px-2 py-1 rounded hover:bg-red-50 transition"
+                          className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition shrink-0"
                         >
                           Hapus
                         </button>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )
             ))}
           </div>
         )}
       </main>
     </div>
-  );
+  )
 }
