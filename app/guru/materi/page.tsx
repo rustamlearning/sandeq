@@ -38,6 +38,7 @@ export default function GuruMateriPage() {
   const [estimasiMenit, setEstimasiMenit] = useState(15);
   const [tingkatKesulitan, setTingkatKesulitan] = useState<'mudah' | 'sedang' | 'sulit'>('sedang');
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   useEffect(() => { init(); }, []);
 
@@ -104,6 +105,26 @@ export default function GuruMateriPage() {
     if (error) { alert('Gagal hapus: ' + error.message); return; }
     await loadMateri(user.id);
   };
+
+  const handleAiGenerate = async () => {
+    if (!judul.trim()) { alert('Isi judul materi terlebih dahulu'); return }
+    setAiGenerating(true)
+    try {
+      const kelasTerpilih = kelasList.find((k) => k.id === kelasId)
+      const res = await fetch('/api/generate-materi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ judul, mapel, tujuan: tujuanPembelajaran, kelas: kelasTerpilih?.nama }),
+      })
+      const data = await res.json()
+      if (!res.ok) { alert('AI gagal: ' + data.error); return }
+      setBlocks((prev) => [...prev, ...data.blocks])
+    } catch {
+      alert('Gagal menghubungi AI')
+    } finally {
+      setAiGenerating(false)
+    }
+  }
 
   const filteredMateri = materiList.filter((m) =>
     !searchQuery || m.judul?.toLowerCase().includes(searchQuery.toLowerCase()) || m.mapel?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -229,11 +250,21 @@ export default function GuruMateriPage() {
 
               {/* Block editor */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <h3 className="font-bold text-gray-800">📚 Konten Materi</h3>
                   <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{blocks.length} block</span>
+                  <button
+                    type="button"
+                    onClick={handleAiGenerate}
+                    disabled={aiGenerating}
+                    className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-indigo-600 transition disabled:opacity-60"
+                  >
+                    {aiGenerating ? '⏳ Generating...' : '✨ Generate dengan AI'}
+                  </button>
                 </div>
-                <p className="text-xs text-gray-500 mb-4">Susun materi pakai blocks. Klik "+ Tambah Block" untuk mulai.</p>
+                <p className="text-xs text-gray-500 mb-4">
+                  {aiGenerating ? 'AI sedang membuat konten, harap tunggu...' : 'Susun materi pakai blocks, atau klik "Generate dengan AI" untuk otomatis.'}
+                </p>
                 <div className="ml-8">
                   <BlockEditor initialBlocks={blocks} onChange={setBlocks} />
                 </div>

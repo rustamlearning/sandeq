@@ -147,21 +147,13 @@ export default function GuruDashboard() {
             <button
               key={item.path}
               onClick={() => router.push(item.path)}
-              className={`group relative p-5 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
-                item.featured
-                  ? `bg-gradient-to-br ${item.color} text-white shadow-md md:col-span-1`
-                  : 'bg-white border border-slate-100 shadow-sm hover:border-blue-100'
-              }`}
+              className={`group relative p-5 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl bg-gradient-to-br ${item.color} text-white shadow-md`}
             >
               <span className="text-2xl mb-3 block">{item.icon}</span>
-              <h4 className={`font-semibold text-sm ${item.featured ? 'text-white' : 'text-slate-800'}`}>
-                {item.title}
-              </h4>
-              <p className={`text-xs mt-0.5 ${item.featured ? 'text-white/75' : 'text-slate-400'}`}>
-                {item.description}
-              </p>
+              <h4 className="font-semibold text-sm text-white">{item.title}</h4>
+              <p className="text-xs mt-0.5 text-white/75">{item.description}</p>
               {item.featured && (
-                <div className="absolute top-3 right-3 w-2 h-2 bg-yellow-400 rounded-full" />
+                <div className="absolute top-3 right-3 w-2 h-2 bg-yellow-300 rounded-full" />
               )}
             </button>
           ))}

@@ -142,30 +142,39 @@ function AddBlockButton({
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-xl p-3">
-          {categories.map((cat) => (
-            <div key={cat} className="mb-3 last:mb-0">
-              <p className="text-xs font-semibold text-gray-500 uppercase mb-1 px-2">
-                {labels[cat]}
-              </p>
-              <div className="grid grid-cols-2 gap-1">
-                {BLOCK_TYPES_META.filter((b) => b.category === cat).map((meta) => (
-                  <button
-                    key={meta.type}
-                    onClick={() => onSelect(meta.type)}
-                    className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded text-left transition"
-                  >
-                    <span className="text-xl">{meta.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{meta.label}</p>
-                      <p className="text-xs text-gray-500 truncate">{meta.description}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
+        <>
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={onToggle} />
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[92vw] max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 flex items-center justify-between flex-shrink-0">
+              <h3 className="text-white font-bold text-sm">Pilih Tipe Block</h3>
+              <button onClick={onToggle} className="text-white/80 hover:text-white text-lg w-7 h-7 flex items-center justify-center">✕</button>
             </div>
-          ))}
-        </div>
+            <div className="overflow-y-auto p-3">
+              {categories.map((cat) => (
+                <div key={cat} className="mb-3 last:mb-0">
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1.5 px-1">
+                    {labels[cat]}
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {BLOCK_TYPES_META.filter((b) => b.category === cat).map((meta) => (
+                      <button
+                        key={meta.type}
+                        onClick={() => onSelect(meta.type)}
+                        className="flex items-center gap-2 p-2.5 hover:bg-blue-50 rounded-xl text-left transition border border-transparent hover:border-blue-100"
+                      >
+                        <span className="text-xl flex-shrink-0">{meta.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate text-gray-800">{meta.label}</p>
+                          <p className="text-[11px] text-gray-400 truncate">{meta.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
