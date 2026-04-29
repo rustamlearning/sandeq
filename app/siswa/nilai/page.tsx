@@ -75,7 +75,7 @@ export default function NilaiSiswaPage() {
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}

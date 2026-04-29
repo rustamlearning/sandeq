@@ -301,7 +301,7 @@ export default function ExportRaporPage() {
               <button
                 onClick={downloadSingle}
                 disabled={generating}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50"
+                className="flex-1 px-5 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50"
               >
                 {generating ? '⏳ Generating...' : '📥 Download PDF Rapor'}
               </button>
@@ -350,7 +350,7 @@ export default function ExportRaporPage() {
             <button
               onClick={downloadBulk}
               disabled={generating || siswaList.length === 0}
-              className="w-full px-5 py-3 bg-gradient-to-r from-[#27AE60] to-[#1a8a47] text-white rounded-lg font-medium hover:from-[#1a8a47] hover:to-[#166638] disabled:opacity-50"
+              className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 disabled:opacity-50"
             >
               {generating
                 ? `⏳ Generating ${progress.current}/${progress.total}...`

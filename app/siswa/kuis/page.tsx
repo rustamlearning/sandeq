@@ -112,7 +112,7 @@ export default function KuisSiswaPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
@@ -170,14 +170,14 @@ export default function KuisSiswaPage() {
                 <div className="p-4">
                   <div className="flex items-start gap-3">
                     <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${
-                      k.sudah_dikerjakan ? 'bg-[#e8f7ef]' : isClosed ? 'bg-gray-100' : 'bg-[#E8F1FB]'
+                      k.sudah_dikerjakan ? 'bg-green-50' : isClosed ? 'bg-gray-100' : 'bg-violet-50'
                     }`}>
                       {k.sudah_dikerjakan ? '✅' : isClosed ? '🔒' : isLocked ? '⏳' : k.tipe === 'ulangan' ? '📝' : '🧩'}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                        <span className="text-xs font-semibold px-2 py-0.5 bg-[#E8F1FB] text-[#1A4A7A] rounded-full">{k.mapel}</span>
+                        <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">{k.mapel}</span>
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${tipeColor}`}>{k.tipe}</span>
                         <DeadlineBadge k={k} />
                       </div>
@@ -227,7 +227,7 @@ export default function KuisSiswaPage() {
                     ) : (
                       <button
                         onClick={() => router.push(`/siswa/kuis/${k.id}`)}
-                        className="w-full py-2.5 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-xl text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition shadow-sm"
+                        className="w-full py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition shadow-sm"
                       >
                         Mulai Kerjakan →
                       </button>

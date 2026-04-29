@@ -395,7 +395,7 @@ export default function KuisBuilderPage() {
               value={kuis.judul || ''}
               onChange={(e) => setKuis({ ...kuis, judul: e.target.value })}
               placeholder="Contoh: Ulangan Harian - Conjunctions"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E86C1]"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -603,7 +603,7 @@ export default function KuisBuilderPage() {
               <button
                 onClick={handleAIGenerate}
                 disabled={aiLoading || !aiTopik.trim()}
-                className="w-full px-4 py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {aiLoading ? '⏳ Generating...' : `🚀 Generate ${aiJumlah} Soal dengan AI`}
               </button>

@@ -110,7 +110,7 @@ export default function AbsensiGuruPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
@@ -237,7 +237,7 @@ export default function AbsensiGuruPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="w-full py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition disabled:opacity-50 shadow-sm"
+                  className="w-full py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition disabled:opacity-50 shadow-sm"
                 >
                   {saving ? '⏳ Menyimpan...' : '💾 Simpan Absensi'}
                 </button>

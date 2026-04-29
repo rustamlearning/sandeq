@@ -161,7 +161,7 @@ export default function KerjakanKuisPage() {
 
           <button
             onClick={() => router.push('/siswa/kuis')}
-            className="w-full px-4 py-3 bg-[#1A4A7A] text-white rounded-lg hover:bg-[#0d3562] transition font-medium"
+            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
           >
             Kembali ke Daftar Kuis
           </button>
@@ -177,7 +177,7 @@ export default function KerjakanKuisPage() {
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header dengan timer */}
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg sticky top-0 z-10">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="font-semibold text-gray-800 text-sm">{kuis?.judul}</h1>
@@ -286,7 +286,7 @@ export default function KerjakanKuisPage() {
           {currentIdx < totalSoal - 1 ? (
             <button
               onClick={() => setCurrentIdx(currentIdx + 1)}
-              className="px-4 py-2 bg-[#1A4A7A] text-white rounded-lg hover:bg-[#0d3562]"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Selanjutnya →
             </button>

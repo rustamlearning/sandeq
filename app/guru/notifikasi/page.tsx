@@ -37,7 +37,7 @@ function timeUntil(dateStr: string) {
 }
 
 const TIPE_CONFIG = {
-  kuis_dikerjakan: { icon: '✏️', bg: 'bg-[#E8F1FB]', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Dikerjakan' },
+  kuis_dikerjakan: { icon: '✏️', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Dikerjakan' },
   forum_reply:     { icon: '💬', bg: 'bg-sky-50',    border: 'border-sky-200',    text: 'text-sky-700',    label: 'Forum' },
   kuis_deadline:   { icon: '⏰', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
 }
@@ -158,7 +158,7 @@ export default function GuruNotifikasiPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button onClick={() => router.push('/guru')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">←</button>
           <div className="flex-1">

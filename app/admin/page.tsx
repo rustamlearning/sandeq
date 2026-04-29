@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">⚙️</div>
           <div className="flex-1">

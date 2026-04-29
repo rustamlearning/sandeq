@@ -154,7 +154,7 @@ export default function KuisResultPage() {
           </button>
           <button
             onClick={() => router.push('/siswa')}
-            className="flex-1 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-[#0d3562] font-medium"
+            className="flex-1 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium"
           >
             Ke Dashboard
           </button>

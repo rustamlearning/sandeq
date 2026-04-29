@@ -122,15 +122,15 @@ export default function GuruAnalyticsPage() {
     { icon: '👥', label: 'Total Siswa', value: overview.totalSiswa, sub: 'terdaftar', accent: 'border-blue-400 bg-blue-50', val: 'text-blue-700' },
     { icon: '✅', label: 'Aktif 7 Hari', value: overview.aktif7hari, sub: 'siswa', accent: 'border-emerald-400 bg-emerald-50', val: 'text-emerald-700' },
     { icon: '⚠️', label: 'Perlu Perhatian', value: overview.perluPerhatian, sub: 'siswa', accent: 'border-red-400 bg-red-50', val: 'text-red-600' },
-    { icon: '⭐', label: 'Rata-rata XP', value: overview.rataXP, sub: 'XP/siswa', accent: 'border-[#2E86C1] bg-[#E8F1FB]', val: 'text-[#1A4A7A]' },
-    { icon: '📚', label: 'Rata Materi', value: overview.rataMateri, sub: 'selesai/siswa', accent: 'border-[#2E86C1] bg-[#e8f4fb]', val: 'text-[#2E86C1]' },
+    { icon: '⭐', label: 'Rata-rata XP', value: overview.rataXP, sub: 'XP/siswa', accent: 'border-violet-400 bg-violet-50', val: 'text-violet-700' },
+    { icon: '📚', label: 'Rata Materi', value: overview.rataMateri, sub: 'selesai/siswa', accent: 'border-indigo-400 bg-indigo-50', val: 'text-indigo-700' },
     { icon: '🎯', label: 'Akurasi Quiz', value: `${overview.rataAccuracy}%`, sub: 'rata-rata', accent: 'border-amber-400 bg-amber-50', val: 'text-amber-700' },
   ] : [];
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white sticky top-0 z-20 shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-20 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -203,7 +203,7 @@ export default function GuruAnalyticsPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#1A4A7A] text-white shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -285,7 +285,7 @@ export default function GuruAnalyticsPage() {
                   key={s.id}
                   onClick={() => setSortSiswa(s.id as any)}
                   className={`px-3 py-1.5 text-xs rounded-xl font-medium transition ${
-                    sortSiswa === s.id ? 'bg-[#1A4A7A] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-[#2E86C1]'
+                    sortSiswa === s.id ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-blue-300'
                   }`}
                 >
                   {s.label}

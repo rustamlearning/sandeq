@@ -19,7 +19,7 @@ export default function DatabaseProvider({ children }: { children: React.ReactNo
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#1A4A7A] to-[#2E86C1] text-white p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-700 to-blue-500 text-white p-6">
         <div className="animate-pulse mb-4">
           <SandeqLogo className="w-24 h-24" />
         </div>

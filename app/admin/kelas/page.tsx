@@ -73,7 +73,7 @@ export default function KelolaKelasPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -86,7 +86,7 @@ export default function KelolaKelasPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 text-sm bg-[#1A4A7A] text-white rounded-lg hover:bg-[#0d3562] transition"
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             {showForm ? 'Tutup' : '+ Tambah Kelas'}
           </button>
@@ -111,7 +111,7 @@ export default function KelolaKelasPage() {
                   onChange={(e) => setNama(e.target.value)}
                   required
                   placeholder="Contoh: X-IPA-1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -121,7 +121,7 @@ export default function KelolaKelasPage() {
                 <select
                   value={tingkat}
                   onChange={(e) => setTingkat(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="10">Kelas 10</option>
                   <option value="11">Kelas 11</option>
@@ -137,7 +137,7 @@ export default function KelolaKelasPage() {
                   value={tahunAjaran}
                   onChange={(e) => setTahunAjaran(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -146,7 +146,7 @@ export default function KelolaKelasPage() {
             )}
             <button
               type="submit"
-              className="mt-4 px-4 py-2 bg-[#1A4A7A] text-white rounded-lg hover:bg-[#0d3562] transition"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               Simpan
             </button>

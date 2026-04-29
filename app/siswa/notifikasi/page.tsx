@@ -38,7 +38,7 @@ function timeUntil(dateStr: string) {
 
 const TIPE_CONFIG = {
   pengumuman: { icon: '📢', bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', label: 'Pengumuman' },
-  kuis_baru: { icon: '✏️', bg: 'bg-[#E8F1FB]', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Baru' },
+  kuis_baru: { icon: '✏️', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Baru' },
   kuis_deadline: { icon: '⏰', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
 }
 
@@ -150,7 +150,7 @@ export default function NotifikasiPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
