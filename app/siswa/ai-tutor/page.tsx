@@ -160,9 +160,9 @@ export default function AITutorPage() {
                   : 'bg-white shadow-sm border border-gray-100 text-gray-800 rounded-tl-sm'
               }`}>
                 {msg.role === 'assistant' ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
-                    {msg.content}
-                  </ReactMarkdown>
+                  <div className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                  </div>
                 ) : (
                   <p>{msg.content}</p>
                 )}
