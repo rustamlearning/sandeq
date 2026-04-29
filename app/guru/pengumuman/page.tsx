@@ -21,6 +21,7 @@ export default function PengumumanGuruPage() {
   const [loading, setLoading] = useState(true)
   const [list, setList] = useState<Pengumuman[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [editItem, setEditItem] = useState<Pengumuman | null>(null)
   const [judul, setJudul] = useState('')
   const [konten, setKonten] = useState('')
   const [kategori, setKategori] = useState<Kategori>('umum')
@@ -44,13 +45,32 @@ export default function PengumumanGuruPage() {
     setList(data || [])
   }
 
+  function openEdit(item: Pengumuman) {
+    setEditItem(item)
+    setJudul(item.judul)
+    setKonten(item.konten)
+    setKategori(item.kategori as Kategori)
+    setDipin(item.dipin)
+    setShowForm(true)
+  }
+
+  function closeForm() {
+    setShowForm(false)
+    setEditItem(null)
+    setJudul(''); setKonten(''); setKategori('umum'); setDipin(false)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!user) return
     setSubmitting(true)
-    await supabase.from('pengumuman').insert({ judul, konten, kategori, target: 'semua', dipin, created_by: user.id })
-    setJudul(''); setKonten(''); setKategori('umum'); setDipin(false)
-    setShowForm(false); setSubmitting(false)
+    if (editItem) {
+      await supabase.from('pengumuman').update({ judul, konten, kategori, dipin }).eq('id', editItem.id)
+    } else {
+      await supabase.from('pengumuman').insert({ judul, konten, kategori, target: 'semua', dipin, created_by: user.id })
+    }
+    closeForm()
+    setSubmitting(false)
     await load(user.id)
   }
 
@@ -91,7 +111,7 @@ export default function PengumumanGuruPage() {
             <p className="text-white/80 text-sm">{list.length} pengumuman diterbitkan</p>
           </div>
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => showForm ? closeForm() : setShowForm(true)}
             className="bg-white text-rose-600 hover:bg-rose-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
           >
             {showForm ? '✕ Tutup' : '+ Buat'}
@@ -104,7 +124,7 @@ export default function PengumumanGuruPage() {
         {showForm && (
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-3 flex items-center justify-between">
-              <h2 className="text-white font-bold">Buat Pengumuman Baru</h2>
+              <h2 className="text-white font-bold">{editItem ? '✏️ Edit Pengumuman' : 'Buat Pengumuman Baru'}</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
@@ -150,10 +170,10 @@ export default function PengumumanGuruPage() {
                   type="submit" disabled={submitting}
                   className="flex-1 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl font-semibold text-sm hover:from-rose-600 hover:to-pink-600 transition disabled:opacity-50"
                 >
-                  {submitting ? '⏳ Menerbitkan...' : '📤 Publikasikan'}
+                  {submitting ? '⏳ Menyimpan...' : editItem ? '💾 Simpan Perubahan' : '📤 Publikasikan'}
                 </button>
                 <button
-                  type="button" onClick={() => setShowForm(false)}
+                  type="button" onClick={closeForm}
                   className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition"
                 >
                   Batal
@@ -210,6 +230,12 @@ export default function PengumumanGuruPage() {
                         className="text-xs px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition"
                       >
                         {p.dipin ? '📌 Unpin' : '📌 Pin'}
+                      </button>
+                      <button
+                        onClick={() => openEdit(p)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                      >
+                        ✏️ Edit
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}

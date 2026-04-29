@@ -23,6 +23,7 @@ export default function GuruDashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({ totalMateri: 0, totalKuis: 0 })
+  const [notifCount, setNotifCount] = useState(0)
 
   useEffect(() => {
     async function init() {
@@ -37,11 +38,25 @@ export default function GuruDashboard() {
   }, [router])
 
   async function loadStats(guruId: string) {
-    const [materi, kuis] = await Promise.all([
+    const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString()
+    const threeDaysLater = new Date(Date.now() + 3 * 86400000).toISOString()
+    const [materi, kuis, kuisIds] = await Promise.all([
       supabase.from('materi').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
       supabase.from('kuis').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
+      supabase.from('kuis').select('id').eq('guru_id', guruId).eq('aktif', true),
     ])
     setStats({ totalMateri: materi.count || 0, totalKuis: kuis.count || 0 })
+
+    const ids = (kuisIds.data || []).map((k) => k.id)
+    let notifTotal = 0
+    if (ids.length > 0) {
+      const [pengerjaan, deadline] = await Promise.all([
+        supabase.from('pengerjaan').select('id', { count: 'exact', head: true }).in('kuis_id', ids).gte('created_at', threeDaysAgo),
+        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('guru_id', guruId).eq('aktif', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
+      ])
+      notifTotal = (pengerjaan.count || 0) + (deadline.count || 0)
+    }
+    setNotifCount(notifTotal)
   }
 
   async function handleLogout() {
@@ -72,11 +87,22 @@ export default function GuruDashboard() {
               <p className="text-blue-200 text-xs">Portal Guru</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium">{user?.nama}</p>
               <p className="text-blue-200 text-xs">Guru</p>
             </div>
+            <button
+              onClick={() => router.push('/guru/notifikasi')}
+              className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
+            >
+              🔔
+              {notifCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {notifCount > 9 ? '9+' : notifCount}
+                </span>
+              )}
+            </button>
             <button
               onClick={handleLogout}
               className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"

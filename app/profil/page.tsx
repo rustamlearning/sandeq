@@ -12,7 +12,11 @@ export default function SiswaProfilPage() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [allBadges, setAllBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'stats' | 'badges' | 'history'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'badges' | 'history' | 'password'>('stats');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [changingPassword, setChangingPassword] = useState(false);
   const [hideFromLb, setHideFromLb] = useState(false);
   const [xpHistory, setXpHistory] = useState<any[]>([]);
 
@@ -36,6 +40,20 @@ export default function SiswaProfilPage() {
     setXpHistory(history || []);
     setLoading(false);
   };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newPassword.length < 6) { setPasswordMsg({ type: 'error', text: 'Password minimal 6 karakter.' }); return }
+    if (newPassword !== confirmPassword) { setPasswordMsg({ type: 'error', text: 'Konfirmasi password tidak cocok.' }); return }
+    setChangingPassword(true)
+    setPasswordMsg(null)
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setChangingPassword(false)
+    if (error) { setPasswordMsg({ type: 'error', text: error.message }); return }
+    setPasswordMsg({ type: 'success', text: 'Password berhasil diubah!' })
+    setNewPassword('')
+    setConfirmPassword('')
+  }
 
   const toggleLeaderboard = async () => {
     const newValue = !hideFromLb;
@@ -140,18 +158,21 @@ export default function SiswaProfilPage() {
 
         {/* Tabs */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="flex border-b">
-            {(['stats', 'badges', 'history'] as const).map((tab) => (
+          <div className="flex border-b overflow-x-auto">
+            {(['stats', 'badges', 'history', 'password'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3 text-xs font-semibold transition ${
+                className={`flex-shrink-0 px-3 py-3 text-xs font-semibold transition ${
                   activeTab === tab
                     ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {tab === 'stats' ? '📊 Stats' : tab === 'badges' ? `🏅 Badges (${stats.totalBadges})` : '📜 Riwayat'}
+                {tab === 'stats' ? '📊 Stats'
+                  : tab === 'badges' ? `🏅 Badges (${stats.totalBadges})`
+                  : tab === 'history' ? '📜 Riwayat'
+                  : '🔐 Password'}
               </button>
             ))}
           </div>
@@ -216,6 +237,41 @@ export default function SiswaProfilPage() {
                   })}
                 </div>
               </div>
+            )}
+
+            {activeTab === 'password' && (
+              <form onSubmit={handleChangePassword} className="space-y-4 max-w-sm">
+                <p className="text-xs text-gray-500">Ganti password akun SANDEQ kamu.</p>
+                {passwordMsg && (
+                  <div className={`text-sm px-3 py-2.5 rounded-xl font-medium ${
+                    passwordMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                  }`}>
+                    {passwordMsg.type === 'success' ? '✅ ' : '⚠️ '}{passwordMsg.text}
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Password Baru</label>
+                  <input
+                    type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                    required minLength={6} placeholder="Minimal 6 karakter"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Konfirmasi Password Baru</label>
+                  <input
+                    type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                    required minLength={6} placeholder="Ulangi password baru"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                </div>
+                <button
+                  type="submit" disabled={changingPassword}
+                  className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition disabled:opacity-50"
+                >
+                  {changingPassword ? '⏳ Menyimpan...' : '🔐 Simpan Password Baru'}
+                </button>
+              </form>
             )}
 
             {activeTab === 'history' && (
