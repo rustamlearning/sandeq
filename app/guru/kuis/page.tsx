@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
-import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -45,8 +43,7 @@ const MAPEL_ICONS: Record<string, string> = {
 };
 
 export default function KuisListPage() {
-  const router = useRouter()
-  const { toast } = useToast();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [kuisList, setKuisList] = useState<KuisItem[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
@@ -110,7 +107,7 @@ export default function KuisListPage() {
     }
     const { error } = await supabase.from('kuis').delete().eq('id', kuis.id);
     if (error) {
-      toast('error', 'Gagal hapus: ' + error.message);
+      alert('Gagal hapus: ' + error.message);
       return;
     }
     setKuisList((prev) => prev.filter((k) => k.id !== kuis.id));
@@ -123,7 +120,7 @@ export default function KuisListPage() {
       .update({ is_published: newStatus })
       .eq('id', kuis.id);
     if (error) {
-      toast('error', 'Gagal update: ' + error.message);
+      alert('Gagal update: ' + error.message);
       return;
     }
     setKuisList((prev) =>
@@ -152,13 +149,13 @@ export default function KuisListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] shadow-lg">
+      <header className="bg-gradient-to-r from-orange-500 to-pink-500 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            <ArrowLeft className="w-4 h-4" />
+            ←
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-bold text-white">Kuis & Ulangan</h1>

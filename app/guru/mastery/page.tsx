@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -169,7 +168,7 @@ export default function MasteryTrackerPage() {
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
+              ←
             </button>
             <div>
               <h1 className="text-lg font-bold text-slate-800">🎯 Mastery Tracker</h1>

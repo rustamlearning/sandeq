@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
-import { useToast } from '@/components/Toast'
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -23,8 +21,7 @@ import {
 import SoalEditor from '@/components/SoalEditor';
 
 export default function KuisBuilderPage() {
-  const router = useRouter()
-  const { toast } = useToast();
+  const router = useRouter();
   const params = useParams();
   const kuisId = params?.id as string;
 
@@ -177,7 +174,7 @@ export default function KuisBuilderPage() {
     setSaving(false);
     
     if (publish) {
-      toast('success', '🎉 Kuis berhasil di-publish! Siswa sekarang bisa mengerjakan.');
+      alert('🎉 Kuis berhasil di-publish! Siswa sekarang bisa mengerjakan.');
       router.push('/guru/kuis');
     } else {
       // Update URL ke ID kalau baru create
@@ -273,7 +270,7 @@ export default function KuisBuilderPage() {
       const result = await getKuisWithSoal(kuis.id);
       if (result) setSoalList(result.soal);
 
-      toast('success', '✅ ${savedCount} soal berhasil di-generate AI!');
+      alert(`✅ ${savedCount} soal berhasil di-generate AI!`);
       setShowAIPanel(false);
       setAiTopik('');
     } catch (e: any) {
@@ -343,7 +340,7 @@ export default function KuisBuilderPage() {
             onClick={() => router.push('/guru/kuis')}
             className="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded text-sm"
           >
-            <ArrowLeft className="w-4 h-4" /> Kembali
+            ← Kembali
           </button>
           <div className="flex-1">
             <h1 className="text-lg font-bold">

@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'
-import BottomNav from '@/components/BottomNav'
-import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getKelasLeaderboard, LeaderboardEntry, getLevelInfo } from '@/lib/gamification';
 import { supabase } from '@/lib/supabase';
@@ -46,14 +44,16 @@ export default function SiswaLeaderboardPage() {
   const rest = leaderboard.slice(3);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white shadow-lg">
+      <header className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
-          ><ArrowLeft className="w-4 h-4" /></button>
+          >
+            ←
+          </button>
           <div>
             <h1 className="text-lg font-bold leading-tight">🏆 Leaderboard</h1>
             <p className="text-yellow-100 text-xs">{kelas?.nama || 'Kelasmu'} · {leaderboard.length} siswa</p>

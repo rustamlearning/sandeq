@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
-import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -22,8 +20,7 @@ const KESULITAN_CONFIG = {
 };
 
 export default function GuruMateriPage() {
-  const router = useRouter()
-  const { toast } = useToast();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
@@ -80,8 +77,8 @@ export default function GuruMateriPage() {
   };
 
   const handleSave = async () => {
-    if (!judul.trim()) { toast('warning', 'Judul wajib diisi'); return; }
-    if (!kelasId) { toast('warning', 'Pilih kelas terlebih dahulu'); return; }
+    if (!judul.trim()) { alert('Judul wajib diisi'); return; }
+    if (!kelasId) { alert('Pilih kelas'); return; }
     setLoading(true);
     try {
       const payload = { judul, mapel, kelas_id: kelasId, bab, tujuan_pembelajaran: tujuanPembelajaran, ringkasan, estimasi_menit: estimasiMenit, tingkat_kesulitan: tingkatKesulitan, konten_blocks: blocks, guru_id: user.id };
@@ -92,11 +89,11 @@ export default function GuruMateriPage() {
         const { error } = await supabase.from('materi').insert(payload);
         if (error) throw error;
       }
-      toast('success', '✅ Materi berhasil disimpan!');
+      alert('✅ Materi berhasil disimpan!');
       resetForm();
       await loadMateri(user.id);
     } catch (e: any) {
-      toast('error', 'Gagal: ' + e.message);
+      alert('Gagal: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -105,12 +102,12 @@ export default function GuruMateriPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Hapus materi ini?')) return;
     const { error } = await supabase.from('materi').delete().eq('id', id);
-    if (error) { toast('error', 'Gagal hapus: ' + error.message); return; }
+    if (error) { alert('Gagal hapus: ' + error.message); return; }
     await loadMateri(user.id);
   };
 
   const handleAiGenerate = async () => {
-    if (!judul.trim()) { toast('warning', 'Isi judul materi terlebih dahulu'); return }
+    if (!judul.trim()) { alert('Isi judul materi terlebih dahulu'); return }
     setAiGenerating(true)
     try {
       const kelasTerpilih = kelasList.find((k) => k.id === kelasId)
@@ -120,10 +117,10 @@ export default function GuruMateriPage() {
         body: JSON.stringify({ judul, mapel, tujuan: tujuanPembelajaran, kelas: kelasTerpilih?.nama }),
       })
       const data = await res.json()
-      if (!res.ok) { toast('error', 'AI gagal: ' + data.error); return }
+      if (!res.ok) { alert('AI gagal: ' + data.error); return }
       setBlocks((prev) => [...prev, ...data.blocks])
     } catch {
-      toast('error', 'Gagal menghubungi AI')
+      alert('Gagal menghubungi AI')
     } finally {
       setAiGenerating(false)
     }
@@ -142,14 +139,14 @@ export default function GuruMateriPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white shadow-lg sticky top-0 z-20">
+      <header className="bg-gradient-to-r from-blue-700 to-cyan-600 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => router.push('/guru')}
               className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold flex-shrink-0"
             >
-              <ArrowLeft className="w-4 h-4" />
+              ←
             </button>
             <div className="min-w-0">
               <h1 className="text-lg font-bold leading-tight truncate">Kelola Materi</h1>

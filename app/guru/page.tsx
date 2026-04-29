@@ -4,38 +4,18 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
-import {
-  BookOpen, PenLine, ClipboardList, Award, FileDown,
-  Calendar, Target, BarChart2, MessageSquare, Megaphone,
-  Bell, LogOut, ChevronRight,
-} from 'lucide-react'
 
-const PRIMARY_MENU = [
-  {
-    title: 'Buat Materi',
-    description: 'Susun materi pelajaran dengan block editor',
-    icon: BookOpen,
-    path: '/guru/materi',
-    color: 'from-[#0A2D52] to-[#1A4A7A]',
-  },
-  {
-    title: 'Buat Kuis',
-    description: 'Buat ulangan & latihan soal',
-    icon: PenLine,
-    path: '/guru/kuis',
-    color: 'from-violet-700 to-violet-500',
-  },
-]
-
-const SECONDARY_MENU = [
-  { title: 'Absensi',      icon: ClipboardList,  path: '/guru/absensi',       iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
-  { title: 'Input Nilai',  icon: Award,           path: '/guru/nilai',          iconBg: 'bg-amber-100',   iconColor: 'text-amber-600'   },
-  { title: 'Export Rapor', icon: FileDown,         path: '/guru/nilai/export',   iconBg: 'bg-teal-100',    iconColor: 'text-teal-600'    },
-  { title: 'Jadwal',       icon: Calendar,         path: '/jadwal',              iconBg: 'bg-indigo-100',  iconColor: 'text-indigo-600'  },
-  { title: 'Mastery',      icon: Target,           path: '/guru/mastery',        iconBg: 'bg-orange-100',  iconColor: 'text-orange-600'  },
-  { title: 'Analytics',    icon: BarChart2,        path: '/guru/analytics',      iconBg: 'bg-blue-100',    iconColor: 'text-blue-600'    },
-  { title: 'Forum',        icon: MessageSquare,    path: '/forum',               iconBg: 'bg-sky-100',     iconColor: 'text-sky-600'     },
-  { title: 'Pengumuman',   icon: Megaphone,        path: '/guru/pengumuman',     iconBg: 'bg-rose-100',    iconColor: 'text-rose-600'    },
+const menuItems = [
+  { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', color: 'from-blue-500 to-blue-600', featured: false },
+  { title: 'Buat Kuis', description: 'Buat ulangan & latihan', icon: '✏️', path: '/guru/kuis', color: 'from-violet-500 to-violet-600', featured: false },
+  { title: 'Absensi', description: 'Catat kehadiran siswa', icon: '📋', path: '/guru/absensi', color: 'from-emerald-500 to-emerald-600', featured: false },
+  { title: 'Input Nilai', description: 'Masukkan nilai siswa', icon: '🏅', path: '/guru/nilai', color: 'from-amber-500 to-amber-600', featured: false },
+  { title: 'Export Rapor', description: 'Download rapor PDF siswa', icon: '📄', path: '/guru/nilai/export', color: 'from-teal-500 to-teal-600', featured: true },
+  { title: 'Jadwal', description: 'Lihat jadwal mengajar', icon: '📅', path: '/jadwal', color: 'from-indigo-500 to-indigo-600', featured: false },
+  { title: 'Mastery Tracker', description: 'Penguasaan materi per siswa', icon: '🎯', path: '/guru/mastery', color: 'from-orange-500 to-orange-600', featured: false },
+  { title: 'Analytics Kelas', description: 'Lihat progress & data siswa', icon: '📊', path: '/guru/analytics', color: 'from-indigo-600 to-blue-700', featured: true },
+  { title: 'Forum', description: 'Diskusi dengan siswa', icon: '💬', path: '/forum', color: 'from-sky-500 to-sky-600', featured: false },
+  { title: 'Pengumuman', description: 'Buat pengumuman kelas', icon: '📢', path: '/guru/pengumuman', color: 'from-rose-500 to-rose-600', featured: false },
 ]
 
 export default function GuruDashboard() {
@@ -79,35 +59,44 @@ export default function GuruDashboard() {
     setNotifCount(notifTotal)
   }
 
+  async function handleLogout() {
+    await logout()
+    router.replace('/login')
+  }
+
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-4 border-[#1A4A7A] border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-400 text-sm font-medium">Memuat dashboard...</p>
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 text-sm">Memuat dashboard...</p>
       </div>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A]">
-        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between">
+      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+        <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center font-black text-white text-lg tracking-tight">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">
               S
             </div>
             <div>
-              <p className="font-black text-white text-base leading-tight tracking-tight">SANDEQ</p>
-              <p className="text-white/50 text-[11px] font-medium">Portal Guru</p>
+              <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
+              <p className="text-blue-200 text-xs">Portal Guru</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium">{user?.nama}</p>
+              <p className="text-blue-200 text-xs">Guru</p>
+            </div>
             <button
               onClick={() => router.push('/guru/notifikasi')}
-              className="relative w-9 h-9 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center transition"
+              className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
             >
-              <Bell className="w-4 h-4 text-white" />
+              🔔
               {notifCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {notifCount > 9 ? '9+' : notifCount}
@@ -115,75 +104,59 @@ export default function GuruDashboard() {
               )}
             </button>
             <button
-              onClick={async () => { await logout(); router.replace('/login') }}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-xl transition"
+              onClick={handleLogout}
+              className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
             >
-              <LogOut className="w-3.5 h-3.5 text-white/70" />
-              <span className="text-white/70 text-xs font-medium">Keluar</span>
+              Keluar
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 py-6">
         {/* Welcome */}
-        <div>
-          <h2 className="text-xl font-black text-slate-800">
-            Halo, {user?.nama?.split(' ')[0]} 👋
-          </h2>
-          <p className="text-slate-400 text-sm mt-0.5 font-medium">Siap mengajar hari ini?</p>
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-slate-800">Selamat mengajar, {user?.nama?.split(' ')[0]} 👋</h2>
+          <p className="text-slate-500 text-sm mt-0.5">Hari ini ada yang perlu diperbarui?</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: 'Materi Dibuat', value: stats.totalMateri, icon: BookOpen, accent: 'text-[#1A4A7A] bg-[#E8F1FB]' },
-            { label: 'Kuis Dibuat',   value: stats.totalKuis,   icon: PenLine,  accent: 'text-violet-600 bg-violet-50' },
-          ].map(({ label, value, icon: Icon, accent }) => (
-            <div key={label} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-              <div className={`w-9 h-9 ${accent} rounded-xl flex items-center justify-center mb-3`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <p className="text-3xl font-black text-slate-800">{value}</p>
-              <p className="text-xs text-slate-400 font-medium mt-1">{label}</p>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-2xl">📖</span>
+              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-medium">Total</span>
             </div>
-          ))}
+            <p className="text-3xl font-bold text-slate-800">{stats.totalMateri}</p>
+            <p className="text-sm text-slate-500 mt-1">Materi dibuat</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-2xl">✏️</span>
+              <span className="text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">Total</span>
+            </div>
+            <p className="text-3xl font-bold text-slate-800">{stats.totalKuis}</p>
+            <p className="text-sm text-slate-500 mt-1">Kuis dibuat</p>
+          </div>
         </div>
 
-        {/* Primary actions */}
-        <div className="grid grid-cols-2 gap-3">
-          {PRIMARY_MENU.map(({ title, description, icon: Icon, path, color }) => (
+        {/* Menu */}
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu Utama</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {menuItems.map((item) => (
             <button
-              key={path}
-              onClick={() => router.push(path)}
-              className={`relative bg-gradient-to-br ${color} p-5 rounded-2xl text-left shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden`}
+              key={item.path}
+              onClick={() => router.push(item.path)}
+              className={`group relative p-5 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl bg-gradient-to-br ${item.color} text-white shadow-md`}
             >
-              <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-white/10 rounded-full" />
-              <Icon className="w-7 h-7 text-white mb-3" strokeWidth={1.75} />
-              <p className="font-bold text-white text-sm leading-tight">{title}</p>
-              <p className="text-white/65 text-xs mt-1 leading-snug">{description}</p>
+              <span className="text-2xl mb-3 block">{item.icon}</span>
+              <h4 className="font-semibold text-sm text-white">{item.title}</h4>
+              <p className="text-xs mt-0.5 text-white/75">{item.description}</p>
+              {item.featured && (
+                <div className="absolute top-3 right-3 w-2 h-2 bg-yellow-300 rounded-full" />
+              )}
             </button>
           ))}
-        </div>
-
-        {/* Secondary menu */}
-        <div>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Menu Lainnya</p>
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-50">
-            {SECONDARY_MENU.map(({ title, icon: Icon, path, iconBg, iconColor }) => (
-              <button
-                key={path}
-                onClick={() => router.push(path)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors text-left group"
-              >
-                <div className={`w-9 h-9 ${iconBg} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-4 h-4 ${iconColor}`} />
-                </div>
-                <span className="flex-1 text-sm font-semibold text-slate-700">{title}</span>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-400 transition-colors" />
-              </button>
-            ))}
-          </div>
         </div>
       </main>
     </div>

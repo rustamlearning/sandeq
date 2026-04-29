@@ -1,14 +1,13 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from 'next';
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
+import { Poppins, Inter } from 'next/font/google';
 import './globals.css';
 import DatabaseProvider from '@/components/DatabaseProvider';
-import { ToastProvider } from '@/components/Toast';
 
-const jakarta = Plus_Jakarta_Sans({
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-jakarta',
+  variable: '--font-poppins',
   display: 'swap',
 });
 
@@ -56,10 +55,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
-      <body className={`${jakarta.variable} ${inter.variable} font-sans antialiased`}>
-        <DatabaseProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </DatabaseProvider>
+      <body className={`${poppins.variable} ${inter.variable} font-sans antialiased`}>
+        <DatabaseProvider>{children}</DatabaseProvider>
       </body>
     </html>
   );

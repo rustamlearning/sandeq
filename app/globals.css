@@ -4,31 +4,24 @@
 @tailwind utilities;
 
 :root {
-  /* Brand */
-  --brand:       #1A4A7A;
-  --brand-dark:  #0A2D52;
-  --brand-mid:   #1464A8;
-  --brand-light: #E8F1FB;
-
-  /* Legacy sandeq tokens */
-  --sandeq-biru-laut:       #1A4A7A;
-  --sandeq-biru-langit:     #2E86C1;
-  --sandeq-putih-ombak:     #F4F9FF;
+  --sandeq-biru-laut: #1A4A7A;
+  --sandeq-biru-langit: #2E86C1;
+  --sandeq-putih-ombak: #F4F9FF;
   --sandeq-oranye-matahari: #E67E22;
-  --sandeq-oranye-senja:    #F39C12;
-  --sandeq-abu-karang:      #7F8C8D;
-  --sandeq-hijau-mangrove:  #27AE60;
-  --sandeq-merah-terumbu:   #E74C3C;
+  --sandeq-oranye-senja: #F39C12;
+  --sandeq-abu-karang: #7F8C8D;
+  --sandeq-hijau-mangrove: #27AE60;
+  --sandeq-merah-terumbu: #E74C3C;
 }
 
 html {
-  font-family: var(--font-jakarta), var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: #F8FAFC;
-  color: #0F172A;
+  background: var(--sandeq-putih-ombak);
+  color: #1f2937;
   overscroll-behavior-y: none;
 }
 

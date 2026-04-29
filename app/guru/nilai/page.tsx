@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
-import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kelas, Nilai } from '@/lib/supabase'
@@ -24,7 +22,6 @@ interface SiswaWithNilai {
 
 export default function InputNilaiPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [kelasList, setKelasList] = useState<Kelas[]>([])
@@ -103,7 +100,7 @@ export default function InputNilaiPage() {
 
     const komponenFinal = komponen === 'Custom' ? komponenCustom : komponen
     if (!komponenFinal.trim()) {
-      toast('warning', 'Komponen tidak boleh kosong')
+      alert('Komponen tidak boleh kosong')
       return
     }
 
@@ -120,7 +117,7 @@ export default function InputNilaiPage() {
       }))
 
     if (records.length === 0) {
-      toast('warning', 'Belum ada nilai yang diisi')
+      alert('Belum ada nilai yang diisi')
       return
     }
 
@@ -129,11 +126,11 @@ export default function InputNilaiPage() {
     setSaving(false)
 
     if (error) {
-      toast('error', 'Gagal: ' + error.message)
+      alert('Gagal: ' + error.message)
       return
     }
 
-    toast('success', `Berhasil input ${records.length} nilai!`)
+    alert(`Berhasil input ${records.length} nilai!`)
     setSiswaList(siswaList.map((s) => ({ ...s, nilai: '' })))
     await loadRiwayat(user.id)
   }
@@ -151,7 +148,7 @@ export default function InputNilaiPage() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/guru')} className="text-gray-500 hover:text-gray-700">
-            <ArrowLeft className="w-4 h-4" /> Kembali
+            ← Kembali
           </button>
           <h1 className="text-xl font-bold text-gray-800 flex-1">Input Nilai</h1>
           <button

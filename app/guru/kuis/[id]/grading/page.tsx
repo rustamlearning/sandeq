@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -176,7 +175,7 @@ export default function EssayGradingPage() {
       <div className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600"><ArrowLeft className="w-4 h-4" /></button>
+            <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600">←</button>
             <div>
               <h1 className="text-lg font-bold text-slate-800">✍️ Essay Grading</h1>
               <p className="text-xs text-slate-500">{kuis?.judul}</p>

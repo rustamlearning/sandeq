@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -131,14 +130,14 @@ export default function GuruAnalyticsPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white sticky top-0 z-20 shadow-lg">
+      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white sticky top-0 z-20 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push('/guru')}
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              <ArrowLeft className="w-4 h-4" /> Dashboard
+              ← Dashboard
             </button>
             <span className="text-white/30">|</span>
             <h1 className="text-lg font-bold">📊 Analytics Kelas</h1>
