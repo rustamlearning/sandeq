@@ -82,7 +82,7 @@ export default function ExportRaporPage() {
       const filename = `Rapor_${previewData.siswa.nama.replace(/\s+/g, '_')}_${previewData.metadata.semester}_${previewData.metadata.tahun_ajaran.replace('/', '-')}.pdf`;
       doc.save(filename);
     } catch (e) {
-      toast('error', 'Gagal generate PDF').message);
+      toast('error', 'Gagal generate PDF: ' + (e as Error).message);
     } finally {
       setGenerating(false);
     }
@@ -108,7 +108,7 @@ export default function ExportRaporPage() {
           await new Promise((r) => setTimeout(r, 500));
         }
       }
-      toast('success', '✅ ${siswaList.length} rapor berhasil di-generate!');
+      toast('success', `✅ ${siswaList.length} rapor berhasil di-generate!`);
     } catch (e) {
       toast('error', 'Error: ' + (e as Error).message);
     } finally {
