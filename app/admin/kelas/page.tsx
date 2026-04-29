@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, Kelas } from '@/lib/supabase'
@@ -80,7 +81,7 @@ export default function KelolaKelasPage() {
               onClick={() => router.push('/admin')}
               className="text-gray-500 hover:text-gray-700"
             >
-              ← Kembali
+              <ArrowLeft className="w-4 h-4" /> Kembali
             </button>
             <h1 className="text-xl font-bold text-gray-800">Kelola Kelas</h1>
           </div>

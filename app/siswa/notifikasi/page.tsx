@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
@@ -150,13 +151,13 @@ export default function NotifikasiPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg">
+      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Notifikasi</h1>

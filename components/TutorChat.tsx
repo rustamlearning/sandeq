@@ -192,7 +192,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
       {/* Chat Panel */}
       <div className="fixed right-0 top-0 bottom-0 w-full sm:w-[450px] bg-white z-50 shadow-2xl flex flex-col">
         {/* Header */}
-        <header className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
+        <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
               🤖

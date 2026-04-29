@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useToast } from '@/components/Toast'
 import { useRouter, useParams } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kuis, Soal } from '@/lib/supabase'
 
 export default function KerjakanKuisPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const params = useParams()
   const kuisId = params.id as string
 
@@ -39,7 +41,7 @@ export default function KerjakanKuisPage() {
         .maybeSingle()
 
       if (existing) {
-        alert('Kamu sudah pernah mengerjakan kuis ini.')
+        toast('info', 'Kamu sudah pernah mengerjakan kuis ini')
         router.replace('/siswa/kuis')
         return
       }
@@ -50,7 +52,7 @@ export default function KerjakanKuisPage() {
       ])
 
       if (!kuisData || !soalData || soalData.length === 0) {
-        alert('Kuis tidak tersedia.')
+        toast('error', 'Kuis tidak tersedia')
         router.replace('/siswa/kuis')
         return
       }

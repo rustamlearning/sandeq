@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react'
+import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -23,7 +25,8 @@ const difficultyConfig: Record<string, { label: string; color: string }> = {
 };
 
 export default function SiswaMateriPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [selectedMateri, setSelectedMateri] = useState<any>(null);
@@ -92,7 +95,7 @@ export default function SiswaMateriPage() {
       const result = await recordActivity(user.id, 'complete_material', { materiId: selectedMateri.id });
       showActivityResult(result);
     } else {
-      alert('✅ Materi sudah ditandai selesai!');
+      toast('success', '✅ Materi sudah ditandai selesai!');
     }
     await loadProgress(user.id);
     setSelectedMateri(null);
@@ -115,13 +118,13 @@ export default function SiswaMateriPage() {
     return (
       <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setSelectedMateri(null)}
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              ← Kembali
+              <ArrowLeft className="w-4 h-4" /> Kembali
             </button>
             <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${mconf.bg} ${mconf.color}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${mconf.dot}`} />
@@ -211,11 +214,11 @@ export default function SiswaMateriPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/siswa')} className="text-blue-200 hover:text-white text-sm transition">
-              ← Dashboard
+              <ArrowLeft className="w-4 h-4" /> Dashboard
             </button>
             <span className="text-white/30">|</span>
             <h1 className="font-bold text-lg">📚 Materi Pelajaran</h1>

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react'
+import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -8,7 +10,8 @@ import { fetchRaporData, generateRaporPDF, RaporData } from '@/lib/exportRapor';
 import { getLevelInfo } from '@/lib/gamification';
 
 export default function ExportRaporPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [kelasList, setKelasList] = useState<any[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>('');
@@ -79,7 +82,7 @@ export default function ExportRaporPage() {
       const filename = `Rapor_${previewData.siswa.nama.replace(/\s+/g, '_')}_${previewData.metadata.semester}_${previewData.metadata.tahun_ajaran.replace('/', '-')}.pdf`;
       doc.save(filename);
     } catch (e) {
-      alert('Gagal generate PDF: ' + (e as Error).message);
+      toast('error', 'Gagal generate PDF').message);
     } finally {
       setGenerating(false);
     }
@@ -105,9 +108,9 @@ export default function ExportRaporPage() {
           await new Promise((r) => setTimeout(r, 500));
         }
       }
-      alert(`✅ ${siswaList.length} rapor berhasil di-generate!`);
+      toast('success', '✅ ${siswaList.length} rapor berhasil di-generate!');
     } catch (e) {
-      alert('Error: ' + (e as Error).message);
+      toast('error', 'Error: ' + (e as Error).message);
     } finally {
       setGenerating(false);
       setProgress({ current: 0, total: 0 });
@@ -123,7 +126,7 @@ export default function ExportRaporPage() {
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru')} className="text-blue-600 text-sm">
-            ← Dashboard
+            <ArrowLeft className="w-4 h-4" /> Dashboard
           </button>
           <h1 className="text-xl font-bold flex-1">📄 Export Rapor</h1>
         </div>

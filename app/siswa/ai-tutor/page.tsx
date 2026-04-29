@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import ReactMarkdown from 'react-markdown'
@@ -111,13 +112,13 @@ export default function AITutorPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-purple-600 to-violet-600 shadow-lg flex-shrink-0">
+      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] shadow-lg flex-shrink-0">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
             🤖

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import BottomNav from '@/components/BottomNav'
+import { ArrowLeft } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kuis } from '@/lib/supabase'
 
@@ -111,15 +113,13 @@ export default function KuisSiswaPage() {
     : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-violet-600 to-indigo-600 shadow-lg">
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-          >
-            ←
-          </button>
+          ><ArrowLeft className="w-4 h-4" /></button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Kuis & Ulangan</h1>
             <p className="text-white/80 text-sm">{kuisList.length} kuis tersedia</p>
@@ -239,6 +239,7 @@ export default function KuisSiswaPage() {
           })
         )}
       </main>
+      <BottomNav />
     </div>
   )
 }

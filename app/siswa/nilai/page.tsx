@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Nilai } from '@/lib/supabase'
@@ -75,13 +76,13 @@ export default function NilaiSiswaPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-700 to-blue-600 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-[#0A2D52] to-[#1A4A7A] text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
           >
-            ←
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <h1 className="text-lg font-bold leading-tight">Nilai Saya</h1>

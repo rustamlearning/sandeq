@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserStats, UserStats, LEVELS } from '@/lib/gamification';
@@ -90,7 +91,7 @@ export default function SiswaProfilPage() {
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
           >
-            ←
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <h1 className="text-lg font-bold">Profil Saya</h1>
         </div>
