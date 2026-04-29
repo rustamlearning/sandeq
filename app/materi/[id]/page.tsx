@@ -1,13 +1,13 @@
-interface Props {
-  params: Promise<{ id: string }>;
-}
+'use client'
+import { useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 
-export default async function MateriPage({ params }: Props) {
-  const { id } = await params;
-  
-  return (
-    <div>
-      <h1>Materi {id}</h1>
-    </div>
-  );
-}export const runtime = 'edge';
+export default function MateriDetailRedirect() {
+  const router = useRouter()
+  const params = useParams()
+  const id = params?.id as string
+  useEffect(() => {
+    router.replace('/siswa/materi')
+  }, [router, id])
+  return null
+}

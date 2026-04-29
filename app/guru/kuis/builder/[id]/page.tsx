@@ -475,6 +475,28 @@ export default function KuisBuilderPage() {
               <p className="text-xs text-gray-500 mt-1">Berapa kali siswa boleh mengerjakan</p>
             </div>
 
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Tanggal Mulai <span className="text-gray-400 font-normal">(opsional)</span></label>
+              <input
+                type="datetime-local"
+                value={kuis.tanggal_mulai || ''}
+                onChange={(e) => setKuis({ ...kuis, tanggal_mulai: e.target.value || undefined })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-1">Kuis hanya bisa dibuka setelah tanggal ini</p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Tanggal Selesai / Deadline <span className="text-gray-400 font-normal">(opsional)</span></label>
+              <input
+                type="datetime-local"
+                value={kuis.tanggal_selesai || ''}
+                onChange={(e) => setKuis({ ...kuis, tanggal_selesai: e.target.value || undefined })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-1">Kuis otomatis ditutup setelah tanggal ini</p>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 block">Pengaturan Lanjutan</label>
               <label className="flex items-center gap-2 text-sm">

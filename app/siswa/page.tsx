@@ -6,13 +6,15 @@ import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 
-const menuItems = [
+const menuItems: { icon: string; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
   { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
   { icon: '✏️', title: 'Kuis', description: 'Kerjakan latihan & ulangan', path: '/siswa/kuis', color: 'text-violet-600 bg-violet-50' },
   { icon: '📊', title: 'Nilai', description: 'Lihat nilai & rapor', path: '/siswa/nilai', color: 'text-emerald-600 bg-emerald-50' },
   { icon: '🗓️', title: 'Jadwal', description: 'Jadwal pelajaran harian', path: '/jadwal', color: 'text-indigo-600 bg-indigo-50' },
   { icon: '📅', title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-600 bg-amber-50' },
   { icon: '📢', title: 'Pengumuman', description: 'Info dari sekolah', path: '/siswa/pengumuman', color: 'text-rose-600 bg-rose-50' },
+  { icon: '🔔', title: 'Notifikasi', description: 'Pengumuman & deadline kuis', path: '/siswa/notifikasi', color: 'text-amber-600 bg-amber-50' },
+  { icon: '🤖', title: 'AI Tutor', description: 'Tanya AI, belajar 24/7', path: '/siswa/ai-tutor', color: 'text-purple-600 bg-purple-50' },
   { icon: '💬', title: 'Forum', description: 'Diskusi dengan teman & guru', path: '/forum', color: 'text-sky-600 bg-sky-50' },
   { icon: '⭐', title: 'Profil & Stats', description: 'XP, level, badges', path: '/profil', color: 'text-yellow-600 bg-yellow-50', highlight: true },
   { icon: '🏆', title: 'Leaderboard', description: 'Ranking kelas', path: '/siswa/leaderboard', color: 'text-orange-600 bg-orange-50', highlight: true },
@@ -22,6 +24,7 @@ export default function SiswaDashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState({ materiCount: 0, kuisCount: 0, pengumumanCount: 0 });
+  const [notifCount, setNotifCount] = useState(0);
 
   useEffect(() => { init(); }, []);
 
@@ -30,12 +33,17 @@ export default function SiswaDashboardPage() {
     if (!u || u.role !== 'siswa') { router.push('/login'); return; }
     setUser(u);
     if (u.kelas_id) {
-      const [materiRes, kuisRes, pengumumanRes] = await Promise.all([
+      const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      const threeDaysLater = new Date(Date.now() + 3 * 86400000).toISOString();
+      const [materiRes, kuisRes, pengumumanRes, recentPengumuman, deadlineKuis] = await Promise.all([
         supabase.from('materi').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id),
         supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id),
         supabase.from('pengumuman').select('id', { count: 'exact', head: true }),
+        supabase.from('pengumuman').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
+        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id).eq('aktif', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
       ]);
       setStats({ materiCount: materiRes.count || 0, kuisCount: kuisRes.count || 0, pengumumanCount: pengumumanRes.count || 0 });
+      setNotifCount((recentPengumuman.count || 0) + (deadlineKuis.count || 0));
     }
   };
 
@@ -49,8 +57,8 @@ export default function SiswaDashboardPage() {
 
   const xp = user.xp || 0;
   const levelInfo = getLevelInfo(xp);
-  const xpToNext = levelInfo.xpForNext - xp;
-  const xpProgress = Math.min(100, Math.round(((xp - levelInfo.xpForCurrent) / (levelInfo.xpForNext - levelInfo.xpForCurrent)) * 100)) || 0;
+  const xpToNext = levelInfo.maxXp - xp;
+  const xpProgress = Math.min(100, Math.round(((xp - levelInfo.minXp) / (levelInfo.maxXp - levelInfo.minXp)) * 100)) || 0;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -64,9 +72,22 @@ export default function SiswaDashboardPage() {
               <p className="text-blue-200 text-xs">Portal Siswa</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
-            Keluar
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push('/siswa/notifikasi')}
+              className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
+            >
+              🔔
+              {notifCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {notifCount > 9 ? '9+' : notifCount}
+                </span>
+              )}
+            </button>
+            <button onClick={handleLogout} className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
+              Keluar
+            </button>
+          </div>
         </div>
       </header>
 

@@ -52,6 +52,8 @@ export interface Kuis {
   tipe: 'latihan' | 'ulangan'
   durasi_menit: number | null
   aktif: boolean
+  tanggal_mulai?: string | null
+  tanggal_selesai?: string | null
   created_at: string
 }
 
