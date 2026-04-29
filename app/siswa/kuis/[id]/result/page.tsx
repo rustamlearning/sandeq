@@ -5,6 +5,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { Kuis, getAttemptResult, formatDuration, getNilaiColor, getNilaiLabel } from '@/lib/kuis';
+import { Confetti } from '@/components/ui/Confetti';
 
 export default function KuisResultPage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function KuisResultPage() {
   const [jawaban, setJawaban] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReview, setShowReview] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     init();
@@ -47,6 +49,8 @@ export default function KuisResultPage() {
     }
 
     setLoading(false);
+    const persen = result?.attempt?.nilai_persen || 0;
+    if (persen >= 75) setTimeout(() => setShowConfetti(true), 300);
   };
 
   if (loading || !attempt || !kuis) {
@@ -64,7 +68,8 @@ export default function KuisResultPage() {
   const ungradedCount = jawaban.filter((j) => j.benar === null).length;
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen bg-[#F4F9FF] animate-fade-in-up">
+      <Confetti active={showConfetti} />
       <header className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa/kuis')} className="text-blue-600 text-sm">

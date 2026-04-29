@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kuis } from '@/lib/supabase'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { SkeletonList } from '@/components/ui/Skeleton'
 
 interface KuisWithStatus extends Kuis {
   guru?: { nama: string }
@@ -95,10 +97,10 @@ export default function KuisSiswaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">✏️</div>
-          <p className="text-gray-500 text-sm">Memuat kuis...</p>
+      <div className="min-h-screen bg-[#F4F9FF]">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-500 h-16" />
+        <div className="max-w-2xl mx-auto px-4 py-5">
+          <SkeletonList count={4} />
         </div>
       </div>
     )
@@ -145,10 +147,12 @@ export default function KuisSiswaPage() {
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-3">
         {kuisList.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-            <div className="text-5xl mb-3">📋</div>
-            <p className="font-semibold text-gray-700">Belum ada kuis aktif</p>
-            <p className="text-sm text-gray-500 mt-1">Gurumu belum menambahkan kuis untuk kelasmu.</p>
+          <div className="bg-white rounded-2xl shadow-sm">
+            <EmptyState
+              type="kuis"
+              title="Belum ada kuis aktif"
+              description="Gurumu belum menambahkan kuis untuk kelasmu. Pantau terus ya!"
+            />
           </div>
         ) : (
           kuisList.map((k) => {
@@ -227,6 +231,7 @@ export default function KuisSiswaPage() {
                     ) : (
                       <button
                         onClick={() => router.push(`/siswa/kuis/${k.id}`)}
+                        aria-label={`Mulai kerjakan ${k.judul}`}
                         className="w-full py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition shadow-sm"
                       >
                         Mulai Kerjakan →

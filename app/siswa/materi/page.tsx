@@ -8,6 +8,7 @@ import BlockRenderer from '@/components/BlockRenderer';
 import TutorChat from '@/components/TutorChat';
 import XPNotification, { useXPNotifications } from '@/components/XPNotification';
 import { recordActivity } from '@/lib/gamification';
+import { useToast } from '@/components/ui/Toast'
 
 const masteryConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   belum_mulai: { label: 'Belum mulai', color: 'text-slate-500', bg: 'bg-slate-100', dot: 'bg-slate-400' },
@@ -23,7 +24,8 @@ const difficultyConfig: Record<string, { label: string; color: string }> = {
 };
 
 export default function SiswaMateriPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [selectedMateri, setSelectedMateri] = useState<any>(null);
@@ -92,7 +94,7 @@ export default function SiswaMateriPage() {
       const result = await recordActivity(user.id, 'complete_material', { materiId: selectedMateri.id });
       showActivityResult(result);
     } else {
-      alert('✅ Materi sudah ditandai selesai!');
+      toastSuccess('Materi sudah ditandai selesai!');
     }
     await loadProgress(user.id);
     setSelectedMateri(null);

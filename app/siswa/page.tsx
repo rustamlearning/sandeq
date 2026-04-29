@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
+import { PageLoader } from '@/components/ui/Skeleton';
 
 const menuItems: { icon: string; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
   { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
@@ -49,11 +50,7 @@ export default function SiswaDashboardPage() {
 
   const handleLogout = async () => { await logout(); router.push('/login'); };
 
-  if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (!user) return <PageLoader />;
 
   const xp = user.xp || 0;
   const levelInfo = getLevelInfo(xp);
@@ -75,7 +72,7 @@ export default function SiswaDashboardPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.push('/siswa/notifikasi')}
-              className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
+              aria-label="Notifikasi" className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
             >
               🔔
               {notifCount > 0 && (
@@ -84,7 +81,7 @@ export default function SiswaDashboardPage() {
                 </span>
               )}
             </button>
-            <button onClick={handleLogout} className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
+            <button onClick={handleLogout} aria-label="Keluar dari aplikasi" className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
               Keluar
             </button>
           </div>
@@ -150,6 +147,7 @@ export default function SiswaDashboardPage() {
             <button
               key={item.path}
               onClick={() => router.push(item.path)}
+              aria-label={item.title}
               className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
                 item.highlight
                   ? 'bg-gradient-to-r from-[#fef3e2] to-[#fef9ee] border-2 border-[#F39C12]/30 shadow-sm'

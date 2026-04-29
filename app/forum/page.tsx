@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
+import { useToast } from '@/components/ui/Toast'
 
 const MAPEL_LIST = [
   'Umum', 'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
@@ -27,6 +28,7 @@ interface ForumPost {
 
 export default function ForumPage() {
   const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<ForumPost[]>([])
@@ -69,7 +71,7 @@ export default function ForumPage() {
     setSubmitting(true)
     const { error } = await supabase.from('forum').insert({ mapel, judul, konten, author_id: user.id, author_nama: user.nama, parent_id: null })
     setSubmitting(false)
-    if (error) { alert('Gagal: ' + error.message); return }
+    if (error) { toastInfo('Gagal: ' + error.message); return }
     setJudul(''); setKonten(''); setMapel(MAPEL_LIST[0]); setShowForm(false)
     await load()
   }
@@ -77,7 +79,7 @@ export default function ForumPage() {
   async function handleSubmitReply(parentId: string, parentMapel: string) {
     if (!user || !replyText.trim()) return
     const { error } = await supabase.from('forum').insert({ mapel: parentMapel, konten: replyText, author_id: user.id, author_nama: user.nama, parent_id: parentId })
-    if (error) { alert('Gagal: ' + error.message); return }
+    if (error) { toastInfo('Gagal: ' + error.message); return }
     setReplyText(''); setReplyTo(null)
     await load()
   }

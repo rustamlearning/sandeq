@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import BlockEditor from '@/components/BlockEditor';
 import { Block } from '@/lib/blocks';
+import { useToast } from '@/components/ui/Toast'
 
 const MAPEL_LIST = [
   'Matematika','Bahasa Indonesia','Bahasa Inggris','Fisika','Kimia',
@@ -20,7 +21,8 @@ const KESULITAN_CONFIG = {
 };
 
 export default function GuruMateriPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
@@ -77,8 +79,8 @@ export default function GuruMateriPage() {
   };
 
   const handleSave = async () => {
-    if (!judul.trim()) { alert('Judul wajib diisi'); return; }
-    if (!kelasId) { alert('Pilih kelas'); return; }
+    if (!judul.trim()) { toastWarning('Judul wajib diisi'); return; }
+    if (!kelasId) { toastWarning('Pilih kelas'); return; }
     setLoading(true);
     try {
       const payload = { judul, mapel, kelas_id: kelasId, bab, tujuan_pembelajaran: tujuanPembelajaran, ringkasan, estimasi_menit: estimasiMenit, tingkat_kesulitan: tingkatKesulitan, konten_blocks: blocks, guru_id: user.id };
@@ -89,11 +91,11 @@ export default function GuruMateriPage() {
         const { error } = await supabase.from('materi').insert(payload);
         if (error) throw error;
       }
-      alert('✅ Materi berhasil disimpan!');
+      toastSuccess('Materi berhasil disimpan!');
       resetForm();
       await loadMateri(user.id);
     } catch (e: any) {
-      alert('Gagal: ' + e.message);
+      toastInfo('Gagal: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -102,12 +104,12 @@ export default function GuruMateriPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Hapus materi ini?')) return;
     const { error } = await supabase.from('materi').delete().eq('id', id);
-    if (error) { alert('Gagal hapus: ' + error.message); return; }
+    if (error) { toastInfo('Gagal hapus: ' + error.message); return; }
     await loadMateri(user.id);
   };
 
   const handleAiGenerate = async () => {
-    if (!judul.trim()) { alert('Isi judul materi terlebih dahulu'); return }
+    if (!judul.trim()) { toastWarning('Isi judul materi terlebih dahulu'); return }
     setAiGenerating(true)
     try {
       const kelasTerpilih = kelasList.find((k) => k.id === kelasId)
@@ -117,10 +119,10 @@ export default function GuruMateriPage() {
         body: JSON.stringify({ judul, mapel, tujuan: tujuanPembelajaran, kelas: kelasTerpilih?.nama }),
       })
       const data = await res.json()
-      if (!res.ok) { alert('AI gagal: ' + data.error); return }
+      if (!res.ok) { toastError('AI gagal: ' + data.error); return }
       setBlocks((prev) => [...prev, ...data.blocks])
     } catch {
-      alert('Gagal menghubungi AI')
+      toastError('Gagal menghubungi AI')
     } finally {
       setAiGenerating(false)
     }

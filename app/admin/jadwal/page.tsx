@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { getCurrentUser } from '@/lib/auth'
+import { useToast } from '@/components/ui/Toast'
 
 interface JadwalItem {
   id: string
@@ -33,6 +34,7 @@ const MAPEL_LIST = [
 
 export default function AdminJadwalPage() {
   const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast()
   const [loading, setLoading] = useState(true)
   const [jadwalList, setJadwalList] = useState<JadwalItem[]>([])
   const [kelasList, setKelasList] = useState<any[]>([])
@@ -91,7 +93,7 @@ export default function AdminJadwalPage() {
       jam_selesai: form.jam_selesai,
     })
     setSaving(false)
-    if (error) { alert('Gagal simpan: ' + error.message); return }
+    if (error) { toastInfo('Gagal simpan: ' + error.message); return }
     setShowForm(false)
     loadJadwal(selectedKelas)
   }

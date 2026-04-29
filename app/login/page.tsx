@@ -88,6 +88,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="text"
+                autoComplete="username"
                 value={nisNip}
                 onChange={(e) => setNisNip(e.target.value)}
                 required
@@ -103,6 +104,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

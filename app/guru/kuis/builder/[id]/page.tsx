@@ -19,9 +19,11 @@ import {
   SOAL_TIPE_LABELS,
 } from '@/lib/kuis';
 import SoalEditor from '@/components/SoalEditor';
+import { useToast } from '@/components/ui/Toast'
 
 export default function KuisBuilderPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
   const params = useParams();
   const kuisId = params?.id as string;
 
@@ -174,7 +176,7 @@ export default function KuisBuilderPage() {
     setSaving(false);
     
     if (publish) {
-      alert('🎉 Kuis berhasil di-publish! Siswa sekarang bisa mengerjakan.');
+      toastInfo('🎉 Kuis berhasil di-publish! Siswa sekarang bisa mengerjakan.');
       router.push('/guru/kuis');
     } else {
       // Update URL ke ID kalau baru create
@@ -270,7 +272,7 @@ export default function KuisBuilderPage() {
       const result = await getKuisWithSoal(kuis.id);
       if (result) setSoalList(result.soal);
 
-      alert(`✅ ${savedCount} soal berhasil di-generate AI!`);
+      toastSuccess(`${savedCount} soal berhasil di-generate AI!`);
       setShowAIPanel(false);
       setAiTopik('');
     } catch (e: any) {

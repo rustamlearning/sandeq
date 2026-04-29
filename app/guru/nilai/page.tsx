@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kelas, Nilai } from '@/lib/supabase'
+import { useToast } from '@/components/ui/Toast'
 
 const MAPEL_LIST = [
   'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
@@ -22,6 +23,7 @@ interface SiswaWithNilai {
 
 export default function InputNilaiPage() {
   const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [kelasList, setKelasList] = useState<Kelas[]>([])
@@ -100,7 +102,7 @@ export default function InputNilaiPage() {
 
     const komponenFinal = komponen === 'Custom' ? komponenCustom : komponen
     if (!komponenFinal.trim()) {
-      alert('Komponen tidak boleh kosong')
+      toastWarning('Komponen tidak boleh kosong')
       return
     }
 
@@ -117,7 +119,7 @@ export default function InputNilaiPage() {
       }))
 
     if (records.length === 0) {
-      alert('Belum ada nilai yang diisi')
+      toastWarning('Belum ada nilai yang diisi')
       return
     }
 
@@ -126,11 +128,11 @@ export default function InputNilaiPage() {
     setSaving(false)
 
     if (error) {
-      alert('Gagal: ' + error.message)
+      toastInfo('Gagal: ' + error.message)
       return
     }
 
-    alert(`Berhasil input ${records.length} nilai!`)
+    toastSuccess(`Berhasil input ${records.length} nilai!`)
     setSiswaList(siswaList.map((s) => ({ ...s, nilai: '' })))
     await loadRiwayat(user.id)
   }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
+import { PageLoader } from '@/components/ui/Skeleton'
 
 const menuItems = [
   { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-blue-600', featured: false },
@@ -64,14 +65,7 @@ export default function GuruDashboard() {
     router.replace('/login')
   }
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-500 text-sm">Memuat dashboard...</p>
-      </div>
-    </div>
-  )
+  if (loading) return <PageLoader />
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
@@ -94,6 +88,7 @@ export default function GuruDashboard() {
             </div>
             <button
               onClick={() => router.push('/guru/notifikasi')}
+              aria-label="Notifikasi"
               className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
             >
               🔔
@@ -105,6 +100,7 @@ export default function GuruDashboard() {
             </button>
             <button
               onClick={handleLogout}
+              aria-label="Keluar dari aplikasi"
               className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
             >
               Keluar
@@ -147,6 +143,7 @@ export default function GuruDashboard() {
             <button
               key={item.path}
               onClick={() => router.push(item.path)}
+              aria-label={item.title}
               className="group relative p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md bg-white border border-slate-100 shadow-sm hover:border-blue-100"
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-3 ${item.iconBg}`}>

@@ -6,9 +6,11 @@ import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { fetchRaporData, generateRaporPDF, RaporData } from '@/lib/exportRapor';
 import { getLevelInfo } from '@/lib/gamification';
+import { useToast } from '@/components/ui/Toast'
 
 export default function ExportRaporPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
   const [user, setUser] = useState<any>(null);
   const [kelasList, setKelasList] = useState<any[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>('');
@@ -79,7 +81,7 @@ export default function ExportRaporPage() {
       const filename = `Rapor_${previewData.siswa.nama.replace(/\s+/g, '_')}_${previewData.metadata.semester}_${previewData.metadata.tahun_ajaran.replace('/', '-')}.pdf`;
       doc.save(filename);
     } catch (e) {
-      alert('Gagal generate PDF: ' + (e as Error).message);
+      toastInfo('Gagal generate PDF: ' + (e as Error).message);
     } finally {
       setGenerating(false);
     }
@@ -105,9 +107,9 @@ export default function ExportRaporPage() {
           await new Promise((r) => setTimeout(r, 500));
         }
       }
-      alert(`✅ ${siswaList.length} rapor berhasil di-generate!`);
+      toastSuccess(`${siswaList.length} rapor berhasil di-generate!`);
     } catch (e) {
-      alert('Error: ' + (e as Error).message);
+      toastError('Error: ' + (e as Error).message);
     } finally {
       setGenerating(false);
       setProgress({ current: 0, total: 0 });

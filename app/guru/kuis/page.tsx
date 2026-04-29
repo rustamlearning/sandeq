@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
+import { useToast } from '@/components/ui/Toast'
 
 interface KuisItem {
   id: string;
@@ -43,7 +44,8 @@ const MAPEL_ICONS: Record<string, string> = {
 };
 
 export default function KuisListPage() {
-  const router = useRouter();
+  const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
   const [user, setUser] = useState<any>(null);
   const [kuisList, setKuisList] = useState<KuisItem[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
@@ -107,7 +109,7 @@ export default function KuisListPage() {
     }
     const { error } = await supabase.from('kuis').delete().eq('id', kuis.id);
     if (error) {
-      alert('Gagal hapus: ' + error.message);
+      toastInfo('Gagal hapus: ' + error.message);
       return;
     }
     setKuisList((prev) => prev.filter((k) => k.id !== kuis.id));
@@ -120,7 +122,7 @@ export default function KuisListPage() {
       .update({ is_published: newStatus })
       .eq('id', kuis.id);
     if (error) {
-      alert('Gagal update: ' + error.message);
+      toastInfo('Gagal update: ' + error.message);
       return;
     }
     setKuisList((prev) =>
