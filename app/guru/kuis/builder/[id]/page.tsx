@@ -332,7 +332,7 @@ export default function KuisBuilderPage() {
   const totalPoin = soalList.reduce((sum, s) => sum + (s.poin || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-[#F4F9FF] pb-32">
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-30 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -395,7 +395,7 @@ export default function KuisBuilderPage() {
               value={kuis.judul || ''}
               onChange={(e) => setKuis({ ...kuis, judul: e.target.value })}
               placeholder="Contoh: Ulangan Harian - Conjunctions"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E86C1]"
             />
           </div>
 
@@ -603,7 +603,7 @@ export default function KuisBuilderPage() {
               <button
                 onClick={handleAIGenerate}
                 disabled={aiLoading || !aiTopik.trim()}
-                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {aiLoading ? '⏳ Generating...' : `🚀 Generate ${aiJumlah} Soal dengan AI`}
               </button>

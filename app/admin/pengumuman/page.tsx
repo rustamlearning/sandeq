@@ -104,8 +104,8 @@ export default function AdminPengumumanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-rose-600 to-pink-500 shadow-lg">
+    <div className="min-h-screen bg-[#F4F9FF]">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
           <button onClick={() => router.push('/admin')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">←</button>
           <div className="flex-1">
@@ -157,7 +157,7 @@ export default function AdminPengumumanPage() {
               </div>
               <div className="flex gap-2 pt-1">
                 <button type="submit" disabled={submitting}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl font-semibold text-sm hover:from-rose-600 hover:to-pink-600 transition disabled:opacity-50">
+                  className="flex-1 py-2.5 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-xl font-semibold text-sm hover:from-[#0d3562] hover:to-[#1A4A7A] transition disabled:opacity-50">
                   {submitting ? '⏳ Menyimpan...' : editItem ? '💾 Simpan Perubahan' : '📤 Publikasikan'}
                 </button>
                 <button type="button" onClick={resetForm}

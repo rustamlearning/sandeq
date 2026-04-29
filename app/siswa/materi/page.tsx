@@ -113,9 +113,9 @@ export default function SiswaMateriPage() {
     const isSelesai = progress[m.id]?.selesai;
 
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-[#F4F9FF]">
         {/* Header */}
-        <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setSelectedMateri(null)}
@@ -193,7 +193,7 @@ export default function SiswaMateriPage() {
         {/* Floating AI Tutor */}
         <button
           onClick={() => setTutorOpen(true)}
-          className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
+          className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
         >
           <span className="text-xl">🤖</span>
           <span>Tanya Tutor</span>
@@ -209,9 +209,9 @@ export default function SiswaMateriPage() {
   const selesaiCount = materiList.filter(m => progress[m.id]?.selesai).length;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/siswa')} className="text-blue-200 hover:text-white text-sm transition">

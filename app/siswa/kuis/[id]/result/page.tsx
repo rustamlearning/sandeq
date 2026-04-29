@@ -64,7 +64,7 @@ export default function KuisResultPage() {
   const ungradedCount = jawaban.filter((j) => j.benar === null).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa/kuis')} className="text-blue-600 text-sm">
@@ -154,7 +154,7 @@ export default function KuisResultPage() {
           </button>
           <button
             onClick={() => router.push('/siswa')}
-            className="flex-1 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium"
+            className="flex-1 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-[#0d3562] font-medium"
           >
             Ke Dashboard
           </button>

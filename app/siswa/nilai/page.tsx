@@ -73,9 +73,9 @@ export default function NilaiSiswaPage() {
   const { grade, color, bar } = getGrade(rataKeseluruhan)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-700 to-blue-600 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}

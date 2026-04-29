@@ -110,7 +110,7 @@ export default function KuisAnalyticsPage() {
   const maxCount = Math.max(...buckets.map((b) => b.count), 1);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru/analytics')} className="text-blue-600 text-sm">

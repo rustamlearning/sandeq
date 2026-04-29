@@ -6,16 +6,16 @@ import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 
 const menuItems = [
-  { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', color: 'from-blue-500 to-blue-600', featured: false },
-  { title: 'Buat Kuis', description: 'Buat ulangan & latihan', icon: '✏️', path: '/guru/kuis', color: 'from-violet-500 to-violet-600', featured: false },
-  { title: 'Absensi', description: 'Catat kehadiran siswa', icon: '📋', path: '/guru/absensi', color: 'from-emerald-500 to-emerald-600', featured: false },
-  { title: 'Input Nilai', description: 'Masukkan nilai siswa', icon: '🏅', path: '/guru/nilai', color: 'from-amber-500 to-amber-600', featured: false },
-  { title: 'Export Rapor', description: 'Download rapor PDF siswa', icon: '📄', path: '/guru/nilai/export', color: 'from-teal-500 to-teal-600', featured: true },
-  { title: 'Jadwal', description: 'Lihat jadwal mengajar', icon: '📅', path: '/jadwal', color: 'from-indigo-500 to-indigo-600', featured: false },
-  { title: 'Mastery Tracker', description: 'Penguasaan materi per siswa', icon: '🎯', path: '/guru/mastery', color: 'from-orange-500 to-orange-600', featured: false },
-  { title: 'Analytics Kelas', description: 'Lihat progress & data siswa', icon: '📊', path: '/guru/analytics', color: 'from-indigo-600 to-blue-700', featured: true },
-  { title: 'Forum', description: 'Diskusi dengan siswa', icon: '💬', path: '/forum', color: 'from-sky-500 to-sky-600', featured: false },
-  { title: 'Pengumuman', description: 'Buat pengumuman kelas', icon: '📢', path: '/guru/pengumuman', color: 'from-rose-500 to-rose-600', featured: false },
+  { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', color: 'from-[#2E86C1] to-[#1A4A7A]', featured: false },
+  { title: 'Buat Kuis', description: 'Buat ulangan & latihan', icon: '✏️', path: '/guru/kuis', color: 'from-[#1A4A7A] to-[#0d3562]', featured: false },
+  { title: 'Absensi', description: 'Catat kehadiran siswa', icon: '📋', path: '/guru/absensi', color: 'from-[#27AE60] to-[#1a8a47]', featured: false },
+  { title: 'Input Nilai', description: 'Masukkan nilai siswa', icon: '🏅', path: '/guru/nilai', color: 'from-[#F39C12] to-[#E67E22]', featured: false },
+  { title: 'Export Rapor', description: 'Download rapor PDF siswa', icon: '📄', path: '/guru/nilai/export', color: 'from-[#2E86C1] to-[#1A6DA8]', featured: true },
+  { title: 'Jadwal', description: 'Lihat jadwal mengajar', icon: '📅', path: '/jadwal', color: 'from-[#1A4A7A] to-[#2E86C1]', featured: false },
+  { title: 'Mastery Tracker', description: 'Penguasaan materi per siswa', icon: '🎯', path: '/guru/mastery', color: 'from-[#E67E22] to-[#d35400]', featured: false },
+  { title: 'Analytics Kelas', description: 'Lihat progress & data siswa', icon: '📊', path: '/guru/analytics', color: 'from-[#1A4A7A] to-[#0d2847]', featured: true },
+  { title: 'Forum', description: 'Diskusi dengan siswa', icon: '💬', path: '/forum', color: 'from-[#2E86C1] to-[#1A6DA8]', featured: false },
+  { title: 'Pengumuman', description: 'Buat pengumuman kelas', icon: '📢', path: '/guru/pengumuman', color: 'from-[#E74C3C] to-[#c0392b]', featured: false },
 ]
 
 export default function GuruDashboard() {
@@ -74,9 +74,9 @@ export default function GuruDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white">
         <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">
@@ -125,7 +125,7 @@ export default function GuruDashboard() {
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-2xl">📖</span>
-              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-medium">Total</span>
+              <span className="text-xs text-[#1A4A7A] bg-[#E8F1FB] px-2 py-0.5 rounded-full font-medium">Total</span>
             </div>
             <p className="text-3xl font-bold text-slate-800">{stats.totalMateri}</p>
             <p className="text-sm text-slate-500 mt-1">Materi dibuat</p>
@@ -133,7 +133,7 @@ export default function GuruDashboard() {
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-2xl">✏️</span>
-              <span className="text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">Total</span>
+              <span className="text-xs text-[#2E86C1] bg-[#E8F1FB] px-2 py-0.5 rounded-full font-medium">Total</span>
             </div>
             <p className="text-3xl font-bold text-slate-800">{stats.totalKuis}</p>
             <p className="text-sm text-slate-500 mt-1">Kuis dibuat</p>

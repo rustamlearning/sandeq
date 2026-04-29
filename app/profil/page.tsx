@@ -82,9 +82,9 @@ export default function SiswaProfilPage() {
   const userBadgeIds = new Set(stats.badges.map((b: any) => b.badge_id));
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-br from-violet-700 via-indigo-700 to-blue-700 text-white shadow-lg">
+      <header className="bg-gradient-to-br from-[#1A4A7A] to-[#2E86C1] text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 pt-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
@@ -166,7 +166,7 @@ export default function SiswaProfilPage() {
                 className={`flex-shrink-0 px-3 py-3 text-xs font-semibold transition ${
                   activeTab === tab
                     ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50'
-                    : 'text-gray-500 hover:text-gray-700'
+                    : 'text-white/80 hover:text-white'
                 }`}
               >
                 {tab === 'stats' ? '📊 Stats'

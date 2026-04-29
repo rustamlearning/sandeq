@@ -44,9 +44,9 @@ export default function SiswaLeaderboardPage() {
   const rest = leaderboard.slice(3);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-[#F39C12] to-[#E67E22] text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}

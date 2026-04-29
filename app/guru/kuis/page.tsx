@@ -148,8 +148,8 @@ export default function KuisListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-orange-500 to-pink-500 shadow-lg">
+    <div className="min-h-screen bg-[#F4F9FF]">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
@@ -165,7 +165,7 @@ export default function KuisListPage() {
           </div>
           <Link
             href="/guru/kuis/builder/new"
-            className="bg-white text-orange-600 hover:bg-orange-50 px-5 py-2.5 rounded-xl font-semibold shadow-md transition flex items-center gap-2"
+            className="bg-white text-[#1A4A7A] hover:bg-blue-50 px-5 py-2.5 rounded-xl font-semibold shadow-md transition flex items-center gap-2"
           >
             <span className="text-xl">+</span>
             <span>Buat Kuis Baru</span>
@@ -237,7 +237,7 @@ export default function KuisListPage() {
             </p>
             <Link
               href="/guru/kuis/builder/new"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
             >
               <span className="text-xl">🚀</span>
               <span>Buat Kuis Pertama</span>

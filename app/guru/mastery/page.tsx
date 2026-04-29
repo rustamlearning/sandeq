@@ -162,7 +162,7 @@ export default function MasteryTrackerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">

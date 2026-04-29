@@ -115,8 +115,8 @@ export default function AdminDashboard() {
   const hadirRate = totalAbsensi > 0 ? Math.round(((absensiData.find((a) => a.status === 'Hadir')?.count || 0) / totalAbsensi) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-slate-700 to-slate-800 shadow-lg">
+    <div className="min-h-screen bg-[#F4F9FF]">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">⚙️</div>
           <div className="flex-1">

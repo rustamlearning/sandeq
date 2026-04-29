@@ -144,16 +144,16 @@ export default function InputNilaiPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-[#F4F9FF]">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.push('/guru')} className="text-gray-500 hover:text-gray-700">
+          <button onClick={() => router.push('/guru')} className="text-white/80 hover:text-white">
             ← Kembali
           </button>
-          <h1 className="text-xl font-bold text-gray-800 flex-1">Input Nilai</h1>
+          <h1 className="text-xl font-bold text-white flex-1">Input Nilai</h1>
           <button
             onClick={() => router.push('/guru/nilai/export')}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition"
+            className="px-4 py-2 bg-[#2E86C1] text-white rounded-lg text-sm font-medium hover:bg-[#1A6DA8] transition"
           >
             📄 Export Rapor
           </button>
@@ -170,7 +170,7 @@ export default function InputNilaiPage() {
               <select
                 value={selectedKelas}
                 onChange={(e) => setSelectedKelas(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
               >
                 <option value="">Pilih kelas</option>
                 {kelasList.map((k) => (
@@ -183,7 +183,7 @@ export default function InputNilaiPage() {
               <select
                 value={mapel}
                 onChange={(e) => setMapel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
               >
                 {MAPEL_LIST.map((m) => (
                   <option key={m} value={m}>{m}</option>
@@ -195,7 +195,7 @@ export default function InputNilaiPage() {
               <select
                 value={komponen}
                 onChange={(e) => setKomponen(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
               >
                 {KOMPONEN_LIST.map((k) => (
                   <option key={k} value={k}>{k}</option>
@@ -211,7 +211,7 @@ export default function InputNilaiPage() {
                   value={komponenCustom}
                   onChange={(e) => setKomponenCustom(e.target.value)}
                   placeholder="Contoh: Tugas Bab 3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
                 />
               </div>
             )}
@@ -222,7 +222,7 @@ export default function InputNilaiPage() {
                 value={bobot}
                 onChange={(e) => setBobot(e.target.value)}
                 min={1}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
               />
             </div>
             <div>
@@ -230,7 +230,7 @@ export default function InputNilaiPage() {
               <select
                 value={semester}
                 onChange={(e) => setSemester(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1]"
               >
                 <option value="1">Semester 1</option>
                 <option value="2">Semester 2</option>
@@ -273,7 +273,7 @@ export default function InputNilaiPage() {
                         min={0}
                         max={100}
                         placeholder="0-100"
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-center font-medium"
+                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#2E86C1] text-center font-medium"
                       />
                     </div>
                   ))}
@@ -282,7 +282,7 @@ export default function InputNilaiPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400 font-medium"
+                    className="w-full px-4 py-2 bg-[#1A4A7A] text-white rounded-lg hover:bg-[#0d3562] transition disabled:opacity-50 font-medium"
                   >
                     {saving ? 'Menyimpan...' : 'Simpan Nilai'}
                   </button>

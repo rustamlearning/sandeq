@@ -7,17 +7,17 @@ import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 
 const menuItems: { icon: string; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
-  { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
-  { icon: '✏️', title: 'Kuis', description: 'Kerjakan latihan & ulangan', path: '/siswa/kuis', color: 'text-violet-600 bg-violet-50' },
-  { icon: '📊', title: 'Nilai', description: 'Lihat nilai & rapor', path: '/siswa/nilai', color: 'text-emerald-600 bg-emerald-50' },
-  { icon: '🗓️', title: 'Jadwal', description: 'Jadwal pelajaran harian', path: '/jadwal', color: 'text-indigo-600 bg-indigo-50' },
-  { icon: '📅', title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-600 bg-amber-50' },
-  { icon: '📢', title: 'Pengumuman', description: 'Info dari sekolah', path: '/siswa/pengumuman', color: 'text-rose-600 bg-rose-50' },
-  { icon: '🔔', title: 'Notifikasi', description: 'Pengumuman & deadline kuis', path: '/siswa/notifikasi', color: 'text-amber-600 bg-amber-50' },
-  { icon: '🤖', title: 'AI Tutor', description: 'Tanya AI, belajar 24/7', path: '/siswa/ai-tutor', color: 'text-purple-600 bg-purple-50' },
-  { icon: '💬', title: 'Forum', description: 'Diskusi dengan teman & guru', path: '/forum', color: 'text-sky-600 bg-sky-50' },
-  { icon: '⭐', title: 'Profil & Stats', description: 'XP, level, badges', path: '/profil', color: 'text-yellow-600 bg-yellow-50', highlight: true },
-  { icon: '🏆', title: 'Leaderboard', description: 'Ranking kelas', path: '/siswa/leaderboard', color: 'text-orange-600 bg-orange-50', highlight: true },
+  { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-[#1A4A7A] bg-[#E8F1FB]' },
+  { icon: '✏️', title: 'Kuis', description: 'Kerjakan latihan & ulangan', path: '/siswa/kuis', color: 'text-[#2E86C1] bg-[#E8F1FB]' },
+  { icon: '📊', title: 'Nilai', description: 'Lihat nilai & rapor', path: '/siswa/nilai', color: 'text-[#27AE60] bg-[#e8f7ef]' },
+  { icon: '🗓️', title: 'Jadwal', description: 'Jadwal pelajaran harian', path: '/jadwal', color: 'text-[#2E86C1] bg-[#e8f4fb]' },
+  { icon: '📅', title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-[#E67E22] bg-[#fef3e2]' },
+  { icon: '📢', title: 'Pengumuman', description: 'Info dari sekolah', path: '/siswa/pengumuman', color: 'text-[#E74C3C] bg-[#fdecea]' },
+  { icon: '🔔', title: 'Notifikasi', description: 'Pengumuman & deadline kuis', path: '/siswa/notifikasi', color: 'text-[#F39C12] bg-[#fef3e2]' },
+  { icon: '🤖', title: 'AI Tutor', description: 'Tanya AI, belajar 24/7', path: '/siswa/ai-tutor', color: 'text-[#1A4A7A] bg-[#E8F1FB]' },
+  { icon: '💬', title: 'Forum', description: 'Diskusi dengan teman & guru', path: '/forum', color: 'text-[#2E86C1] bg-[#e8f4fb]' },
+  { icon: '⭐', title: 'Profil & Stats', description: 'XP, level, badges', path: '/profil', color: 'text-[#F39C12] bg-[#fef3e2]', highlight: true },
+  { icon: '🏆', title: 'Leaderboard', description: 'Ranking kelas', path: '/siswa/leaderboard', color: 'text-[#E67E22] bg-[#fef3e2]', highlight: true },
 ]
 
 export default function SiswaDashboardPage() {
@@ -61,9 +61,9 @@ export default function SiswaDashboardPage() {
   const xpProgress = Math.min(100, Math.round(((xp - levelInfo.minXp) / (levelInfo.maxXp - levelInfo.minXp)) * 100)) || 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+      <header className="bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
@@ -93,7 +93,7 @@ export default function SiswaDashboardPage() {
 
       <main className="max-w-3xl mx-auto px-4 py-6">
         {/* Gamification Hero Card */}
-        <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#1A4A7A] via-[#2E86C1] to-[#1A4A7A] text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
           {/* Decorative circles */}
           <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
           <div className="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full" />
@@ -131,9 +131,9 @@ export default function SiswaDashboardPage() {
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-blue-600' },
-            { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-violet-600' },
-            { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-rose-600' },
+            { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-[#1A4A7A]' },
+            { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-[#2E86C1]' },
+            { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-[#E74C3C]' },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
               <span className="text-xl">{s.icon}</span>
@@ -152,8 +152,8 @@ export default function SiswaDashboardPage() {
               onClick={() => router.push(item.path)}
               className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
                 item.highlight
-                  ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 shadow-sm'
-                  : 'bg-white border border-slate-100 shadow-sm hover:border-blue-100'
+                  ? 'bg-gradient-to-r from-[#fef3e2] to-[#fef9ee] border-2 border-[#F39C12]/30 shadow-sm'
+                  : 'bg-white border border-slate-100 shadow-sm hover:border-[#2E86C1]/30'
               }`}
             >
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
@@ -163,7 +163,7 @@ export default function SiswaDashboardPage() {
                 <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
                 <p className="text-xs text-slate-400 mt-0.5 truncate">{item.description}</p>
               </div>
-              <span className="ml-auto text-slate-300 group-hover:text-blue-400 transition text-lg">›</span>
+              <span className="ml-auto text-slate-300 group-hover:text-[#2E86C1] transition text-lg">›</span>
             </button>
           ))}
         </div>

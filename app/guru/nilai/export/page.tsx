@@ -119,7 +119,7 @@ export default function ExportRaporPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru')} className="text-blue-600 text-sm">
@@ -301,7 +301,7 @@ export default function ExportRaporPage() {
               <button
                 onClick={downloadSingle}
                 disabled={generating}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50"
+                className="flex-1 px-5 py-3 bg-gradient-to-r from-[#1A4A7A] to-[#2E86C1] text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50"
               >
                 {generating ? '⏳ Generating...' : '📥 Download PDF Rapor'}
               </button>
@@ -350,7 +350,7 @@ export default function ExportRaporPage() {
             <button
               onClick={downloadBulk}
               disabled={generating || siswaList.length === 0}
-              className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 disabled:opacity-50"
+              className="w-full px-5 py-3 bg-gradient-to-r from-[#27AE60] to-[#1a8a47] text-white rounded-lg font-medium hover:from-[#1a8a47] hover:to-[#166638] disabled:opacity-50"
             >
               {generating
                 ? `⏳ Generating ${progress.current}/${progress.total}...`

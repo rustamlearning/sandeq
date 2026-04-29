@@ -91,7 +91,7 @@ export default function LoginPage() {
                 value={nisNip}
                 onChange={(e) => setNisNip(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none transition"
                 placeholder="Masukkan username"
               />
             </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 pr-12 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 pr-12 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none transition"
                   placeholder="••••••••"
                 />
                 <button

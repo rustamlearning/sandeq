@@ -137,7 +137,7 @@ export default function GuruMateriPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-700 to-cyan-600 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
@@ -182,7 +182,7 @@ export default function GuruMateriPage() {
                   value={judul}
                   onChange={(e) => setJudul(e.target.value)}
                   placeholder="Contoh: Persamaan Kuadrat"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent"
                 />
               </div>
 
@@ -190,13 +190,13 @@ export default function GuruMateriPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Mata Pelajaran</label>
-                  <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1]">
                     {MAPEL_LIST.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kelas <span className="text-red-500">*</span></label>
-                  <select value={kelasId} onChange={(e) => setKelasId(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <select value={kelasId} onChange={(e) => setKelasId(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1]">
                     <option value="">-- Pilih Kelas --</option>
                     {kelasList.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
                   </select>
@@ -207,15 +207,15 @@ export default function GuruMateriPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Bab/Pertemuan</label>
-                  <input type="text" value={bab} onChange={(e) => setBab(e.target.value)} placeholder="Bab 3" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" value={bab} onChange={(e) => setBab(e.target.value)} placeholder="Bab 3" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1]" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Estimasi (menit)</label>
-                  <input type="number" value={estimasiMenit} onChange={(e) => setEstimasiMenit(parseInt(e.target.value) || 15)} min={1} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="number" value={estimasiMenit} onChange={(e) => setEstimasiMenit(parseInt(e.target.value) || 15)} min={1} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1]" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kesulitan</label>
-                  <select value={tingkatKesulitan} onChange={(e) => setTingkatKesulitan(e.target.value as any)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <select value={tingkatKesulitan} onChange={(e) => setTingkatKesulitan(e.target.value as any)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1]">
                     <option value="mudah">🟢 Mudah</option>
                     <option value="sedang">🟡 Sedang</option>
                     <option value="sulit">🔴 Sulit</option>
@@ -233,7 +233,7 @@ export default function GuruMateriPage() {
                   value={tujuanPembelajaran} onChange={(e) => setTujuanPembelajaran(e.target.value)}
                   placeholder="1. Memahami konsep persamaan kuadrat&#10;2. Menyelesaikan dengan rumus ABC"
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1] resize-none"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export default function GuruMateriPage() {
                   value={ringkasan} onChange={(e) => setRingkasan(e.target.value)}
                   placeholder="Ringkasan 1-2 kalimat untuk preview di daftar materi"
                   rows={2}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1] resize-none"
                 />
               </div>
 
@@ -294,7 +294,7 @@ export default function GuruMateriPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari materi..."
-                  className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                  className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#2E86C1] shadow-sm"
                 />
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               </div>
@@ -311,7 +311,7 @@ export default function GuruMateriPage() {
                   {materiList.length === 0 ? 'Buat materi pertamamu sekarang.' : `Tidak ada materi untuk "${searchQuery}"`}
                 </p>
                 {materiList.length === 0 && (
-                  <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                  <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-[#0d3562] transition">
                     + Buat Materi Pertama
                   </button>
                 )}
