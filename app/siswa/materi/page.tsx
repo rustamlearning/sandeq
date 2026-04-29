@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -9,6 +9,7 @@ import TutorChat from '@/components/TutorChat';
 import XPNotification, { useXPNotifications } from '@/components/XPNotification';
 import { recordActivity } from '@/lib/gamification';
 import { useToast } from '@/components/ui/Toast'
+import { PageLoader } from '@/components/ui/Skeleton';
 
 const masteryConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   belum_mulai: { label: 'Belum mulai', color: 'text-slate-500', bg: 'bg-slate-100', dot: 'bg-slate-400' },
@@ -23,15 +24,64 @@ const difficultyConfig: Record<string, { label: string; color: string }> = {
   sulit:  { label: 'Sulit',  color: 'text-red-600 bg-red-50'         },
 };
 
+function isHtmlKonten(konten: string | null | undefined): boolean {
+  return !!(konten && konten.trim().startsWith('<'));
+}
+
+// Auto-resize iframe to match its content height
+function HtmlViewer({ html, title }: { html: string; title: string }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeHeight, setIframeHeight] = useState(600);
+  const [loaded, setLoaded] = useState(false);
+
+  const handleLoad = () => {
+    setLoaded(true);
+    try {
+      const doc = iframeRef.current?.contentDocument;
+      if (doc) {
+        const h = doc.documentElement.scrollHeight || doc.body.scrollHeight;
+        if (h > 200) setIframeHeight(h);
+      }
+    } catch {
+      // cross-origin fallback — just use a tall fixed height
+      setIframeHeight(Math.max(window.innerHeight * 1.5, 800));
+    }
+  };
+
+  return (
+    <div className="relative w-full rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+      {!loaded && (
+        <div className="absolute inset-0 bg-white flex items-center justify-center z-10 rounded-2xl">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-3 border-violet-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-slate-400">Memuat materi...</p>
+          </div>
+        </div>
+      )}
+      <iframe
+        ref={iframeRef}
+        srcDoc={html}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        onLoad={handleLoad}
+        title={title}
+        className="w-full block bg-white"
+        style={{ height: iframeHeight, border: 'none' }}
+        aria-label={`Konten materi: ${title}`}
+      />
+    </div>
+  );
+}
+
 export default function SiswaMateriPage() {
   const router = useRouter()
-  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
+  const { success: toastSuccess } = useToast();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [selectedMateri, setSelectedMateri] = useState<any>(null);
   const [progress, setProgress] = useState<Record<string, any>>({});
   const [mastery, setMastery] = useState<Record<string, any>>({});
   const [tutorOpen, setTutorOpen] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const { notifications, dismiss, showActivityResult } = useXPNotifications();
 
   useEffect(() => { init(); }, []);
@@ -40,9 +90,8 @@ export default function SiswaMateriPage() {
     const u = await getCurrentUser();
     if (!u || u.role !== 'siswa') { router.push('/login'); return; }
     setUser(u);
-    await loadMateri(u);
-    await loadProgress(u.id);
-    await loadMastery(u.id);
+    await Promise.all([loadMateri(u), loadProgress(u.id), loadMastery(u.id)]);
+    setPageLoading(false);
   };
 
   const loadMateri = async (u: any) => {
@@ -100,11 +149,7 @@ export default function SiswaMateriPage() {
     setSelectedMateri(null);
   };
 
-  if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (pageLoading) return <PageLoader />;
 
   // ===== DETAIL VIEW =====
   if (selectedMateri) {
@@ -113,6 +158,7 @@ export default function SiswaMateriPage() {
     const mconf = masteryConfig[masteryLevel];
     const diff = m.tingkat_kesulitan ? difficultyConfig[m.tingkat_kesulitan] : null;
     const isSelesai = progress[m.id]?.selesai;
+    const htmlMode = isHtmlKonten(m.konten);
 
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
@@ -121,13 +167,19 @@ export default function SiswaMateriPage() {
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setSelectedMateri(null)}
+              aria-label="Kembali ke daftar materi"
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
               ← Kembali
             </button>
-            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${mconf.bg} ${mconf.color}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${mconf.dot}`} />
-              {mconf.label}
+            <div className="flex items-center gap-2">
+              {htmlMode && (
+                <span className="px-2.5 py-1 bg-white/15 rounded-full text-xs font-semibold">🌐 HTML</span>
+              )}
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${mconf.bg} ${mconf.color}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${mconf.dot}`} />
+                {mconf.label}
+              </div>
             </div>
           </div>
         </header>
@@ -157,20 +209,28 @@ export default function SiswaMateriPage() {
             )}
           </div>
 
-          {/* Content */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            {m.konten_blocks && m.konten_blocks.length > 0 ? (
-              <BlockRenderer blocks={m.konten_blocks} materiId={m.id} userId={user.id} />
-            ) : (
-              <div className="py-16 text-center">
-                <p className="text-4xl mb-3">📭</p>
-                <p className="text-slate-400">Belum ada konten untuk materi ini.</p>
-              </div>
-            )}
-          </div>
+          {/* Content area */}
+          {htmlMode ? (
+            // ===== HTML VIEWER =====
+            <div className="mb-5">
+              <HtmlViewer html={m.konten} title={m.judul} />
+            </div>
+          ) : (
+            // ===== BLOCK RENDERER =====
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-5">
+              {m.konten_blocks && m.konten_blocks.length > 0 ? (
+                <BlockRenderer blocks={m.konten_blocks} materiId={m.id} userId={user.id} />
+              ) : (
+                <div className="py-16 text-center">
+                  <p className="text-4xl mb-3">📭</p>
+                  <p className="text-slate-400">Belum ada konten untuk materi ini.</p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Action buttons */}
-          <div className="mt-5 flex gap-3">
+          <div className="flex gap-3">
             <button
               onClick={markComplete}
               className={`flex-1 py-3.5 rounded-2xl font-semibold text-sm transition-all ${
@@ -192,16 +252,20 @@ export default function SiswaMateriPage() {
           <div className="h-24" />
         </main>
 
-        {/* Floating AI Tutor */}
-        <button
-          onClick={() => setTutorOpen(true)}
-          className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-700 to-blue-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
-        >
-          <span className="text-xl">🤖</span>
-          <span>Tanya Tutor</span>
-        </button>
+        {/* Floating AI Tutor — hanya muncul untuk materi block */}
+        {!htmlMode && (
+          <>
+            <button
+              onClick={() => setTutorOpen(true)}
+              className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-700 to-blue-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
+            >
+              <span className="text-xl">🤖</span>
+              <span>Tanya Tutor</span>
+            </button>
+            <TutorChat materi={selectedMateri} blocks={selectedMateri.konten_blocks || []} user={user} isOpen={tutorOpen} onClose={() => setTutorOpen(false)} />
+          </>
+        )}
 
-        <TutorChat materi={selectedMateri} blocks={selectedMateri.konten_blocks || []} user={user} isOpen={tutorOpen} onClose={() => setTutorOpen(false)} />
         <XPNotification notifications={notifications} onDismiss={dismiss} />
       </div>
     );
@@ -254,17 +318,23 @@ export default function SiswaMateriPage() {
               const mastConf = masteryConfig[mast?.level || 'belum_mulai'];
               const diff = m.tingkat_kesulitan ? difficultyConfig[m.tingkat_kesulitan] : null;
               const isSelesai = p?.selesai;
+              const htmlMode = isHtmlKonten(m.konten);
 
               return (
                 <button
                   key={m.id}
                   onClick={() => openMateri(m)}
+                  aria-label={`Buka materi: ${m.judul}`}
                   className="w-full text-left bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
                 >
                   <div className="flex items-start gap-4">
-                    {/* Left indicator */}
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelesai ? 'bg-emerald-100' : 'bg-blue-50'}`}>
-                      <span className="text-lg">{isSelesai ? '✅' : '📖'}</span>
+                    {/* Icon */}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isSelesai ? 'bg-emerald-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
+                    }`}>
+                      <span className="text-lg">
+                        {isSelesai ? '✅' : htmlMode ? '🌐' : '📖'}
+                      </span>
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -273,6 +343,9 @@ export default function SiswaMateriPage() {
                         <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">{m.mapel}</span>
                         {m.bab && <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">{m.bab}</span>}
                         {diff && <span className={`text-xs px-2 py-0.5 rounded-full ${diff.color}`}>{diff.label}</span>}
+                        {htmlMode && (
+                          <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 Interaktif</span>
+                        )}
                         {m.estimasi_menit && <span className="text-xs text-slate-400">⏱ {m.estimasi_menit} mnt</span>}
                       </div>
 

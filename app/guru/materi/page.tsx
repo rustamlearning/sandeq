@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
@@ -20,9 +20,11 @@ const KESULITAN_CONFIG = {
   sulit: { label: '🔴 Sulit', color: 'bg-red-100 text-red-700' },
 };
 
+type KontenMode = 'blocks' | 'html';
+
 export default function GuruMateriPage() {
   const router = useRouter()
-  const { success: toastSuccess, error: toastError, warning: toastWarning, info: toastInfo } = useToast();
+  const { success: toastSuccess, error: toastError, warning: toastWarning } = useToast();
   const [user, setUser] = useState<any>(null);
   const [materiList, setMateriList] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
@@ -31,6 +33,7 @@ export default function GuruMateriPage() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Form fields
   const [judul, setJudul] = useState('');
   const [mapel, setMapel] = useState('Matematika');
   const [kelasId, setKelasId] = useState('');
@@ -41,6 +44,13 @@ export default function GuruMateriPage() {
   const [tingkatKesulitan, setTingkatKesulitan] = useState<'mudah' | 'sedang' | 'sulit'>('sedang');
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [aiGenerating, setAiGenerating] = useState(false);
+
+  // HTML upload
+  const [kontenMode, setKontenMode] = useState<KontenMode>('blocks');
+  const [htmlKonten, setHtmlKonten] = useState('');
+  const [htmlFileName, setHtmlFileName] = useState('');
+  const [htmlPreview, setHtmlPreview] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { init(); }, []);
 
@@ -65,25 +75,84 @@ export default function GuruMateriPage() {
 
   const resetForm = () => {
     setJudul(''); setMapel('Matematika'); setBab(''); setTujuanPembelajaran('');
-    setRingkasan(''); setEstimasiMenit(15); setTingkatKesulitan('sedang'); setBlocks([]);
-    setEditingId(null); setShowForm(false);
+    setRingkasan(''); setEstimasiMenit(15); setTingkatKesulitan('sedang');
+    setBlocks([]); setEditingId(null); setShowForm(false);
+    setKontenMode('blocks'); setHtmlKonten(''); setHtmlFileName(''); setHtmlPreview(false);
   };
 
   const handleEdit = (m: any) => {
-    setEditingId(m.id); setJudul(m.judul || ''); setMapel(m.mapel || 'Matematika');
-    setKelasId(m.kelas_id || ''); setBab(m.bab || '');
-    setTujuanPembelajaran(m.tujuan_pembelajaran || ''); setRingkasan(m.ringkasan || '');
-    setEstimasiMenit(m.estimasi_menit || 15); setTingkatKesulitan(m.tingkat_kesulitan || 'sedang');
-    setBlocks(m.konten_blocks || []); setShowForm(true);
+    setEditingId(m.id);
+    setJudul(m.judul || '');
+    setMapel(m.mapel || 'Matematika');
+    setKelasId(m.kelas_id || '');
+    setBab(m.bab || '');
+    setTujuanPembelajaran(m.tujuan_pembelajaran || '');
+    setRingkasan(m.ringkasan || '');
+    setEstimasiMenit(m.estimasi_menit || 15);
+    setTingkatKesulitan(m.tingkat_kesulitan || 'sedang');
+    setBlocks(m.konten_blocks || []);
+    // detect mode
+    if (m.konten && m.konten.trim().startsWith('<')) {
+      setKontenMode('html');
+      setHtmlKonten(m.konten);
+      setHtmlFileName('(file sebelumnya)');
+    } else {
+      setKontenMode('blocks');
+      setHtmlKonten('');
+      setHtmlFileName('');
+    }
+    setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleHtmlFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+      toastWarning('File harus berformat .html atau .htm');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toastWarning('Ukuran file maksimal 5 MB');
+      return;
+    }
+    setHtmlFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      setHtmlKonten(text);
+      // auto-fill judul from <title> tag if empty
+      if (!judul.trim()) {
+        const match = text.match(/<title[^>]*>([^<]+)<\/title>/i);
+        if (match) setJudul(match[1].trim());
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleSave = async () => {
     if (!judul.trim()) { toastWarning('Judul wajib diisi'); return; }
     if (!kelasId) { toastWarning('Pilih kelas'); return; }
+    if (kontenMode === 'html' && !htmlKonten.trim()) {
+      toastWarning('Upload file HTML terlebih dahulu'); return;
+    }
     setLoading(true);
     try {
-      const payload = { judul, mapel, kelas_id: kelasId, bab, tujuan_pembelajaran: tujuanPembelajaran, ringkasan, estimasi_menit: estimasiMenit, tingkat_kesulitan: tingkatKesulitan, konten_blocks: blocks, guru_id: user.id };
+      const payload: any = {
+        judul, mapel, kelas_id: kelasId, bab,
+        tujuan_pembelajaran: tujuanPembelajaran,
+        ringkasan, estimasi_menit: estimasiMenit,
+        tingkat_kesulitan: tingkatKesulitan,
+        guru_id: user.id,
+      };
+      if (kontenMode === 'html') {
+        payload.konten = htmlKonten;
+        payload.konten_blocks = [];
+      } else {
+        payload.konten = null;
+        payload.konten_blocks = blocks;
+      }
+
       if (editingId) {
         const { error } = await supabase.from('materi').update(payload).eq('id', editingId);
         if (error) throw error;
@@ -95,7 +164,7 @@ export default function GuruMateriPage() {
       resetForm();
       await loadMateri(user.id);
     } catch (e: any) {
-      toastInfo('Gagal: ' + e.message);
+      toastError('Gagal: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -104,7 +173,7 @@ export default function GuruMateriPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Hapus materi ini?')) return;
     const { error } = await supabase.from('materi').delete().eq('id', id);
-    if (error) { toastInfo('Gagal hapus: ' + error.message); return; }
+    if (error) { toastError('Gagal hapus: ' + error.message); return; }
     await loadMateri(user.id);
   };
 
@@ -146,6 +215,7 @@ export default function GuruMateriPage() {
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => router.push('/guru')}
+              aria-label="Kembali"
               className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold flex-shrink-0"
             >
               ←
@@ -183,7 +253,7 @@ export default function GuruMateriPage() {
                   type="text"
                   value={judul}
                   onChange={(e) => setJudul(e.target.value)}
-                  placeholder="Contoh: Persamaan Kuadrat"
+                  placeholder="Contoh: Chapter 7 – Explanation Text"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -233,7 +303,7 @@ export default function GuruMateriPage() {
                 </label>
                 <textarea
                   value={tujuanPembelajaran} onChange={(e) => setTujuanPembelajaran(e.target.value)}
-                  placeholder="1. Memahami konsep persamaan kuadrat&#10;2. Menyelesaikan dengan rumus ABC"
+                  placeholder="1. Memahami konsep&#10;2. Menerapkan dalam kehidupan"
                   rows={3}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
@@ -250,26 +320,136 @@ export default function GuruMateriPage() {
                 />
               </div>
 
-              {/* Block editor */}
+              {/* ===== MODE TOGGLE ===== */}
               <div>
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <h3 className="font-bold text-gray-800">📚 Konten Materi</h3>
-                  <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{blocks.length} block</span>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">📚 Tipe Konten</label>
+                <div className="flex gap-2 mb-4">
                   <button
                     type="button"
-                    onClick={handleAiGenerate}
-                    disabled={aiGenerating}
-                    className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-indigo-600 transition disabled:opacity-60"
+                    onClick={() => setKontenMode('blocks')}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
+                      kontenMode === 'blocks'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
                   >
-                    {aiGenerating ? '⏳ Generating...' : '✨ Generate dengan AI'}
+                    <span>🧱</span> Block Editor
+                    {kontenMode === 'blocks' && <span className="w-2 h-2 bg-blue-500 rounded-full" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setKontenMode('html')}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
+                      kontenMode === 'html'
+                        ? 'border-violet-500 bg-violet-50 text-violet-700'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    <span>🌐</span> Upload HTML
+                    {kontenMode === 'html' && <span className="w-2 h-2 bg-violet-500 rounded-full" />}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mb-4">
-                  {aiGenerating ? 'AI sedang membuat konten, harap tunggu...' : 'Susun materi pakai blocks, atau klik "Generate dengan AI" untuk otomatis.'}
-                </p>
-                <div className="ml-8">
-                  <BlockEditor initialBlocks={blocks} onChange={setBlocks} />
-                </div>
+
+                {/* BLOCK EDITOR */}
+                {kontenMode === 'blocks' && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{blocks.length} block</span>
+                      <button
+                        type="button"
+                        onClick={handleAiGenerate}
+                        disabled={aiGenerating}
+                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-indigo-600 transition disabled:opacity-60"
+                      >
+                        {aiGenerating ? '⏳ Generating...' : '✨ Generate dengan AI'}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mb-4">
+                      {aiGenerating ? 'AI sedang membuat konten, harap tunggu...' : 'Susun materi pakai blocks, atau klik "Generate dengan AI" untuk otomatis.'}
+                    </p>
+                    <div className="ml-8">
+                      <BlockEditor initialBlocks={blocks} onChange={setBlocks} />
+                    </div>
+                  </div>
+                )}
+
+                {/* HTML UPLOAD */}
+                {kontenMode === 'html' && (
+                  <div className="space-y-4">
+                    {/* Info box */}
+                    <div className="bg-violet-50 border border-violet-200 rounded-xl p-4">
+                      <p className="text-sm font-semibold text-violet-800 mb-1">🌐 Upload File HTML Interaktif</p>
+                      <p className="text-xs text-violet-600 leading-relaxed">
+                        Upload file <strong>.html</strong> yang sudah kamu buat. Semua fitur akan berjalan sempurna: quiz, animasi, tabs, dan interaksi lainnya. Maksimal <strong>5 MB</strong>.
+                      </p>
+                    </div>
+
+                    {/* Drop zone / file picker */}
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+                        htmlFileName
+                          ? 'border-violet-400 bg-violet-50'
+                          : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50'
+                      }`}
+                    >
+                      {htmlFileName ? (
+                        <>
+                          <div className="text-4xl mb-2">✅</div>
+                          <p className="font-semibold text-violet-700 text-sm">{htmlFileName}</p>
+                          <p className="text-xs text-gray-400 mt-1">{Math.round(htmlKonten.length / 1024)} KB · Klik untuk ganti file</p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-4xl mb-2">📂</div>
+                          <p className="font-semibold text-gray-600 text-sm">Klik untuk pilih file HTML</p>
+                          <p className="text-xs text-gray-400 mt-1">Format: .html atau .htm · Maks 5 MB</p>
+                        </>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".html,.htm"
+                        onChange={handleHtmlFileChange}
+                        className="hidden"
+                        aria-label="Upload file HTML"
+                      />
+                    </div>
+
+                    {/* Preview toggle */}
+                    {htmlKonten && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setHtmlPreview(!htmlPreview)}
+                          className="flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-900 transition"
+                        >
+                          <span>{htmlPreview ? '🙈' : '👁'}</span>
+                          {htmlPreview ? 'Sembunyikan Preview' : 'Lihat Preview HTML'}
+                        </button>
+                        {htmlPreview && (
+                          <div className="mt-3 rounded-2xl overflow-hidden border-2 border-violet-200 shadow-lg">
+                            <div className="bg-violet-100 px-4 py-2 flex items-center gap-2 border-b border-violet-200">
+                              <div className="flex gap-1.5">
+                                <div className="w-3 h-3 bg-red-400 rounded-full" />
+                                <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                                <div className="w-3 h-3 bg-green-400 rounded-full" />
+                              </div>
+                              <p className="text-xs text-violet-600 font-medium ml-2">Preview: {htmlFileName}</p>
+                            </div>
+                            <iframe
+                              srcDoc={htmlKonten}
+                              sandbox="allow-scripts allow-same-origin"
+                              className="w-full bg-white"
+                              style={{ height: '600px', border: 'none' }}
+                              title="Preview materi HTML"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -322,21 +502,27 @@ export default function GuruMateriPage() {
               <div className="space-y-2">
                 {filteredMateri.map((m) => {
                   const k_config = KESULITAN_CONFIG[m.tingkat_kesulitan as keyof typeof KESULITAN_CONFIG] || KESULITAN_CONFIG.sedang;
+                  const isHtml = m.konten && m.konten.trim().startsWith('<');
                   return (
                     <div key={m.id} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
                       <div className="flex items-start gap-4 p-4">
-                        <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">📖</div>
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isHtml ? 'bg-violet-50' : 'bg-blue-50'}`}>
+                          {isHtml ? '🌐' : '📖'}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap mb-1">
                             <span className="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">{m.mapel}</span>
                             {m.kelas && <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{m.kelas.nama}</span>}
                             {m.tingkat_kesulitan && <span className={`text-xs px-2 py-0.5 rounded-full ${k_config.color}`}>{k_config.label}</span>}
+                            {isHtml && <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 HTML</span>}
                             {m.estimasi_menit && <span className="text-xs text-gray-500">⏱ {m.estimasi_menit} mnt</span>}
                           </div>
                           <h3 className="font-bold text-gray-800 text-sm">{m.judul}</h3>
                           {m.bab && <p className="text-xs text-gray-500 mt-0.5">{m.bab}</p>}
                           {m.ringkasan && <p className="text-xs text-gray-500 mt-1 line-clamp-1">{m.ringkasan}</p>}
-                          <p className="text-[10px] text-gray-400 mt-1.5">{(m.konten_blocks?.length || 0)} block · {new Date(m.created_at).toLocaleDateString('id-ID')}</p>
+                          <p className="text-[10px] text-gray-400 mt-1.5">
+                            {isHtml ? `HTML · ${Math.round((m.konten?.length || 0) / 1024)} KB` : `${(m.konten_blocks?.length || 0)} block`} · {new Date(m.created_at).toLocaleDateString('id-ID')}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-1.5 flex-shrink-0">
                           <button onClick={() => handleEdit(m)} className="px-3 py-1.5 text-xs bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 font-semibold transition">
