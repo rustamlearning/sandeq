@@ -220,7 +220,7 @@ export default function KerjakanKuisPage() {
           <p className="text-xs text-gray-500 mb-2">Soal {currentIdx + 1} dari {totalSoal}</p>
           <p className="text-lg text-gray-800 mb-6 whitespace-pre-wrap">{soal.teks}</p>
 
-          {soal.tipe === 'pilgan' && soal.pilihan && (
+          {soal.tipe === 'pg' && soal.pilihan && (
             <div className="space-y-2">
               {soal.pilihan.map((p, i) => {
                 if (!p) return null
@@ -243,7 +243,7 @@ export default function KerjakanKuisPage() {
             </div>
           )}
 
-          {soal.tipe === 'benar_salah' && (
+          {soal.tipe === 'true_false' && (
             <div className="space-y-2">
               {['Benar', 'Salah'].map((p) => {
                 const isSelected = jawaban[soal.id] === p
