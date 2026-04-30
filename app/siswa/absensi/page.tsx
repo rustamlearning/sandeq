@@ -162,7 +162,7 @@ export default function AbsensiSiswaPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
               <div className="grid grid-cols-7 border-b border-slate-100">
                 {['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map((d,i) => (
-                  <div key={d} className={`py-2 text-center text-xs font-semibold ${i>=5?'text-red-400':'text-slate-400'}`}>{d}</div>
+                  <div key={d} className={`py-2 text-center text-xs font-semibold ${i>=6?'text-red-400':'text-slate-400'}`}>{d}</div>
                 ))}
               </div>
               <div className="grid grid-cols-7 gap-px bg-slate-50">
@@ -172,7 +172,7 @@ export default function AbsensiSiswaPage() {
                   const ds = String(day).padStart(2,'0')
                   const status = dayMap[ds]
                   const date = new Date(sy, sm-1, day)
-                  const isWeekend = date.getDay()===0||date.getDay()===6
+                  const isWeekend = date.getDay()===0
                   const isToday = date.toDateString()===new Date().toDateString()
                   const cfg = status ? STATUS_CONFIG[status] : null
                   return (
