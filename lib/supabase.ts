@@ -63,6 +63,7 @@ export interface Soal {
   teks: string
   tipe: 'pilgan' | 'benar_salah' | 'isian'
   pilihan: string[] | null
+  jawaban_benar: string
   jawaban: string
   pembahasan: string | null
 }
