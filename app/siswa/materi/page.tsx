@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -82,6 +83,7 @@ export default function SiswaMateriPage() {
   const [mastery, setMastery] = useState<Record<string, any>>({});
   const [tutorOpen, setTutorOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  const [openMapel, setOpenMapel] = useState<string | null>(null);
   const { notifications, dismiss, showActivityResult } = useXPNotifications();
 
   useEffect(() => { init(); }, []);
@@ -271,12 +273,122 @@ export default function SiswaMateriPage() {
     );
   }
 
-  // ===== LIST VIEW =====
+
+  // Ikon per mata pelajaran
+  const MAPEL_ICONS: Record<string, { icon: string; bg: string; color: string }> = {
+    'Matematika':              { icon: '🧮', bg: 'bg-blue-50',    color: 'text-blue-600'   },
+    'Bahasa Indonesia':        { icon: '📝', bg: 'bg-red-50',     color: 'text-red-600'    },
+    'Bahasa Inggris':          { icon: '🌍', bg: 'bg-sky-50',     color: 'text-sky-600'    },
+    'Fisika':                  { icon: '⚡', bg: 'bg-yellow-50',  color: 'text-yellow-600' },
+    'Kimia':                   { icon: '🧪', bg: 'bg-green-50',   color: 'text-green-600'  },
+    'Biologi':                 { icon: '🌿', bg: 'bg-emerald-50', color: 'text-emerald-600'},
+    'Sejarah Indonesia':       { icon: '🏛️', bg: 'bg-amber-50',   color: 'text-amber-600'  },
+    'Geografi':                { icon: '🗺️', bg: 'bg-teal-50',    color: 'text-teal-600'   },
+    'Ekonomi':                 { icon: '📈', bg: 'bg-lime-50',    color: 'text-lime-600'   },
+    'Sosiologi':               { icon: '👥', bg: 'bg-pink-50',    color: 'text-pink-600'   },
+    'PPKn':                    { icon: '🏅', bg: 'bg-rose-50',    color: 'text-rose-600'   },
+    'Pendidikan Agama Islam':  { icon: '☪️', bg: 'bg-green-50',   color: 'text-green-700'  },
+    'Seni Budaya':             { icon: '🎨', bg: 'bg-purple-50',  color: 'text-purple-600' },
+    'Penjaskes':               { icon: '⚽', bg: 'bg-orange-50',  color: 'text-orange-600' },
+    'Informatika':             { icon: '💻', bg: 'bg-indigo-50',  color: 'text-indigo-600' },
+    'Lainnya':                 { icon: '📚', bg: 'bg-slate-50',   color: 'text-slate-600'  },
+  };
+  const getMapelStyle = (mapel: string) => MAPEL_ICONS[mapel] || { icon: '📚', bg: 'bg-slate-50', color: 'text-slate-600' };
+  // ===== LIST VIEW — grouped by mapel =====
   const selesaiCount = materiList.filter(m => progress[m.id]?.selesai).length;
 
+  // Group materi by mapel
+  const grouped: Record<string, any[]> = {};
+  materiList.forEach(m => {
+    const key = m.mapel || 'Lainnya';
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(m);
+  });
+  const mapelList = Object.keys(grouped).sort();
+
+  if (openMapel) {
+    const items = grouped[openMapel] || [];
+    return (
+      <div className="min-h-screen bg-[#F4F9FF]">
+        <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-20 shadow-lg">
+          <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+            <button
+              onClick={() => setOpenMapel(null)}
+              aria-label="Kembali ke daftar mapel"
+              className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
+            >
+              ← Kembali
+            </button>
+            <span className="text-white/30">|</span>
+            <h1 className="font-bold text-lg truncate">📚 {openMapel}</h1>
+            <div className="ml-auto text-right flex-shrink-0">
+              <p className="text-sm font-bold">
+                {items.filter(m => progress[m.id]?.selesai).length}
+                <span className="text-blue-300 font-normal">/{items.length}</span>
+              </p>
+              <p className="text-blue-200 text-xs">selesai</p>
+            </div>
+          </div>
+          <div className="h-1 bg-white/20">
+            <div
+              className="h-1 bg-gradient-to-r from-emerald-400 to-teal-400 transition-all"
+              style={{ width: `${items.length > 0 ? Math.round(items.filter(m => progress[m.id]?.selesai).length / items.length * 100) : 0}%` }}
+            />
+          </div>
+        </header>
+        <main className="max-w-3xl mx-auto px-4 py-6">
+          <div className="space-y-3">
+            {items.map((m) => {
+              const p = progress[m.id];
+              const mast = mastery[m.id];
+              const mastConf = masteryConfig[mast?.level || 'belum_mulai'];
+              const diff = m.tingkat_kesulitan ? difficultyConfig[m.tingkat_kesulitan] : null;
+              const isSelesai = p?.selesai;
+              const htmlMode = isHtmlKonten(m.konten);
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => openMateri(m)}
+                  aria-label={`Buka materi: ${m.judul}`}
+                  className="w-full text-left bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isSelesai ? 'bg-emerald-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
+                    }`}>
+                      <span className="text-lg">{isSelesai ? '✅' : htmlMode ? '🌐' : '📖'}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                        {m.bab && <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">{m.bab}</span>}
+                        {diff && <span className={`text-xs px-2 py-0.5 rounded-full ${diff.color}`}>{diff.label}</span>}
+                        {htmlMode && <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 Interaktif</span>}
+                        {m.estimasi_menit && <span className="text-xs text-slate-400">⏱ {m.estimasi_menit} mnt</span>}
+                      </div>
+                      <h3 className="font-semibold text-slate-800 group-hover:text-blue-700 transition">{m.judul}</h3>
+                      {m.ringkasan && <p className="text-sm text-slate-400 mt-1 line-clamp-2 leading-relaxed">{m.ringkasan}</p>}
+                      <div className="flex items-center justify-between mt-3">
+                        {m.users?.nama && <p className="text-xs text-slate-400">Oleh {m.users.nama}</p>}
+                        <div className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${mastConf.bg} ${mastConf.color}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${mastConf.dot}`} />
+                          {mastConf.label}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-slate-300 group-hover:text-blue-400 transition text-xl mt-1">›</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ===== MAPEL FOLDER VIEW =====
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -293,7 +405,6 @@ export default function SiswaMateriPage() {
             </div>
           )}
         </div>
-        {/* Progress bar */}
         {materiList.length > 0 && (
           <div className="h-1 bg-white/20">
             <div
@@ -312,56 +423,39 @@ export default function SiswaMateriPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {materiList.map((m) => {
-              const p = progress[m.id];
-              const mast = mastery[m.id];
-              const mastConf = masteryConfig[mast?.level || 'belum_mulai'];
-              const diff = m.tingkat_kesulitan ? difficultyConfig[m.tingkat_kesulitan] : null;
-              const isSelesai = p?.selesai;
-              const htmlMode = isHtmlKonten(m.konten);
-
+            {mapelList.map((mapel) => {
+              const items = grouped[mapel];
+              const selesai = items.filter(m => progress[m.id]?.selesai).length;
+              const pct = Math.round(selesai / items.length * 100);
+              const hasHtml = items.some(m => isHtmlKonten(m.konten));
               return (
                 <button
-                  key={m.id}
-                  onClick={() => openMateri(m)}
-                  aria-label={`Buka materi: ${m.judul}`}
+                  key={mapel}
+                  onClick={() => setOpenMapel(mapel)}
+                  aria-label={`Buka folder ${mapel}`}
                   className="w-full text-left bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Icon */}
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isSelesai ? 'bg-emerald-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
-                    }`}>
-                      <span className="text-lg">
-                        {isSelesai ? '✅' : htmlMode ? '🌐' : '📖'}
-                      </span>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl ${getMapelStyle(mapel).bg}`}>
+                      {getMapelStyle(mapel).icon}
                     </div>
-
                     <div className="flex-1 min-w-0">
-                      {/* Badges */}
-                      <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                        <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">{m.mapel}</span>
-                        {m.bab && <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">{m.bab}</span>}
-                        {diff && <span className={`text-xs px-2 py-0.5 rounded-full ${diff.color}`}>{diff.label}</span>}
-                        {htmlMode && (
-                          <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 Interaktif</span>
-                        )}
-                        {m.estimasi_menit && <span className="text-xs text-slate-400">⏱ {m.estimasi_menit} mnt</span>}
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-slate-800 group-hover:text-blue-700 transition truncate">{mapel}</h3>
+                        {hasHtml && <span className="text-xs px-1.5 py-0.5 bg-violet-100 text-violet-600 rounded-full">🌐</span>}
                       </div>
-
-                      <h3 className="font-semibold text-slate-800 group-hover:text-blue-700 transition">{m.judul}</h3>
-                      {m.ringkasan && <p className="text-sm text-slate-400 mt-1 line-clamp-2 leading-relaxed">{m.ringkasan}</p>}
-
-                      <div className="flex items-center justify-between mt-3">
-                        {m.users?.nama && <p className="text-xs text-slate-400">Oleh {m.users.nama}</p>}
-                        <div className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${mastConf.bg} ${mastConf.color}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${mastConf.dot}`} />
-                          {mastConf.label}
-                        </div>
+                      <p className="text-xs text-slate-400 mb-2">{items.length} materi · {selesai} selesai</p>
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500"
+                          style={{ width: `${pct}%` }}
+                        />
                       </div>
                     </div>
-
-                    <span className="text-slate-300 group-hover:text-blue-400 transition text-xl mt-1">›</span>
+                    <div className="flex-shrink-0 text-right">
+                      <p className="text-lg font-black text-blue-600">{pct}%</p>
+                      <span className="text-slate-300 group-hover:text-blue-400 transition text-xl">›</span>
+                    </div>
                   </div>
                 </button>
               );
