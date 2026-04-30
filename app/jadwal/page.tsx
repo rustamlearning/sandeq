@@ -23,6 +23,7 @@ const HARI_LIST = [
   { num: 3, short: 'Rab', full: 'Rabu' },
   { num: 4, short: 'Kam', full: 'Kamis' },
   { num: 5, short: 'Jum', full: 'Jumat' },
+  { num: 6, short: 'Sab', full: 'Sabtu' },
 ];
 
 const MAPEL_COLORS: Record<string, string> = {
