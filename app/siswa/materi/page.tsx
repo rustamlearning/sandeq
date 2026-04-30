@@ -294,6 +294,16 @@ export default function SiswaMateriPage() {
     'Lainnya':                 { icon: '📚', bg: 'bg-slate-50',   color: 'text-slate-600'  },
   };
   const getMapelStyle = (mapel: string) => MAPEL_ICONS[mapel] || { icon: '📚', bg: 'bg-slate-50', color: 'text-slate-600' };
+
+  // Semua mapel yang selalu ditampilkan (dengan placeholder kalau kosong)
+  const ALL_MAPEL = [
+    'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
+    'Biologi', 'Sejarah Indonesia', 'Geografi', 'Ekonomi', 'Sosiologi',
+    'PPKn', 'Pendidikan Agama Islam', 'Seni Budaya', 'Penjaskes', 'Informatika',
+  ];
+  // Merge: semua mapel standar + mapel dari data yang mungkin tidak ada di list
+  const extraMapel = mapelList.filter(m => !ALL_MAPEL.includes(m));
+  const fullMapelList = [...ALL_MAPEL, ...extraMapel];
   // ===== LIST VIEW — grouped by mapel =====
   const selesaiCount = materiList.filter(m => progress[m.id]?.selesai).length;
 
@@ -423,17 +433,22 @@ export default function SiswaMateriPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {mapelList.map((mapel) => {
-              const items = grouped[mapel];
+            {fullMapelList.map((mapel) => {
+              const items = grouped[mapel] || [];
+              const isEmpty = items.length === 0;
               const selesai = items.filter(m => progress[m.id]?.selesai).length;
-              const pct = Math.round(selesai / items.length * 100);
+              const pct = items.length > 0 ? Math.round(selesai / items.length * 100) : 0;
               const hasHtml = items.some(m => isHtmlKonten(m.konten));
               return (
                 <button
                   key={mapel}
-                  onClick={() => setOpenMapel(mapel)}
-                  aria-label={`Buka folder ${mapel}`}
-                  className="w-full text-left bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+                  onClick={() => !isEmpty && setOpenMapel(mapel)}
+                  aria-label={isEmpty ? `${mapel} - belum ada materi` : `Buka folder ${mapel}`}
+                  className={`w-full text-left rounded-2xl border shadow-sm p-5 transition-all duration-200 group ${
+                    isEmpty
+                      ? 'bg-slate-50 border-slate-100 opacity-60 cursor-default'
+                      : 'bg-white border-slate-100 hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl ${getMapelStyle(mapel).bg}`}>
@@ -444,7 +459,7 @@ export default function SiswaMateriPage() {
                         <h3 className="font-bold text-slate-800 group-hover:text-blue-700 transition truncate">{mapel}</h3>
                         {hasHtml && <span className="text-xs px-1.5 py-0.5 bg-violet-100 text-violet-600 rounded-full">🌐</span>}
                       </div>
-                      <p className="text-xs text-slate-400 mb-2">{items.length} materi · {selesai} selesai</p>
+                      <p className="text-xs text-slate-400 mb-2">{isEmpty ? 'Belum ada materi' : `${items.length} materi · ${selesai} selesai`}</p>
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500"
@@ -453,7 +468,7 @@ export default function SiswaMateriPage() {
                       </div>
                     </div>
                     <div className="flex-shrink-0 text-right">
-                      <p className="text-lg font-black text-blue-600">{pct}%</p>
+                      <p className={`text-lg font-black ${isEmpty ? 'text-slate-300' : 'text-blue-600'}`}>{isEmpty ? '–' : `${pct}%`}</p>
                       <span className="text-slate-300 group-hover:text-blue-400 transition text-xl">›</span>
                     </div>
                   </div>
