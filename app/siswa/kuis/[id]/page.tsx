@@ -74,7 +74,7 @@ export default function KerjakanKuisPage() {
     let benar = 0
     soalList.forEach((s) => {
       const userJawab = (jawaban[s.id] || '').trim()
-      const correct = s.jawaban.trim()
+      const correct = (s.jawaban || '').trim()
       if (s.tipe === 'isian') {
         if (userJawab.toLowerCase() === correct.toLowerCase()) benar++
       } else {
