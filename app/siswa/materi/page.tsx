@@ -282,7 +282,7 @@ export default function SiswaMateriPage() {
     'Fisika':                  { icon: '⚡', bg: 'bg-yellow-50',  color: 'text-yellow-600' },
     'Kimia':                   { icon: '🧪', bg: 'bg-green-50',   color: 'text-green-600'  },
     'Biologi':                 { icon: '🌿', bg: 'bg-emerald-50', color: 'text-emerald-600'},
-    'Sejarah Indonesia':       { icon: '🏛️', bg: 'bg-amber-50',   color: 'text-amber-600'  },
+    'Sejarah':       { icon: '🏛️', bg: 'bg-amber-50',   color: 'text-amber-600'  },
     'Geografi':                { icon: '🗺️', bg: 'bg-teal-50',    color: 'text-teal-600'   },
     'Ekonomi':                 { icon: '📈', bg: 'bg-lime-50',    color: 'text-lime-600'   },
     'Sosiologi':               { icon: '👥', bg: 'bg-pink-50',    color: 'text-pink-600'   },
@@ -294,16 +294,6 @@ export default function SiswaMateriPage() {
     'Lainnya':                 { icon: '📚', bg: 'bg-slate-50',   color: 'text-slate-600'  },
   };
   const getMapelStyle = (mapel: string) => MAPEL_ICONS[mapel] || { icon: '📚', bg: 'bg-slate-50', color: 'text-slate-600' };
-
-  // Semua mapel yang selalu ditampilkan (dengan placeholder kalau kosong)
-  const ALL_MAPEL = [
-    'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
-    'Biologi', 'Sejarah Indonesia', 'Geografi', 'Ekonomi', 'Sosiologi',
-    'PPKn', 'Pendidikan Agama Islam', 'Seni Budaya', 'Penjaskes', 'Informatika',
-  ];
-  // Merge: semua mapel standar + mapel dari data yang mungkin tidak ada di list
-  const extraMapel = mapelList.filter(m => !ALL_MAPEL.includes(m));
-  const fullMapelList = [...ALL_MAPEL, ...extraMapel];
   // ===== LIST VIEW — grouped by mapel =====
   const selesaiCount = materiList.filter(m => progress[m.id]?.selesai).length;
 
@@ -315,6 +305,13 @@ export default function SiswaMateriPage() {
     grouped[key].push(m);
   });
   const mapelList = Object.keys(grouped).sort();
+  const ALL_MAPEL = [
+    'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Fisika', 'Kimia',
+    'Biologi', 'Sejarah', 'Geografi', 'Ekonomi', 'Sosiologi',
+    'PPKn', 'Pendidikan Agama Islam', 'Seni Budaya', 'Penjaskes', 'Informatika',
+  ];
+  const extraMapel = mapelList.filter(m => !ALL_MAPEL.includes(m));
+  const fullMapelList = [...ALL_MAPEL, ...extraMapel];
 
   if (openMapel) {
     const items = grouped[openMapel] || [];
