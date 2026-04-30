@@ -68,6 +68,7 @@ export default function KerjakanKuisPage() {
   const handleSubmit = useCallback(async () => {
     if (!user || submitting) return
     setSubmitting(true)
+    try {
 
     // Hitung skor
     let benar = 0
@@ -105,7 +106,12 @@ export default function KerjakanKuisPage() {
     }
 
     setHasil({ skor, benar, total: soalList.length })
+    } catch (e: any) {
+      console.error('Submit error:', e)
+      alert('Gagal kirim: ' + (e?.message || JSON.stringify(e)))
+    } finally {
     setSubmitting(false)
+    }
   }, [user, submitting, soalList, jawaban, kuis, kuisId])
 
   // Timer countdown
