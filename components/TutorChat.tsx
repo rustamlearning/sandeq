@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Bot, Loader2, Send, Sparkles, Trash2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Block } from '@/lib/blocks';
 import { getStarterMessages } from '@/lib/aiTutor';
@@ -142,7 +143,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
     } catch (e) {
       const fallback: Message = {
         role: 'assistant',
-        content: `Halo! Aku **Tutor SANDEQ** 🤖\n\nAda kendala koneksi sebentar. Coba tanya lagi ya — aku siap bantu kamu belajar **${materi?.judul || 'materi ini'}**!`,
+        content: `Halo! Aku **Tutor SANDEQ**.\n\nAda kendala koneksi sebentar. Coba tanya lagi ya, aku siap bantu kamu belajar **${materi?.judul || 'materi ini'}**.`,
         suggestions: ['Jelaskan materi', 'Kasih contoh', 'Buatkan soal'],
       };
       setMessages((prev) => [...prev, fallback]);
@@ -200,7 +201,7 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
         <header className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
-              🤖
+              <Bot size={21} />
             </div>
             <div className="min-w-0">
               <h3 className="font-bold truncate">Tutor SANDEQ</h3>
@@ -215,13 +216,13 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
               className="text-xs text-white/80 hover:text-white px-2 py-1 hover:bg-white/10 rounded"
               title="Hapus riwayat chat"
             >
-              🗑
+              <Trash2 size={15} />
             </button>
             <button
               onClick={onClose}
               className="w-8 h-8 hover:bg-white/20 rounded-full flex items-center justify-center"
             >
-              ✕
+              <X size={17} />
             </button>
           </div>
         </header>
@@ -229,7 +230,10 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
           {loading && (
-            <div className="text-center text-gray-500 text-sm py-4">⏳ Memuat percakapan...</div>
+            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm py-4">
+              <Loader2 className="animate-spin" size={16} />
+              Memuat percakapan...
+            </div>
           )}
 
           {messages.map((msg, idx) => (
@@ -291,7 +295,10 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
           {/* Starter messages */}
           {!loading && messages.length === 1 && messages[0].role === 'assistant' && (
             <div className="space-y-2 mt-4">
-              <p className="text-xs text-gray-500 text-center">💡 Atau pilih pertanyaan cepat:</p>
+              <p className="inline-flex w-full items-center justify-center gap-1.5 text-xs text-gray-500 text-center">
+                <Sparkles size={13} />
+                Atau pilih pertanyaan cepat:
+              </p>
               <div className="grid grid-cols-1 gap-2">
                 {starters.slice(0, 4).map((s, i) => (
                   <button
@@ -327,11 +334,11 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
               disabled={!input.trim() || thinking}
               className="w-10 h-10 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition flex-shrink-0"
             >
-              ➤
+              <Send size={17} />
             </button>
           </div>
           <p className="text-[10px] text-gray-400 text-center mt-2">
-            🦙 Llama 4 Scout by Meta · Tutor SANDEQ
+            Llama 4 Scout by Meta · Tutor SANDEQ
           </p>
         </div>
       </div>

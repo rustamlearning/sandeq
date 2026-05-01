@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft, Bot, Loader2, Send } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
 import ReactMarkdown from 'react-markdown'
@@ -74,7 +75,7 @@ export default function AITutorPage() {
     } catch {
       const fallback: Message = {
         role: 'assistant',
-        content: `Halo **${user?.nama?.split(' ')[0] || 'kamu'}**! 👋\n\nAku **Tutor SANDEQ** — siap bantu kamu belajar apapun! Ada koneksi sebentar, coba tanya ya.`,
+        content: `Halo **${user?.nama?.split(' ')[0] || 'kamu'}**.\n\nAku **Tutor SANDEQ**, siap bantu kamu belajar apapun. Ada kendala koneksi sebentar, coba tanya lagi ya.`,
         suggestions: QUICK_STARTERS.slice(0, 3),
       }
       setMessages((prev) => isGreeting ? [fallback] : [...prev, fallback])
@@ -107,7 +108,9 @@ export default function AITutorPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">🤖</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-purple-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-500">Memuat tutor...</p>
         </div>
       </div>
@@ -123,10 +126,10 @@ export default function AITutorPage() {
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-            🤖
+            <Bot size={19} />
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold text-white leading-tight">Tutor SANDEQ</h1>
@@ -147,7 +150,9 @@ export default function AITutorPage() {
       <main className="flex-1 overflow-y-auto max-w-2xl w-full mx-auto px-4 py-4 space-y-4">
         {messages.length === 0 && !thinking && (
           <div className="mt-8 text-center">
-            <div className="text-6xl mb-4">🤖</div>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 text-purple-700">
+              <Bot size={31} />
+            </div>
             <p className="text-gray-500 text-sm">Tutor sedang bersiap...</p>
           </div>
         )}
@@ -156,7 +161,7 @@ export default function AITutorPage() {
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             {msg.role === 'assistant' && (
               <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-lg flex-shrink-0 mt-0.5">
-                🤖
+                <Bot size={16} />
               </div>
             )}
             <div className={`max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-2`}>
@@ -194,7 +199,7 @@ export default function AITutorPage() {
 
         {thinking && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-lg flex-shrink-0">🤖</div>
+            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-lg flex-shrink-0"><Bot size={16} /></div>
             <div className="bg-white shadow-sm border border-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm">
               <div className="flex gap-1 items-center">
                 <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -245,7 +250,7 @@ export default function AITutorPage() {
             disabled={!input.trim() || thinking}
             className="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center hover:bg-purple-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
-            ↑
+            <Send size={17} />
           </button>
         </div>
         <p className="text-xs text-gray-400 mt-1.5 text-center">Shift+Enter untuk baris baru</p>

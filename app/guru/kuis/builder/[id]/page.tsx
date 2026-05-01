@@ -2,6 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Bot,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList,
+  Eye,
+  FileQuestion,
+  Lightbulb,
+  Loader2,
+  Plus,
+  Rocket,
+  Save,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import {
@@ -15,7 +34,6 @@ import {
   validateSoal,
   publishKuis,
   getKuisWithSoal,
-  SOAL_TIPE_ICONS,
   SOAL_TIPE_LABELS,
 } from '@/lib/kuis';
 import SoalEditor from '@/components/SoalEditor';
@@ -176,7 +194,7 @@ export default function KuisBuilderPage() {
     setSaving(false);
     
     if (publish) {
-      toastInfo('🎉 Kuis berhasil di-publish! Siswa sekarang bisa mengerjakan.');
+      toastInfo('Kuis berhasil di-publish. Siswa sekarang bisa mengerjakan.');
       router.push('/guru/kuis');
     } else {
       // Update URL ke ID kalau baru create
@@ -347,15 +365,18 @@ export default function KuisBuilderPage() {
             onClick={() => router.push('/guru/kuis')}
             className="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded text-sm"
           >
-            ← Kembali
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={15} /> Kembali</span>
           </button>
           <div className="flex-1">
             <h1 className="text-lg font-bold">
-              {kuisId === 'new' ? '✨ Buat Kuis Baru' : '✏️ Edit Kuis'}
+              <span className="inline-flex items-center gap-2">
+                {kuisId === 'new' ? <Sparkles size={18} /> : <FileQuestion size={18} />}
+                {kuisId === 'new' ? 'Buat Kuis Baru' : 'Edit Kuis'}
+              </span>
             </h1>
             <p className="text-xs text-gray-500">
               {soalList.length} soal • {totalPoin} poin
-              {kuis.is_published && ' • 🟢 Published'}
+              {kuis.is_published && ' • Published'}
             </p>
           </div>
 
@@ -364,14 +385,14 @@ export default function KuisBuilderPage() {
             disabled={saving}
             className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 disabled:opacity-50 text-sm font-medium"
           >
-            {saving ? 'Menyimpan...' : '💾 Simpan Draft'}
+            <span className="inline-flex items-center gap-1.5">{saving ? <Loader2 className="animate-spin" size={15} /> : <Save size={15} />}{saving ? 'Menyimpan...' : 'Simpan Draft'}</span>
           </button>
           <button
             onClick={() => saveKuis(true)}
             disabled={saving}
             className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 text-sm font-medium"
           >
-            {saving ? 'Mempublish...' : '🚀 Publish'}
+            <span className="inline-flex items-center gap-1.5">{saving ? <Loader2 className="animate-spin" size={15} /> : <Rocket size={15} />}{saving ? 'Mempublish...' : 'Publish'}</span>
           </button>
         </div>
       </header>
@@ -380,7 +401,7 @@ export default function KuisBuilderPage() {
         {/* Errors */}
         {errors.length > 0 && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <p className="font-semibold text-red-700 mb-1">⚠️ Ada yang harus diperbaiki:</p>
+            <p className="inline-flex items-center gap-1.5 font-semibold text-red-700 mb-1"><AlertTriangle size={15} /> Ada yang harus diperbaiki:</p>
             <ul className="text-sm text-red-600 list-disc list-inside">
               {errors.map((err, i) => <li key={i}>{err}</li>)}
             </ul>
@@ -390,7 +411,8 @@ export default function KuisBuilderPage() {
         {/* Kuis Info Card */}
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-bold flex items-center gap-2">
-            📋 Informasi Kuis
+            <ClipboardList size={18} />
+            Informasi Kuis
           </h2>
 
           <div>
@@ -542,13 +564,13 @@ export default function KuisBuilderPage() {
             className="w-full flex items-center justify-between gap-2"
           >
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🤖</span>
+              <Bot size={24} className="text-purple-700" />
               <div className="text-left">
                 <p className="font-bold text-purple-900">Generate Soal dengan AI</p>
                 <p className="text-xs text-purple-600">Powered by Llama 4 via Groq</p>
               </div>
             </div>
-            <span className="text-purple-600">{showAIPanel ? '▲' : '▼'}</span>
+            <span className="text-purple-600">{showAIPanel ? <ChevronUp size={18} /> : <ChevronDown size={18} />}</span>
           </button>
 
           {showAIPanel && (
@@ -604,7 +626,7 @@ export default function KuisBuilderPage() {
               </div>
               {aiError && (
                 <div className="bg-red-50 border-l-4 border-red-400 p-2 text-xs text-red-700 rounded">
-                  ⚠️ {aiError}
+                  <span className="inline-flex items-center gap-1.5"><AlertTriangle size={13} /> {aiError}</span>
                 </div>
               )}
               <button
@@ -612,10 +634,13 @@ export default function KuisBuilderPage() {
                 disabled={aiLoading || !aiTopik.trim()}
                 className="w-full px-4 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {aiLoading ? '⏳ Generating...' : `🚀 Generate ${aiJumlah} Soal dengan AI`}
+                <span className="inline-flex items-center justify-center gap-2">
+                  {aiLoading ? <Loader2 className="animate-spin" size={16} /> : <Rocket size={16} />}
+                  {aiLoading ? 'Generating...' : `Generate ${aiJumlah} Soal dengan AI`}
+                </span>
               </button>
               <p className="text-xs text-gray-500 italic">
-                💡 Pastikan kuis sudah disimpan (judul + kelas + mapel terisi) sebelum generate.
+                <span className="inline-flex items-center gap-1.5"><Lightbulb size={13} /> Pastikan kuis sudah disimpan (judul + kelas + mapel terisi) sebelum generate.</span>
               </p>
             </div>
           )}
@@ -624,7 +649,7 @@ export default function KuisBuilderPage() {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">📝 Soal-Soal ({soalList.length})</h2>
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold"><FileQuestion size={18} /> Soal-Soal ({soalList.length})</h2>
             <div className="flex gap-2">
               <button
                 onClick={() => router.push(`/guru/kuis/builder/${kuis.id || 'new'}/preview`)}
@@ -632,14 +657,16 @@ export default function KuisBuilderPage() {
                 className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50"
                 title={!kuis.id ? 'Save dulu' : ''}
               >
-                👁️ Preview
+                <span className="inline-flex items-center gap-1.5"><Eye size={14} /> Preview</span>
               </button>
             </div>
           </div>
 
           {soalList.length === 0 ? (
             <div className="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-              <div className="text-5xl mb-3">📝</div>
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                <FileQuestion size={25} />
+              </div>
               <p className="text-gray-500 mb-4">Belum ada soal. Klik tombol "+ Tambah Soal" di bawah!</p>
             </div>
           ) : (
@@ -660,7 +687,7 @@ export default function KuisBuilderPage() {
                     className="p-1 bg-white border rounded hover:bg-gray-50 disabled:opacity-30 text-xs"
                     title="Pindah ke atas"
                   >
-                    ⬆️
+                    <ArrowUp size={14} />
                   </button>
                   <button
                     onClick={() => moveSoal(i, 'down')}
@@ -668,7 +695,7 @@ export default function KuisBuilderPage() {
                     className="p-1 bg-white border rounded hover:bg-gray-50 disabled:opacity-30 text-xs"
                     title="Pindah ke bawah"
                   >
-                    ⬇️
+                    <ArrowDown size={14} />
                   </button>
                 </div>
               </div>
@@ -688,7 +715,7 @@ export default function KuisBuilderPage() {
                 onClick={() => addSoal(tipe)}
                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-blue-50 rounded-lg text-left transition"
               >
-                <span className="text-2xl">{SOAL_TIPE_ICONS[tipe]}</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-[10px] font-black text-blue-700">{SOAL_TIPE_LABELS[tipe].slice(0, 2).toUpperCase()}</span>
                 <span className="font-medium text-sm">{SOAL_TIPE_LABELS[tipe]}</span>
               </button>
             ))}
@@ -698,7 +725,8 @@ export default function KuisBuilderPage() {
           onClick={() => setShowAddMenu(!showAddMenu)}
           className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2 font-medium"
         >
-          {showAddMenu ? '✕ Tutup' : '+ Tambah Soal'}
+          {showAddMenu ? <X size={17} /> : <Plus size={17} />}
+          {showAddMenu ? 'Tutup' : 'Tambah Soal'}
         </button>
       </div>
     </div>

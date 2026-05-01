@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, Inbox, Lightbulb, Search, Target } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -168,10 +169,10 @@ export default function MasteryTrackerPage() {
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600 transition-colors">
-              ←
+              <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">🎯 Mastery Tracker</h1>
+              <h1 className="inline-flex items-center gap-2 text-lg font-bold text-slate-800"><Target size={18} /> Mastery Tracker</h1>
               <p className="text-xs text-slate-500">Status penguasaan materi per siswa</p>
             </div>
           </div>
@@ -245,7 +246,9 @@ export default function MasteryTrackerPage() {
         {/* Tabel Mastery */}
         {siswas.length === 0 || materis.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-100 p-12 text-center text-slate-400">
-            <p className="text-4xl mb-3">📭</p>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Inbox size={25} />
+            </div>
             <p className="font-medium">Belum ada data siswa atau materi</p>
           </div>
         ) : (
@@ -375,7 +378,7 @@ export default function MasteryTrackerPage() {
 
             {filteredSiswas.length === 0 && (
               <div className="py-12 text-center text-slate-400">
-                <p className="text-3xl mb-2">🔍</p>
+                <Search className="mx-auto mb-2" size={26} />
                 <p className="text-sm">Tidak ada siswa dengan filter ini</p>
               </div>
             )}
@@ -386,7 +389,7 @@ export default function MasteryTrackerPage() {
         {filterLevel !== 'semua' && filteredSiswas.length > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
             <p className="text-sm font-semibold text-amber-800 mb-1">
-              💡 {filteredSiswas.length} siswa dengan status "{MASTERY_CONFIG[filterLevel as MasteryLevel]?.label}"
+              <span className="inline-flex items-center gap-1.5"><Lightbulb size={15} /> {filteredSiswas.length} siswa dengan status "{MASTERY_CONFIG[filterLevel as MasteryLevel]?.label}"</span>
             </p>
             <p className="text-xs text-amber-700">
               {filterLevel === 'belum_mulai' && 'Siswa ini belum memulai materi. Pertimbangkan untuk mengirim pengingat atau membuka akses materi.'}

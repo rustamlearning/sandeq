@@ -2,6 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList,
+  Clock3,
+  FileText,
+  GraduationCap,
+  Medal,
+  Sparkles,
+  Target,
+  Timer,
+  Trophy,
+  XCircle,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { Kuis, getAttemptResult, formatDuration, getNilaiColor, getNilaiLabel } from '@/lib/kuis';
@@ -73,7 +90,7 @@ export default function KuisResultPage() {
       <header className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa/kuis')} className="text-blue-600 text-sm">
-            ← Daftar Kuis
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Daftar Kuis</span>
           </button>
           <h1 className="text-lg font-bold truncate">Hasil: {kuis.judul}</h1>
         </div>
@@ -90,8 +107,8 @@ export default function KuisResultPage() {
           }`}
         >
           <div className="text-center">
-            <div className="text-6xl mb-3">
-              {isPerfect ? '🏆' : lulus ? '🎉' : '💪'}
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20">
+              {isPerfect ? <Trophy size={32} /> : lulus ? <Sparkles size={32} /> : <Medal size={32} />}
             </div>
             <p className="text-sm uppercase tracking-wider opacity-90">
               {isPerfect && 'PERFECT SCORE!'}
@@ -111,20 +128,20 @@ export default function KuisResultPage() {
             </div>
             {attempt.needs_grading && (
               <p className="mt-3 text-xs bg-white/20 px-3 py-2 rounded-lg inline-block">
-                ⏳ Ada soal essay menunggu dinilai guru. Skor final akan update setelah dinilai.
+                <span className="inline-flex items-center gap-1.5"><Clock3 size={13} /> Ada soal essay menunggu dinilai guru. Skor final akan update setelah dinilai.</span>
               </p>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <StatCard icon="✅" label="Benar" value={correctCount} color="text-green-600" />
-          <StatCard icon="❌" label="Salah" value={wrongCount} color="text-red-600" />
+          <StatCard icon={CheckCircle2} label="Benar" value={correctCount} color="text-green-600" />
+          <StatCard icon={XCircle} label="Salah" value={wrongCount} color="text-red-600" />
           {ungradedCount > 0 && (
-            <StatCard icon="⏳" label="Belum dinilai" value={ungradedCount} color="text-yellow-600" />
+            <StatCard icon={Clock3} label="Belum dinilai" value={ungradedCount} color="text-yellow-600" />
           )}
-          <StatCard icon="⏱️" label="Durasi" value={formatDuration(attempt.durasi_aktual_detik || 0)} color="text-blue-600" />
-          <StatCard icon="🎯" label="KKM" value={kuis.kkm || 75} color="text-gray-600" />
+          <StatCard icon={Timer} label="Durasi" value={formatDuration(attempt.durasi_aktual_detik || 0)} color="text-blue-600" />
+          <StatCard icon={Target} label="KKM" value={kuis.kkm || 75} color="text-gray-600" />
         </div>
 
         {kuis.tampilkan_jawaban !== false && (
@@ -133,12 +150,12 @@ export default function KuisResultPage() {
             className="w-full bg-white rounded-xl shadow-sm p-4 mb-4 flex items-center justify-between hover:shadow-md transition"
           >
             <div className="flex items-center gap-3">
-              <span className="text-2xl">📋</span>
+              <ClipboardList size={22} className="text-blue-600" />
               <span className="font-medium">
                 {showReview ? 'Sembunyikan Review' : 'Lihat Review Jawaban'}
               </span>
             </div>
-            <span className="text-blue-600">{showReview ? '▲' : '▼'}</span>
+            <span className="text-blue-600">{showReview ? <ChevronUp size={18} /> : <ChevronDown size={18} />}</span>
           </button>
         )}
 
@@ -169,10 +186,10 @@ export default function KuisResultPage() {
   );
 }
 
-function StatCard({ icon, label, value, color }: { icon: string; label: string; value: any; color: string }) {
+function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: any; color: string }) {
   return (
     <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-      <div className="text-2xl mb-1">{icon}</div>
+      <Icon className={`mx-auto mb-1 ${color}`} size={22} />
       <div className={`text-xl font-bold ${color}`}>{value}</div>
       <div className="text-xs text-gray-500">{label}</div>
     </div>
@@ -187,20 +204,20 @@ function ReviewCard({ jawaban, index }: { jawaban: any; index: number }) {
   const isCorrect = jawaban.benar === true;
 
   let bgColor = 'bg-gray-50 border-gray-200';
-  let icon = '📝';
+  let Icon = FileText;
   let label = 'Belum dijawab';
 
   if (isUngraded && jawaban.jawaban) {
     bgColor = 'bg-yellow-50 border-yellow-300';
-    icon = '⏳';
+    Icon = Clock3;
     label = 'Menunggu nilai';
   } else if (isCorrect) {
     bgColor = 'bg-green-50 border-green-300';
-    icon = '✅';
+    Icon = CheckCircle2;
     label = 'Benar';
   } else if (jawaban.benar === false) {
     bgColor = 'bg-red-50 border-red-300';
-    icon = '❌';
+    Icon = XCircle;
     label = 'Salah';
   }
 
@@ -211,7 +228,7 @@ function ReviewCard({ jawaban, index }: { jawaban: any; index: number }) {
           <span className="bg-white px-2 py-1 rounded font-bold text-sm">
             #{index + 1}
           </span>
-          <span className="text-2xl">{icon}</span>
+          <Icon size={20} />
           <span className="text-sm font-medium">{label}</span>
         </div>
         <div className="text-right text-sm">
@@ -238,14 +255,14 @@ function ReviewCard({ jawaban, index }: { jawaban: any; index: number }) {
 
       {soal.penjelasan && (
         <div className="mt-2 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-          <p className="text-xs text-blue-700 font-medium mb-1">💡 Penjelasan:</p>
+          <p className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-medium mb-1"><Sparkles size={12} /> Penjelasan:</p>
           <p className="text-sm text-blue-900">{soal.penjelasan}</p>
         </div>
       )}
 
       {jawaban.feedback && (
         <div className="mt-2 p-3 bg-purple-50 border-l-4 border-purple-400 rounded">
-          <p className="text-xs text-purple-700 font-medium mb-1">👨‍🏫 Feedback Guru:</p>
+          <p className="inline-flex items-center gap-1.5 text-xs text-purple-700 font-medium mb-1"><GraduationCap size={12} /> Feedback Guru:</p>
           <p className="text-sm text-purple-900">{jawaban.feedback}</p>
         </div>
       )}

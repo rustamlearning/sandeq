@@ -1,6 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  CheckCircle2,
+  FileUp,
+  Image,
+  Link,
+  Loader2,
+  Paperclip,
+  Plus,
+  Table2,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import {
   Block,
@@ -88,7 +100,7 @@ export default function BlockEditor({ initialBlocks = [], onChange }: BlockEdito
               className="p-1 hover:bg-red-100 rounded text-red-500"
               title="Hapus"
             >
-              ✕
+              <X size={14} />
             </button>
           </div>
 
@@ -126,10 +138,10 @@ function AddBlockButton({
 }) {
   const categories = ['text', 'media', 'akademik', 'interaktif'] as const;
   const labels = {
-    text: '📝 Teks',
-    media: '🎬 Media',
-    akademik: '🎓 Akademik',
-    interaktif: '⚡ Interaktif',
+    text: 'Teks',
+    media: 'Media',
+    akademik: 'Akademik',
+    interaktif: 'Interaktif',
   };
 
   return (
@@ -138,7 +150,7 @@ function AddBlockButton({
         onClick={onToggle}
         className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition"
       >
-        + Tambah Block
+        <span className="inline-flex items-center gap-1.5"><Plus size={14} /> Tambah Block</span>
       </button>
 
       {isOpen && (
@@ -147,7 +159,7 @@ function AddBlockButton({
           <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[92vw] max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 flex items-center justify-between flex-shrink-0">
               <h3 className="text-white font-bold text-sm">Pilih Tipe Block</h3>
-              <button onClick={onToggle} className="text-white/80 hover:text-white text-lg w-7 h-7 flex items-center justify-center">✕</button>
+              <button onClick={onToggle} className="text-white/80 hover:text-white text-lg w-7 h-7 flex items-center justify-center"><X size={16} /></button>
             </div>
             <div className="overflow-y-auto p-3">
               {categories.map((cat) => (
@@ -162,7 +174,7 @@ function AddBlockButton({
                         onClick={() => onSelect(meta.type)}
                         className="flex items-center gap-2 p-2.5 hover:bg-blue-50 rounded-xl text-left transition border border-transparent hover:border-blue-100"
                       >
-                        <span className="text-xl flex-shrink-0">{meta.icon}</span>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-xs font-black text-blue-700 flex-shrink-0">{meta.label.slice(0, 2).toUpperCase()}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold truncate text-gray-800">{meta.label}</p>
                           <p className="text-[11px] text-gray-400 truncate">{meta.description}</p>
@@ -210,7 +222,7 @@ function BlockEditorItem({
               <option value={2}>H2 - Sedang</option>
               <option value={3}>H3 - Kecil</option>
             </select>
-            <span className="text-xs text-gray-500">📌 Heading</span>
+            <span className="text-xs text-gray-500">Heading</span>
           </div>
           <input
             type="text"
@@ -231,7 +243,7 @@ function BlockEditorItem({
     case 'paragraph':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-1">📝 Paragraf (markdown supported: **bold**, *italic*, `code`)</p>
+          <p className="text-xs text-gray-500 mb-1">Paragraf (markdown supported: **bold**, *italic*, `code`)</p>
           <textarea
             value={block.text}
             onChange={(e) => update({ text: e.target.value })}
@@ -245,7 +257,7 @@ function BlockEditorItem({
     case 'image':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-2">🖼️ Gambar</p>
+          <p className="inline-flex items-center gap-1.5 text-xs text-gray-500 mb-2"><Image size={13} /> Gambar</p>
           <ImageUploader
             currentUrl={block.url}
             onUpload={(url) => update({ url })}
@@ -263,7 +275,7 @@ function BlockEditorItem({
     case 'video':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-2">🎥 Video YouTube</p>
+          <p className="text-xs text-gray-500 mb-2">Video YouTube</p>
           <input
             type="text"
             value={block.url}
@@ -284,7 +296,7 @@ function BlockEditorItem({
     case 'audio':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-2">🎵 Audio</p>
+          <p className="text-xs text-gray-500 mb-2">Audio</p>
           <input
             type="text"
             value={block.url}
@@ -311,10 +323,10 @@ function BlockEditorItem({
               onChange={(e) => update({ style: e.target.value as any })}
               className="text-xs border rounded px-2 py-1"
             >
-              <option value="info">ℹ️ Info</option>
-              <option value="tip">💡 Tip</option>
-              <option value="warning">⚠️ Warning</option>
-              <option value="danger">🚨 Danger</option>
+              <option value="info">Info</option>
+              <option value="tip">Tip</option>
+              <option value="warning">Warning</option>
+              <option value="danger">Danger</option>
             </select>
             <span className="text-xs text-gray-500">Callout</span>
           </div>
@@ -346,7 +358,7 @@ function BlockEditorItem({
               <option value="cpp">C++</option>
               <option value="text">Plain Text</option>
             </select>
-            <span className="text-xs text-gray-500">⚡ Code</span>
+            <span className="text-xs text-gray-500">Code</span>
           </div>
           <textarea
             value={block.code}
@@ -391,7 +403,7 @@ function BlockEditorItem({
     case 'quote':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-2">💬 Kutipan</p>
+          <p className="text-xs text-gray-500 mb-2">Kutipan</p>
           <textarea
             value={block.text}
             onChange={(e) => update({ text: e.target.value })}
@@ -415,7 +427,7 @@ function BlockEditorItem({
     case 'file':
       return (
         <div className={wrapperClass}>
-          <p className="text-xs text-gray-500 mb-2">📎 File Lampiran</p>
+          <p className="inline-flex items-center gap-1.5 text-xs text-gray-500 mb-2"><Paperclip size={13} /> File Lampiran</p>
           <FileUploader
             currentUrl={block.url}
             currentFilename={block.filename}
@@ -439,7 +451,7 @@ function BlockEditorItem({
               <option value="phet">PhET Simulation</option>
               <option value="codepen">CodePen</option>
             </select>
-            <span className="text-xs text-gray-500">🔗 Embed</span>
+            <span className="inline-flex items-center gap-1.5 text-xs text-gray-500"><Link size={13} /> Embed</span>
           </div>
           <input
             type="text"
@@ -515,7 +527,10 @@ function ImageUploader({
             className="hidden"
           />
           <p className="text-gray-500">
-            {uploading ? '⏳ Uploading...' : '📁 Klik untuk upload gambar'}
+            <span className="inline-flex items-center gap-2">
+              {uploading ? <Loader2 className="animate-spin" size={16} /> : <FileUp size={16} />}
+              {uploading ? 'Uploading...' : 'Klik untuk upload gambar'}
+            </span>
           </p>
           <p className="text-xs text-gray-400 mt-1">PNG, JPG, WebP (max 5MB)</p>
         </label>
@@ -560,7 +575,7 @@ function FileUploader({
     <div>
       {currentUrl ? (
         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
-          <span className="text-2xl">📎</span>
+          <Paperclip className="text-blue-600" size={20} />
           <span className="flex-1 text-sm truncate">{currentFilename}</span>
           <button
             onClick={() => onUpload('', '')}
@@ -577,7 +592,10 @@ function FileUploader({
             className="hidden"
           />
           <p className="text-gray-500">
-            {uploading ? '⏳ Uploading...' : '📁 Klik untuk upload file'}
+            <span className="inline-flex items-center gap-2">
+              {uploading ? <Loader2 className="animate-spin" size={16} /> : <FileUp size={16} />}
+              {uploading ? 'Uploading...' : 'Klik untuk upload file'}
+            </span>
           </p>
           <p className="text-xs text-gray-400 mt-1">PDF, DOCX, PPTX, dll</p>
         </label>
@@ -619,7 +637,7 @@ function TableEditor({ block, onChange }: { block: any; onChange: (b: Block) => 
 
   return (
     <div className="border border-gray-200 rounded-lg p-3 bg-white">
-      <p className="text-xs text-gray-500 mb-2">📊 Tabel</p>
+      <p className="inline-flex items-center gap-1.5 text-xs text-gray-500 mb-2"><Table2 size={13} /> Tabel</p>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
@@ -695,7 +713,7 @@ function CheckEditor({ block, onChange }: { block: any; onChange: (b: Block) => 
 
   return (
     <div className="border-2 border-blue-200 bg-blue-50 rounded-lg p-3">
-      <p className="text-xs text-blue-700 font-semibold mb-2">✅ Mini Quiz (Cek Pemahaman)</p>
+      <p className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-semibold mb-2"><CheckCircle2 size={13} /> Mini Quiz (Cek Pemahaman)</p>
       <textarea
         value={block.question}
         onChange={(e) => onChange({ ...block, question: e.target.value })}

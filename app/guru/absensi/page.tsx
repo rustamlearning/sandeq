@@ -2,6 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ClipboardList,
+  GraduationCap,
+  Inbox,
+  Loader2,
+  Save,
+  TriangleAlert,
+} from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kelas } from '@/lib/supabase'
 
@@ -101,7 +111,9 @@ export default function AbsensiGuruPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">📋</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-500">Memuat absensi...</p>
         </div>
       </div>
@@ -114,9 +126,10 @@ export default function AbsensiGuruPage() {
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
+            aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Absensi Siswa</h1>
@@ -156,18 +169,24 @@ export default function AbsensiGuruPage() {
       <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
         {!selectedKelas ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">🏫</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <GraduationCap size={27} />
+            </div>
             <p className="font-semibold text-gray-700">Pilih kelas di atas</p>
             <p className="text-sm text-gray-400 mt-1">untuk mulai mengisi absensi</p>
           </div>
         ) : loadingSiswa ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-4xl mb-3 animate-pulse">⏳</div>
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <Loader2 className="animate-spin" size={24} />
+            </div>
             <p className="text-gray-500">Memuat daftar siswa...</p>
           </div>
         ) : siswaList.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">📭</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Inbox size={26} />
+            </div>
             <p className="text-gray-600">Tidak ada siswa di kelas ini</p>
           </div>
         ) : (
@@ -195,8 +214,9 @@ export default function AbsensiGuruPage() {
                 </button>
               ))}
               {stats.belum > 0 && (
-                <span className="ml-auto text-xs text-orange-500 font-medium">
-                  ⚠️ {stats.belum} belum diisi
+                <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-orange-500 font-medium">
+                  <TriangleAlert size={13} />
+                  {stats.belum} belum diisi
                 </span>
               )}
             </div>
@@ -230,16 +250,18 @@ export default function AbsensiGuruPage() {
 
               <div className="p-4 border-t bg-gray-50">
                 {saved && (
-                  <p className="text-center text-sm text-emerald-600 font-medium mb-3">
-                    ✅ Absensi berhasil disimpan!
+                  <p className="flex items-center justify-center gap-1.5 text-center text-sm text-emerald-600 font-medium mb-3">
+                    <CheckCircle2 size={15} />
+                    Absensi berhasil disimpan
                   </p>
                 )}
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="w-full py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition disabled:opacity-50 shadow-sm"
+                  className="inline-flex w-full items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition disabled:opacity-50 shadow-sm"
                 >
-                  {saving ? '⏳ Menyimpan...' : '💾 Simpan Absensi'}
+                  {saving ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
+                  {saving ? 'Menyimpan...' : 'Simpan Absensi'}
                 </button>
               </div>
             </div>

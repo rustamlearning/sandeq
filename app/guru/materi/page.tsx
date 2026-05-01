@@ -2,6 +2,26 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle2,
+  Code2,
+  Edit3,
+  Eye,
+  EyeOff,
+  FileCode2,
+  FileText,
+  Inbox,
+  Loader2,
+  Plus,
+  Save,
+  Search,
+  Sparkles,
+  Trash2,
+  UploadCloud,
+  X,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import BlockEditor from '@/components/BlockEditor';
@@ -15,9 +35,9 @@ const MAPEL_LIST = [
 ];
 
 const KESULITAN_CONFIG = {
-  mudah: { label: '🟢 Mudah', color: 'bg-green-100 text-green-700' },
-  sedang: { label: '🟡 Sedang', color: 'bg-yellow-100 text-yellow-700' },
-  sulit: { label: '🔴 Sulit', color: 'bg-red-100 text-red-700' },
+  mudah: { label: 'Mudah', color: 'bg-green-100 text-green-700' },
+  sedang: { label: 'Sedang', color: 'bg-yellow-100 text-yellow-700' },
+  sulit: { label: 'Sulit', color: 'bg-red-100 text-red-700' },
 };
 
 type KontenMode = 'blocks' | 'html';
@@ -223,7 +243,7 @@ export default function GuruMateriPage() {
               aria-label="Kembali"
               className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold flex-shrink-0"
             >
-              ←
+              <ArrowLeft size={17} />
             </button>
             <div className="min-w-0">
               <h1 className="text-lg font-bold leading-tight truncate">Kelola Materi</h1>
@@ -233,9 +253,10 @@ export default function GuruMateriPage() {
           {!showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="flex-shrink-0 px-4 py-2 bg-white text-blue-700 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow-sm"
+              className="inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-white text-blue-700 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow-sm"
             >
-              + Buat Materi
+              <Plus size={16} />
+              Buat Materi
             </button>
           )}
         </div>
@@ -246,8 +267,13 @@ export default function GuruMateriPage() {
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-5">
             {/* Form header */}
             <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-white font-bold">{editingId ? '✏️ Edit Materi' : '➕ Buat Materi Baru'}</h2>
-              <button onClick={resetForm} className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-lg text-white transition">✕</button>
+              <h2 className="inline-flex items-center gap-2 text-white font-bold">
+                {editingId ? <Edit3 size={17} /> : <Plus size={17} />}
+                {editingId ? 'Edit Materi' : 'Buat Materi Baru'}
+              </h2>
+              <button onClick={resetForm} aria-label="Tutup form" className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-lg text-white transition">
+                <X size={17} />
+              </button>
             </div>
 
             <div className="p-6 space-y-5">
@@ -293,9 +319,9 @@ export default function GuruMateriPage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kesulitan</label>
                   <select value={tingkatKesulitan} onChange={(e) => setTingkatKesulitan(e.target.value as any)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="mudah">🟢 Mudah</option>
-                    <option value="sedang">🟡 Sedang</option>
-                    <option value="sulit">🔴 Sulit</option>
+                    <option value="mudah">Mudah</option>
+                    <option value="sedang">Sedang</option>
+                    <option value="sulit">Sulit</option>
                   </select>
                 </div>
               </div>
@@ -327,7 +353,7 @@ export default function GuruMateriPage() {
 
               {/* ===== MODE TOGGLE ===== */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">📚 Tipe Konten</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Tipe Konten</label>
                 <div className="flex gap-2 mb-4">
                   <button
                     type="button"
@@ -338,7 +364,7 @@ export default function GuruMateriPage() {
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
                     }`}
                   >
-                    <span>🧱</span> Block Editor
+                    <Code2 size={16} /> Block Editor
                     {kontenMode === 'blocks' && <span className="w-2 h-2 bg-blue-500 rounded-full" />}
                   </button>
                   <button
@@ -350,7 +376,7 @@ export default function GuruMateriPage() {
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
                     }`}
                   >
-                    <span>🌐</span> Upload HTML
+                    <FileCode2 size={16} /> Upload HTML
                     {kontenMode === 'html' && <span className="w-2 h-2 bg-violet-500 rounded-full" />}
                   </button>
                 </div>
@@ -366,7 +392,8 @@ export default function GuruMateriPage() {
                         disabled={aiGenerating}
                         className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-indigo-600 transition disabled:opacity-60"
                       >
-                        {aiGenerating ? '⏳ Generating...' : '✨ Generate dengan AI'}
+                        {aiGenerating ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                        {aiGenerating ? 'Generating...' : 'Generate dengan AI'}
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 mb-4">
@@ -383,7 +410,7 @@ export default function GuruMateriPage() {
                   <div className="space-y-4">
                     {/* Info box */}
                     <div className="bg-violet-50 border border-violet-200 rounded-xl p-4">
-                      <p className="text-sm font-semibold text-violet-800 mb-1">🌐 Upload File HTML Interaktif</p>
+                      <p className="inline-flex items-center gap-2 text-sm font-semibold text-violet-800 mb-1"><FileCode2 size={16} /> Upload File HTML Interaktif</p>
                       <p className="text-xs text-violet-600 leading-relaxed">
                         Upload file <strong>.html</strong> yang sudah kamu buat. Semua fitur akan berjalan sempurna: quiz, animasi, tabs, dan interaksi lainnya. Maksimal <strong>5 MB</strong>.
                       </p>
@@ -400,13 +427,17 @@ export default function GuruMateriPage() {
                     >
                       {htmlFileName ? (
                         <>
-                          <div className="text-4xl mb-2">✅</div>
+                          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                            <CheckCircle2 size={24} />
+                          </div>
                           <p className="font-semibold text-violet-700 text-sm">{htmlFileName}</p>
                           <p className="text-xs text-gray-400 mt-1">{Math.round(htmlKonten.length / 1024)} KB · Klik untuk ganti file</p>
                         </>
                       ) : (
                         <>
-                          <div className="text-4xl mb-2">📂</div>
+                          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                            <UploadCloud size={24} />
+                          </div>
                           <p className="font-semibold text-gray-600 text-sm">Klik untuk pilih file HTML</p>
                           <p className="text-xs text-gray-400 mt-1">Format: .html atau .htm · Maks 5 MB</p>
                         </>
@@ -429,7 +460,7 @@ export default function GuruMateriPage() {
                           onClick={() => setHtmlPreview(!htmlPreview)}
                           className="flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-900 transition"
                         >
-                          <span>{htmlPreview ? '🙈' : '👁'}</span>
+                          {htmlPreview ? <EyeOff size={16} /> : <Eye size={16} />}
                           {htmlPreview ? 'Sembunyikan Preview' : 'Lihat Preview HTML'}
                         </button>
                         {htmlPreview && (
@@ -462,9 +493,10 @@ export default function GuruMateriPage() {
             <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex gap-3">
               <button
                 onClick={handleSave} disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-bold text-sm hover:from-blue-700 hover:to-cyan-700 transition disabled:opacity-50 shadow-sm"
+                className="inline-flex flex-1 items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-bold text-sm hover:from-blue-700 hover:to-cyan-700 transition disabled:opacity-50 shadow-sm"
               >
-                {loading ? '⏳ Menyimpan...' : '💾 Simpan Materi'}
+                {loading ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
+                {loading ? 'Menyimpan...' : 'Simpan Materi'}
               </button>
               <button onClick={resetForm} disabled={loading} className="px-6 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
                 Batal
@@ -483,14 +515,16 @@ export default function GuruMateriPage() {
                   placeholder="Cari materi..."
                   className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                 />
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               </div>
             )}
 
             {/* List */}
             {filteredMateri.length === 0 ? (
               <div className="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
-                <div className="text-5xl mb-3">📖</div>
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+                  <Inbox size={26} />
+                </div>
                 <p className="font-semibold text-gray-600 mb-1">
                   {materiList.length === 0 ? 'Belum ada materi' : 'Tidak ditemukan'}
                 </p>
@@ -498,8 +532,9 @@ export default function GuruMateriPage() {
                   {materiList.length === 0 ? 'Buat materi pertamamu sekarang.' : `Tidak ada materi untuk "${searchQuery}"`}
                 </p>
                 {materiList.length === 0 && (
-                  <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
-                    + Buat Materi Pertama
+                  <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                    <Plus size={15} />
+                    Buat Materi Pertama
                   </button>
                 )}
               </div>
@@ -511,16 +546,16 @@ export default function GuruMateriPage() {
                   return (
                     <div key={m.id} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
                       <div className="flex items-start gap-4 p-4">
-                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isHtml ? 'bg-violet-50' : 'bg-blue-50'}`}>
-                          {isHtml ? '🌐' : '📖'}
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isHtml ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700'}`}>
+                          {isHtml ? <FileCode2 size={20} /> : <BookOpen size={20} />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap mb-1">
                             <span className="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">{m.mapel}</span>
                             {m.kelas && <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{m.kelas.nama}</span>}
                             {m.tingkat_kesulitan && <span className={`text-xs px-2 py-0.5 rounded-full ${k_config.color}`}>{k_config.label}</span>}
-                            {isHtml && <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 HTML</span>}
-                            {m.estimasi_menit && <span className="text-xs text-gray-500">⏱ {m.estimasi_menit} mnt</span>}
+                            {isHtml && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold"><FileCode2 size={11} /> HTML</span>}
+                            {m.estimasi_menit && <span className="text-xs text-gray-500">{m.estimasi_menit} mnt</span>}
                           </div>
                           <h3 className="font-bold text-gray-800 text-sm">{m.judul}</h3>
                           {m.bab && <p className="text-xs text-gray-500 mt-0.5">{m.bab}</p>}
@@ -531,10 +566,10 @@ export default function GuruMateriPage() {
                         </div>
                         <div className="flex flex-col gap-1.5 flex-shrink-0">
                           <button onClick={() => handleEdit(m)} className="px-3 py-1.5 text-xs bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 font-semibold transition">
-                            ✏️ Edit
+                            <span className="inline-flex items-center gap-1"><Edit3 size={12} /> Edit</span>
                           </button>
                           <button onClick={() => handleDelete(m.id)} className="px-3 py-1.5 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-semibold transition">
-                            🗑️ Hapus
+                            <span className="inline-flex items-center gap-1"><Trash2 size={12} /> Hapus</span>
                           </button>
                         </div>
                       </div>

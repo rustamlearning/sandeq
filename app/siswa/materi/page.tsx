@@ -3,6 +3,20 @@ import React from 'react';
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  ArrowLeft,
+  BookOpen,
+  Bot,
+  CheckCircle2,
+  ChevronRight,
+  Clock3,
+  FileCode2,
+  FileText,
+  Globe2,
+  Inbox,
+  Loader2,
+  Target,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import BlockRenderer from '@/components/BlockRenderer';
@@ -54,7 +68,7 @@ function HtmlViewer({ html, title }: { html: string; title: string }) {
       {!loaded && (
         <div className="absolute inset-0 bg-white flex items-center justify-center z-10 rounded-2xl">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-3 border-violet-500 border-t-transparent rounded-full animate-spin" />
+            <Loader2 className="animate-spin text-violet-600" size={28} />
             <p className="text-sm text-slate-400">Memuat materi...</p>
           </div>
         </div>
@@ -172,11 +186,12 @@ export default function SiswaMateriPage() {
               aria-label="Kembali ke daftar materi"
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              ← Kembali
+              <ArrowLeft size={16} />
+              Kembali
             </button>
             <div className="flex items-center gap-2">
               {htmlMode && (
-                <span className="px-2.5 py-1 bg-white/15 rounded-full text-xs font-semibold">🌐 HTML</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/15 rounded-full text-xs font-semibold"><Globe2 size={12} /> HTML</span>
               )}
               <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${mconf.bg} ${mconf.color}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${mconf.dot}`} />
@@ -193,8 +208,8 @@ export default function SiswaMateriPage() {
               <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{m.mapel}</span>
               {m.bab && <span className="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full">{m.bab}</span>}
               {diff && <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${diff.color}`}>{diff.label}</span>}
-              {m.estimasi_menit && <span className="text-xs text-slate-400">⏱ {m.estimasi_menit} menit</span>}
-              {isSelesai && <span className="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-medium">✅ Selesai</span>}
+              {m.estimasi_menit && <span className="inline-flex items-center gap-1 text-xs text-slate-400"><Clock3 size={12} /> {m.estimasi_menit} menit</span>}
+              {isSelesai && <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-medium"><CheckCircle2 size={12} /> Selesai</span>}
             </div>
 
             <h1 className="text-2xl font-bold text-slate-900 mb-2 leading-tight">{m.judul}</h1>
@@ -202,7 +217,7 @@ export default function SiswaMateriPage() {
 
             {m.tujuan_pembelajaran && (
               <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400 mt-4">
-                <h3 className="text-sm font-semibold text-blue-800 mb-1.5">🎯 Tujuan Pembelajaran</h3>
+                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-800 mb-1.5"><Target size={15} /> Tujuan Pembelajaran</h3>
                 <p className="text-sm text-blue-700 whitespace-pre-line leading-relaxed">{m.tujuan_pembelajaran}</p>
               </div>
             )}
@@ -224,7 +239,9 @@ export default function SiswaMateriPage() {
                 <BlockRenderer blocks={m.konten_blocks} materiId={m.id} userId={user.id} />
               ) : (
                 <div className="py-16 text-center">
-                  <p className="text-4xl mb-3">📭</p>
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                    <Inbox size={25} />
+                  </div>
                   <p className="text-slate-400">Belum ada konten untuk materi ini.</p>
                 </div>
               )}
@@ -241,7 +258,10 @@ export default function SiswaMateriPage() {
                   : 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5'
               }`}
             >
-              {isSelesai ? '✅ Sudah Selesai' : '✅ Tandai Selesai'}
+              <span className="inline-flex items-center justify-center gap-2">
+                <CheckCircle2 size={17} />
+                {isSelesai ? 'Sudah Selesai' : 'Tandai Selesai'}
+              </span>
             </button>
             <button
               onClick={() => setSelectedMateri(null)}
@@ -261,7 +281,7 @@ export default function SiswaMateriPage() {
               onClick={() => setTutorOpen(true)}
               className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-700 to-blue-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
             >
-              <span className="text-xl">🤖</span>
+              <Bot size={19} />
               <span>Tanya Tutor</span>
             </button>
             <TutorChat materi={selectedMateri} blocks={selectedMateri.konten_blocks || []} user={user} isOpen={tutorOpen} onClose={() => setTutorOpen(false)} />
@@ -275,25 +295,25 @@ export default function SiswaMateriPage() {
 
 
   // Ikon per mata pelajaran
-  const MAPEL_ICONS: Record<string, { icon: string; bg: string; color: string }> = {
-    'Matematika':              { icon: '🧮', bg: 'bg-blue-50',    color: 'text-blue-600'   },
-    'Bahasa Indonesia':        { icon: '📝', bg: 'bg-red-50',     color: 'text-red-600'    },
-    'Bahasa Inggris':          { icon: '🌍', bg: 'bg-sky-50',     color: 'text-sky-600'    },
-    'Fisika':                  { icon: '⚡', bg: 'bg-yellow-50',  color: 'text-yellow-600' },
-    'Kimia':                   { icon: '🧪', bg: 'bg-green-50',   color: 'text-green-600'  },
-    'Biologi':                 { icon: '🌿', bg: 'bg-emerald-50', color: 'text-emerald-600'},
-    'Sejarah':       { icon: '🏛️', bg: 'bg-amber-50',   color: 'text-amber-600'  },
-    'Geografi':                { icon: '🗺️', bg: 'bg-teal-50',    color: 'text-teal-600'   },
-    'Ekonomi':                 { icon: '📈', bg: 'bg-lime-50',    color: 'text-lime-600'   },
-    'Sosiologi':               { icon: '👥', bg: 'bg-pink-50',    color: 'text-pink-600'   },
-    'PPKn':                    { icon: '🏅', bg: 'bg-rose-50',    color: 'text-rose-600'   },
-    'Pendidikan Agama Islam':  { icon: '☪️', bg: 'bg-green-50',   color: 'text-green-700'  },
-    'Seni Budaya':             { icon: '🎨', bg: 'bg-purple-50',  color: 'text-purple-600' },
-    'Penjaskes':               { icon: '⚽', bg: 'bg-orange-50',  color: 'text-orange-600' },
-    'Informatika':             { icon: '💻', bg: 'bg-indigo-50',  color: 'text-indigo-600' },
-    'Lainnya':                 { icon: '📚', bg: 'bg-slate-50',   color: 'text-slate-600'  },
+  const MAPEL_ICONS: Record<string, { initials: string; bg: string; color: string }> = {
+    'Matematika':              { initials: 'MT', bg: 'bg-blue-50',    color: 'text-blue-600'   },
+    'Bahasa Indonesia':        { initials: 'BI', bg: 'bg-red-50',     color: 'text-red-600'    },
+    'Bahasa Inggris':          { initials: 'EN', bg: 'bg-sky-50',     color: 'text-sky-600'    },
+    'Fisika':                  { initials: 'FS', bg: 'bg-yellow-50',  color: 'text-yellow-600' },
+    'Kimia':                   { initials: 'KM', bg: 'bg-green-50',   color: 'text-green-600'  },
+    'Biologi':                 { initials: 'BG', bg: 'bg-emerald-50', color: 'text-emerald-600'},
+    'Sejarah':                 { initials: 'SJ', bg: 'bg-amber-50',   color: 'text-amber-600'  },
+    'Geografi':                { initials: 'GF', bg: 'bg-teal-50',    color: 'text-teal-600'   },
+    'Ekonomi':                 { initials: 'EK', bg: 'bg-lime-50',    color: 'text-lime-600'   },
+    'Sosiologi':               { initials: 'SO', bg: 'bg-pink-50',    color: 'text-pink-600'   },
+    'PPKn':                    { initials: 'PK', bg: 'bg-rose-50',    color: 'text-rose-600'   },
+    'Pendidikan Agama Islam':  { initials: 'PA', bg: 'bg-green-50',   color: 'text-green-700'  },
+    'Seni Budaya':             { initials: 'SB', bg: 'bg-purple-50',  color: 'text-purple-600' },
+    'Penjaskes':               { initials: 'PJ', bg: 'bg-orange-50',  color: 'text-orange-600' },
+    'Informatika':             { initials: 'IF', bg: 'bg-indigo-50',  color: 'text-indigo-600' },
+    'Lainnya':                 { initials: 'LN', bg: 'bg-slate-50',   color: 'text-slate-600'  },
   };
-  const getMapelStyle = (mapel: string) => MAPEL_ICONS[mapel] || { icon: '📚', bg: 'bg-slate-50', color: 'text-slate-600' };
+  const getMapelStyle = (mapel: string) => MAPEL_ICONS[mapel] || { initials: mapel.slice(0, 2).toUpperCase(), bg: 'bg-slate-50', color: 'text-slate-600' };
   // ===== LIST VIEW — grouped by mapel =====
   const selesaiCount = materiList.filter(m => progress[m.id]?.selesai).length;
 
@@ -324,10 +344,11 @@ export default function SiswaMateriPage() {
               aria-label="Kembali ke daftar mapel"
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              ← Kembali
+              <ArrowLeft size={16} />
+              Kembali
             </button>
             <span className="text-white/30">|</span>
-            <h1 className="font-bold text-lg truncate">📚 {openMapel}</h1>
+            <h1 className="font-bold text-lg truncate">{openMapel}</h1>
             <div className="ml-auto text-right flex-shrink-0">
               <p className="text-sm font-bold">
                 {items.filter(m => progress[m.id]?.selesai).length}
@@ -363,14 +384,14 @@ export default function SiswaMateriPage() {
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
                       isSelesai ? 'bg-emerald-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
                     }`}>
-                      <span className="text-lg">{isSelesai ? '✅' : htmlMode ? '🌐' : '📖'}</span>
+                      {isSelesai ? <CheckCircle2 className="text-emerald-600" size={19} /> : htmlMode ? <FileCode2 className="text-violet-700" size={19} /> : <BookOpen className="text-blue-700" size={19} />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 mb-2">
                         {m.bab && <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">{m.bab}</span>}
                         {diff && <span className={`text-xs px-2 py-0.5 rounded-full ${diff.color}`}>{diff.label}</span>}
-                        {htmlMode && <span className="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">🌐 Interaktif</span>}
-                        {m.estimasi_menit && <span className="text-xs text-slate-400">⏱ {m.estimasi_menit} mnt</span>}
+                        {htmlMode && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold"><Globe2 size={11} /> Interaktif</span>}
+                        {m.estimasi_menit && <span className="inline-flex items-center gap-1 text-xs text-slate-400"><Clock3 size={11} /> {m.estimasi_menit} mnt</span>}
                       </div>
                       <h3 className="font-semibold text-slate-800 group-hover:text-blue-700 transition">{m.judul}</h3>
                       {m.ringkasan && <p className="text-sm text-slate-400 mt-1 line-clamp-2 leading-relaxed">{m.ringkasan}</p>}
@@ -382,7 +403,7 @@ export default function SiswaMateriPage() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-slate-300 group-hover:text-blue-400 transition text-xl mt-1">›</span>
+                    <ChevronRight className="text-slate-300 group-hover:text-blue-400 transition mt-1" size={19} />
                   </div>
                 </button>
               );
@@ -400,10 +421,10 @@ export default function SiswaMateriPage() {
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/siswa')} className="text-blue-200 hover:text-white text-sm transition">
-              ← Dashboard
+              <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Dashboard</span>
             </button>
             <span className="text-white/30">|</span>
-            <h1 className="font-bold text-lg">📚 Materi Pelajaran</h1>
+            <h1 className="font-bold text-lg">Materi Pelajaran</h1>
           </div>
           {materiList.length > 0 && (
             <div className="text-right">
@@ -425,7 +446,9 @@ export default function SiswaMateriPage() {
       <main className="max-w-3xl mx-auto px-4 py-6">
         {materiList.length === 0 ? (
           <div className="bg-white rounded-2xl p-16 text-center border border-slate-100 shadow-sm">
-            <p className="text-4xl mb-3">📭</p>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Inbox size={25} />
+            </div>
             <p className="text-slate-500">Belum ada materi tersedia untuk kelasmu.</p>
           </div>
         ) : (
@@ -448,13 +471,13 @@ export default function SiswaMateriPage() {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl ${getMapelStyle(mapel).bg}`}>
-                      {getMapelStyle(mapel).icon}
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 text-sm font-black ${getMapelStyle(mapel).bg} ${getMapelStyle(mapel).color}`}>
+                      {getMapelStyle(mapel).initials}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-bold text-slate-800 group-hover:text-blue-700 transition truncate">{mapel}</h3>
-                        {hasHtml && <span className="text-xs px-1.5 py-0.5 bg-violet-100 text-violet-600 rounded-full">🌐</span>}
+                        {hasHtml && <span className="inline-flex items-center px-1.5 py-0.5 bg-violet-100 text-violet-600 rounded-full"><Globe2 size={11} /></span>}
                       </div>
                       <p className="text-xs text-slate-400 mb-2">{isEmpty ? 'Belum ada materi' : `${items.length} materi · ${selesai} selesai`}</p>
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
@@ -466,7 +489,7 @@ export default function SiswaMateriPage() {
                     </div>
                     <div className="flex-shrink-0 text-right">
                       <p className={`text-lg font-black ${isEmpty ? 'text-slate-300' : 'text-blue-600'}`}>{isEmpty ? '–' : `${pct}%`}</p>
-                      <span className="text-slate-300 group-hover:text-blue-400 transition text-xl">›</span>
+                      <ChevronRight className="ml-auto text-slate-300 group-hover:text-blue-400 transition" size={19} />
                     </div>
                   </div>
                 </button>

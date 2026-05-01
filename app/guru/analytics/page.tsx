@@ -2,6 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  Crown,
+  LineChart,
+  Users,
+  Star,
+  Target,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import {
@@ -119,13 +132,13 @@ export default function GuruAnalyticsPage() {
   );
 
   const statCards = overview ? [
-    { icon: '👥', label: 'Total Siswa', value: overview.totalSiswa, sub: 'terdaftar', accent: 'border-blue-400 bg-blue-50', val: 'text-blue-700' },
-    { icon: '✅', label: 'Aktif 7 Hari', value: overview.aktif7hari, sub: 'siswa', accent: 'border-emerald-400 bg-emerald-50', val: 'text-emerald-700' },
-    { icon: '⚠️', label: 'Perlu Perhatian', value: overview.perluPerhatian, sub: 'siswa', accent: 'border-red-400 bg-red-50', val: 'text-red-600' },
-    { icon: '⭐', label: 'Rata-rata XP', value: overview.rataXP, sub: 'XP/siswa', accent: 'border-violet-400 bg-violet-50', val: 'text-violet-700' },
-    { icon: '📚', label: 'Rata Materi', value: overview.rataMateri, sub: 'selesai/siswa', accent: 'border-indigo-400 bg-indigo-50', val: 'text-indigo-700' },
-    { icon: '🎯', label: 'Akurasi Quiz', value: `${overview.rataAccuracy}%`, sub: 'rata-rata', accent: 'border-amber-400 bg-amber-50', val: 'text-amber-700' },
-  ] : [];
+    { icon: Users, label: 'Total Siswa', value: overview.totalSiswa, sub: 'terdaftar', accent: 'border-blue-400 bg-blue-50', val: 'text-blue-700' },
+    { icon: CheckCircle2, label: 'Aktif 7 Hari', value: overview.aktif7hari, sub: 'siswa', accent: 'border-emerald-400 bg-emerald-50', val: 'text-emerald-700' },
+    { icon: AlertTriangle, label: 'Perlu Perhatian', value: overview.perluPerhatian, sub: 'siswa', accent: 'border-red-400 bg-red-50', val: 'text-red-600' },
+    { icon: Star, label: 'Rata-rata XP', value: overview.rataXP, sub: 'XP/siswa', accent: 'border-violet-400 bg-violet-50', val: 'text-violet-700' },
+    { icon: BookOpen, label: 'Rata Materi', value: overview.rataMateri, sub: 'selesai/siswa', accent: 'border-indigo-400 bg-indigo-50', val: 'text-indigo-700' },
+    { icon: Target, label: 'Akurasi Quiz', value: `${overview.rataAccuracy}%`, sub: 'rata-rata', accent: 'border-amber-400 bg-amber-50', val: 'text-amber-700' },
+  ] satisfies Array<{ icon: LucideIcon; label: string; value: any; sub: string; accent: string; val: string }> : [];
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
@@ -137,10 +150,11 @@ export default function GuruAnalyticsPage() {
               onClick={() => router.push('/guru')}
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              ← Dashboard
+              <ArrowLeft size={16} />
+              Dashboard
             </button>
             <span className="text-white/30">|</span>
-            <h1 className="text-lg font-bold">📊 Analytics Kelas</h1>
+            <h1 className="inline-flex items-center gap-2 text-lg font-bold"><BarChart3 size={18} /> Analytics Kelas</h1>
           </div>
           <select
             value={selectedKelas}
@@ -158,7 +172,7 @@ export default function GuruAnalyticsPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
             {statCards.map((s) => (
               <div key={s.label} className={`${s.accent} rounded-xl p-4 text-center`}>
-                <p className="text-2xl mb-1">{s.icon}</p>
+                <s.icon className={`mx-auto mb-1 ${s.val}`} size={22} />
                 <p className={`text-2xl font-bold ${s.val}`}>{s.value}</p>
                 <p className="text-xs text-slate-500 mt-0.5 font-medium">{s.label}</p>
                 <p className="text-xs text-slate-400">{s.sub}</p>
@@ -169,7 +183,7 @@ export default function GuruAnalyticsPage() {
 
         {/* Chart */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-5">
-          <h3 className="font-semibold text-slate-800 mb-1">📈 Siswa Aktif 7 Hari Terakhir</h3>
+          <h3 className="inline-flex items-center gap-2 font-semibold text-slate-800 mb-1"><LineChart size={17} /> Siswa Aktif 7 Hari Terakhir</h3>
           <p className="text-xs text-slate-400 mb-4">Jumlah siswa yang aktif belajar per hari</p>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={dailyActivity} barSize={32}>
@@ -194,9 +208,9 @@ export default function GuruAnalyticsPage() {
         {/* Tabs */}
         <div className="flex gap-2 mb-4 bg-white rounded-2xl p-1.5 border border-slate-100 shadow-sm w-fit">
           {[
-            { id: 'overview', label: '📊 Ringkasan' },
-            { id: 'siswa', label: '👥 Per Siswa' },
-            { id: 'materi', label: '📚 Per Materi' },
+            { id: 'overview', label: 'Ringkasan' },
+            { id: 'siswa', label: 'Per Siswa' },
+            { id: 'materi', label: 'Per Materi' },
           ].map(tab => (
             <button
               key={tab.id}
@@ -217,7 +231,7 @@ export default function GuruAnalyticsPage() {
           <div className="space-y-4">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
               <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                🏆 <span>Top Siswa Kelas</span>
+                <Crown size={17} /> <span>Top Siswa Kelas</span>
               </h3>
               {sortedSiswa.slice(0, 5).map((s, i) => (
                 <div key={s.siswa_id} className="flex items-center gap-3 py-3 border-b border-slate-50 last:border-0">
@@ -242,7 +256,7 @@ export default function GuruAnalyticsPage() {
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
               <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                ⚠️ <span>Siswa yang Perlu Perhatian</span>
+                <AlertTriangle size={17} /> <span>Siswa yang Perlu Perhatian</span>
               </h3>
               {sortedSiswa.filter(s => {
                 if (!s.last_active_at) return true;
@@ -251,7 +265,7 @@ export default function GuruAnalyticsPage() {
                 const status = getSiswaStatus(s);
                 return (
                   <div key={s.siswa_id} className="flex items-center gap-3 py-3 border-b border-slate-50 last:border-0">
-                    <span className="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center text-base flex-shrink-0">😴</span>
+                    <span className="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center text-red-600 flex-shrink-0"><AlertTriangle size={15} /></span>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-slate-800 text-sm truncate">{s.nama}</p>
                       <p className="text-xs text-slate-400">NIS: {s.nis_nip}</p>
@@ -264,7 +278,7 @@ export default function GuruAnalyticsPage() {
                 if (!s.last_active_at) return true;
                 return (Date.now() - new Date(s.last_active_at).getTime()) / 86400000 > 7;
               }).length === 0 && (
-                <p className="text-emerald-600 text-sm text-center py-6">🎉 Semua siswa aktif minggu ini!</p>
+                <p className="text-emerald-600 text-sm text-center py-6">Semua siswa aktif minggu ini</p>
               )}
             </div>
           </div>
@@ -299,7 +313,7 @@ export default function GuruAnalyticsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      {['#', 'Siswa', 'XP', 'Level', 'Materi', 'Quiz', 'Streak 🔥', 'Status'].map(h => (
+                      {['#', 'Siswa', 'XP', 'Level', 'Materi', 'Quiz', 'Streak', 'Status'].map(h => (
                         <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
@@ -350,7 +364,7 @@ export default function GuruAnalyticsPage() {
           <div className="space-y-4">
             {materiChartData.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-                <h3 className="font-semibold text-slate-800 mb-4">📚 Engagement per Materi</h3>
+                <h3 className="inline-flex items-center gap-2 font-semibold text-slate-800 mb-4"><BookOpen size={17} /> Engagement per Materi</h3>
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={materiChartData} layout="vertical" barSize={10}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />

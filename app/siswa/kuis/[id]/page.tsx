@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { ArrowLeft, ArrowRight, CheckCircle2, Medal, Send, Sparkles, Timer } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Kuis } from '@/lib/supabase'
 import { useToast } from '@/components/ui/Toast'
@@ -136,7 +137,9 @@ export default function KerjakanKuisPage() {
     return (
       <div className="min-h-screen bg-[#F4F9FF] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
-          <div className="text-6xl mb-4">{hasil.skor >= 75 ? '🎉' : hasil.skor >= 50 ? '👍' : '💪'}</div>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            {hasil.skor >= 75 ? <Sparkles size={31} /> : hasil.skor >= 50 ? <Medal size={31} /> : <CheckCircle2 size={31} />}
+          </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Selesai!</h1>
           <p className="text-gray-500 mb-6">{kuis?.judul}</p>
 
@@ -183,7 +186,7 @@ export default function KerjakanKuisPage() {
           <div className={`px-4 py-2 rounded-lg font-mono font-bold text-lg ${
             timeLeft < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
           }`}>
-            ⏱ {formatTime(timeLeft)}
+            <span className="inline-flex items-center gap-2"><Timer size={18} /> {formatTime(timeLeft)}</span>
           </div>
         </div>
       </header>
@@ -275,7 +278,7 @@ export default function KerjakanKuisPage() {
             disabled={currentIdx === 0}
             className="px-4 py-2 bg-white border border-gray-200 rounded-lg disabled:opacity-50"
           >
-            ← Sebelumnya
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={15} /> Sebelumnya</span>
           </button>
 
           {currentIdx < totalSoal - 1 ? (
@@ -283,7 +286,7 @@ export default function KerjakanKuisPage() {
               onClick={() => setCurrentIdx(currentIdx + 1)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Selanjutnya →
+              <span className="inline-flex items-center gap-1.5">Selanjutnya <ArrowRight size={15} /></span>
             </button>
           ) : (
             <button
@@ -295,7 +298,7 @@ export default function KerjakanKuisPage() {
               disabled={submitting}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400 font-medium"
             >
-              {submitting ? 'Mengirim...' : 'Selesai & Kirim'}
+              <span className="inline-flex items-center gap-1.5">{!submitting && <Send size={15} />}{submitting ? 'Mengirim...' : 'Selesai & Kirim'}</span>
             </button>
           )}
         </div>

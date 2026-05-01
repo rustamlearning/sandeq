@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  ArrowLeft,
+  CalendarDays,
+  CalendarRange,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  FileText,
+  Inbox,
+  Loader2,
+} from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Absensi } from '@/lib/supabase'
 
@@ -103,7 +114,12 @@ export default function AbsensiSiswaPage() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-[#F4F9FF]">
-      <div className="text-center"><div className="text-4xl mb-3 animate-pulse">📋</div><p className="text-gray-500">Memuat...</p></div>
+      <div className="text-center">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+          <Loader2 className="animate-spin" size={24} />
+        </div>
+        <p className="text-gray-500">Memuat...</p>
+      </div>
     </div>
   )
 
@@ -112,7 +128,9 @@ export default function AbsensiSiswaPage() {
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa')} aria-label="Kembali"
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">←</button>
+            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">
+            <ArrowLeft size={18} />
+          </button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-white">Absensi Saya</h1>
             <p className="text-white/70 text-xs">{total} hari tercatat</p>
@@ -128,10 +146,10 @@ export default function AbsensiSiswaPage() {
               <div className={`h-full ${barColor} rounded-full transition-all duration-700`} style={{width:`${pct}%`}} />
             </div>
             <div className="flex gap-3 mt-2 text-xs text-white/70 flex-wrap">
-              <span>✅ {stats.hadir} hadir</span>
-              <span>🤒 {stats.sakit} sakit</span>
-              <span>📋 {stats.izin} izin</span>
-              <span>❌ {stats.alpha} alpha</span>
+              <span>{stats.hadir} hadir</span>
+              <span>{stats.sakit} sakit</span>
+              <span>{stats.izin} izin</span>
+              <span>{stats.alpha} alpha</span>
             </div>
           </div>
         </div>
@@ -139,7 +157,10 @@ export default function AbsensiSiswaPage() {
           {(['bulan','minggu','riwayat'] as const).map(tab => (
             <button key={tab} onClick={()=>setActiveTab(tab)}
               className={`flex-1 py-2 rounded-xl text-sm font-semibold transition ${activeTab===tab?'bg-white text-blue-700':'bg-white/20 text-white hover:bg-white/30'}`}>
-              {tab==='bulan'?'📅 Bulan':tab==='minggu'?'📆 Minggu':'📋 Riwayat'}
+              <span className="inline-flex items-center justify-center gap-1.5">
+                {tab === 'bulan' ? <CalendarDays size={15} /> : tab === 'minggu' ? <CalendarRange size={15} /> : <ClipboardList size={15} />}
+                {tab === 'bulan' ? 'Bulan' : tab === 'minggu' ? 'Minggu' : 'Riwayat'}
+              </span>
             </button>
           ))}
         </div>
@@ -151,11 +172,15 @@ export default function AbsensiSiswaPage() {
           <div className="space-y-4">
             {/* Navigator bulan */}
             <div className="flex items-center gap-2">
-              <button onClick={prevMonth} className="w-9 h-9 bg-white rounded-xl border border-slate-100 shadow-sm flex items-center justify-center text-slate-500 hover:bg-slate-50 text-lg">‹</button>
+              <button onClick={prevMonth} aria-label="Bulan sebelumnya" className="w-9 h-9 bg-white rounded-xl border border-slate-100 shadow-sm flex items-center justify-center text-slate-500 hover:bg-slate-50 text-lg">
+                <ChevronLeft size={17} />
+              </button>
               <div className="flex-1 text-center font-bold text-slate-700">
                 {new Date(sy, sm-1, 1).toLocaleDateString('id-ID',{month:'long',year:'numeric'})}
               </div>
-              <button onClick={nextMonth} className="w-9 h-9 bg-white rounded-xl border border-slate-100 shadow-sm flex items-center justify-center text-slate-500 hover:bg-slate-50 text-lg">›</button>
+              <button onClick={nextMonth} aria-label="Bulan berikutnya" className="w-9 h-9 bg-white rounded-xl border border-slate-100 shadow-sm flex items-center justify-center text-slate-500 hover:bg-slate-50 text-lg">
+                <ChevronRight size={17} />
+              </button>
             </div>
 
             {/* Kalender */}
@@ -221,7 +246,9 @@ export default function AbsensiSiswaPage() {
               )
             })() : (
               <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                <p className="text-3xl mb-2">📭</p>
+                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                  <Inbox size={22} />
+                </div>
                 <p className="text-slate-500 text-sm">Tidak ada data absensi bulan ini</p>
               </div>
             )}
@@ -232,7 +259,10 @@ export default function AbsensiSiswaPage() {
           <div className="space-y-3">
             {weekKeys.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                <p className="text-3xl mb-2">📭</p><p className="text-slate-500 text-sm">Belum ada data</p>
+                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                  <Inbox size={22} />
+                </div>
+                <p className="text-slate-500 text-sm">Belum ada data</p>
               </div>
             ) : weekKeys.map(wk => {
               const ws = statsFor(byWeek[wk])
@@ -267,7 +297,10 @@ export default function AbsensiSiswaPage() {
           <div className="space-y-4">
             {list.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                <p className="text-3xl mb-2">📭</p><p className="text-slate-500 text-sm">Belum ada catatan</p>
+                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                  <FileText size={22} />
+                </div>
+                <p className="text-slate-500 text-sm">Belum ada catatan</p>
               </div>
             ) : monthKeys.map(mk => {
               const recs = byMonth[mk]

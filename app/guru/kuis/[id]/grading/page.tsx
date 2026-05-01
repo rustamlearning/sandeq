@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { ArrowLeft, Bot, CheckCircle2, Clock3, FileText, Inbox, Loader2, Save, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -175,9 +176,9 @@ export default function EssayGradingPage() {
       <div className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600">←</button>
+            <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600"><ArrowLeft size={18} /></button>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">✍️ Essay Grading</h1>
+              <h1 className="inline-flex items-center gap-2 text-lg font-bold text-slate-800"><FileText size={18} /> Essay Grading</h1>
               <p className="text-xs text-slate-500">{kuis?.judul}</p>
             </div>
           </div>
@@ -225,9 +226,11 @@ export default function EssayGradingPage() {
         {/* Jawaban List */}
         {filteredJawaban.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-100 p-12 text-center">
-            <p className="text-4xl mb-3">{filter === 'belum' ? '🎉' : '📭'}</p>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              {filter === 'belum' ? <Sparkles size={25} /> : <Inbox size={25} />}
+            </div>
             <p className="text-slate-600 font-medium">
-              {filter === 'belum' ? 'Semua essay sudah dinilai!' : 'Belum ada jawaban essay'}
+              {filter === 'belum' ? 'Semua essay sudah dinilai' : 'Belum ada jawaban essay'}
             </p>
           </div>
         ) : (
@@ -254,7 +257,7 @@ export default function EssayGradingPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {j.graded_by_ai && (
-                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">🤖 AI Scored</span>
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full"><Bot size={12} /> AI Scored</span>
                       )}
                       {sudahDinilai && (
                         <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">✓ Dinilai</span>
@@ -352,7 +355,10 @@ export default function EssayGradingPage() {
                             : 'bg-violet-600 hover:bg-violet-700 text-white'
                         } disabled:opacity-60`}
                       >
-                        {isSaving ? '⏳ Menyimpan...' : isSaved ? '✓ Tersimpan!' : 'Simpan Nilai'}
+                        <span className="inline-flex items-center gap-1.5">
+                          {isSaving ? <Loader2 className="animate-spin" size={14} /> : isSaved ? <CheckCircle2 size={14} /> : <Save size={14} />}
+                          {isSaving ? 'Menyimpan...' : isSaved ? 'Tersimpan' : 'Simpan Nilai'}
+                        </span>
                       </button>
                     </div>
                   </div>

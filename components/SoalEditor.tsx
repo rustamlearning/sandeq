@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Soal, SoalTipe, SOAL_TIPE_LABELS, SOAL_TIPE_ICONS } from '@/lib/kuis';
+import { CheckCircle2, ChevronDown, ChevronUp, Clipboard, Lightbulb, Trash2, XCircle } from 'lucide-react';
+import { Soal, SoalTipe } from '@/lib/kuis';
 
 interface SoalEditorProps {
   soal: Partial<Soal>;
@@ -47,11 +48,11 @@ export default function SoalEditor({ soal, onChange, onDelete, onDuplicate, inde
             }}
             className="text-sm font-medium border rounded-lg px-2 py-1 bg-white"
           >
-            <option value="pg">{SOAL_TIPE_ICONS.pg} Pilihan Ganda</option>
-            <option value="true_false">{SOAL_TIPE_ICONS.true_false} Benar/Salah</option>
-            <option value="isian">{SOAL_TIPE_ICONS.isian} Isian Singkat</option>
-            <option value="matching">{SOAL_TIPE_ICONS.matching} Mencocokkan</option>
-            <option value="essay">{SOAL_TIPE_ICONS.essay} Essay</option>
+            <option value="pg">Pilihan Ganda</option>
+            <option value="true_false">Benar/Salah</option>
+            <option value="isian">Isian Singkat</option>
+            <option value="matching">Mencocokkan</option>
+            <option value="essay">Essay</option>
           </select>
         </div>
 
@@ -73,7 +74,7 @@ export default function SoalEditor({ soal, onChange, onDelete, onDuplicate, inde
             className="p-1.5 hover:bg-blue-100 rounded text-blue-600"
             title={collapsed ? 'Expand' : 'Collapse'}
           >
-            {collapsed ? '▼' : '▲'}
+            {collapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
           </button>
           {onDuplicate && (
             <button
@@ -81,7 +82,7 @@ export default function SoalEditor({ soal, onChange, onDelete, onDuplicate, inde
               className="p-1.5 hover:bg-blue-100 rounded text-blue-600"
               title="Duplikat"
             >
-              📋
+              <Clipboard size={16} />
             </button>
           )}
           {onDelete && (
@@ -90,7 +91,7 @@ export default function SoalEditor({ soal, onChange, onDelete, onDuplicate, inde
               className="p-1.5 hover:bg-red-100 rounded text-red-600"
               title="Hapus"
             >
-              🗑️
+              <Trash2 size={16} />
             </button>
           )}
         </div>
@@ -212,7 +213,7 @@ function TrueFalseEditor({ soal, update }: { soal: Partial<Soal>; update: (p: Pa
             onChange={() => update({ jawaban_benar: 'Benar' })}
             className="w-4 h-4"
           />
-          <span className="font-medium">✅ Benar</span>
+          <span className="inline-flex items-center gap-1.5 font-medium"><CheckCircle2 size={16} /> Benar</span>
         </label>
         <label className="flex items-center gap-2 px-4 py-3 border-2 rounded-lg cursor-pointer flex-1 hover:bg-red-50 transition"
           style={{ borderColor: soal.jawaban_benar === 'Salah' ? '#ef4444' : '#e5e7eb' }}>
@@ -223,7 +224,7 @@ function TrueFalseEditor({ soal, update }: { soal: Partial<Soal>; update: (p: Pa
             onChange={() => update({ jawaban_benar: 'Salah' })}
             className="w-4 h-4"
           />
-          <span className="font-medium">❌ Salah</span>
+          <span className="inline-flex items-center gap-1.5 font-medium"><XCircle size={16} /> Salah</span>
         </label>
       </div>
     </div>
@@ -406,7 +407,7 @@ function EssayEditor({ soal, update }: { soal: Partial<Soal>; update: (p: Partia
       </div>
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
         <p className="text-xs text-yellow-800">
-          💡 <strong>Essay</strong> akan dinilai manual oleh guru (atau AI assist).
+          <span className="inline-flex items-center gap-1.5"><Lightbulb size={13} /> <strong>Essay</strong> akan dinilai manual oleh guru (atau AI assist).</span>
           Jawaban ideal di atas hanya untuk referensi grading, tidak ditampilkan ke siswa.
         </p>
       </div>
