@@ -7,6 +7,7 @@ import { useAuthStore } from '@/lib/store/auth';
 import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
 import TopBar from './TopBar';
+import { LoadingState } from './ui/Skeleton';
 
 interface Props {
   children: ReactNode;
@@ -28,11 +29,7 @@ export default function AppShell({ children, title }: Props) {
   }, [isAuthenticated, router]);
 
   if (!isAuthenticated || !user) {
-    return (
-      <div className="app-canvas flex items-center justify-center">
-        <div className="surface-card rounded-lg px-5 py-4 text-sm font-medium text-[#1A4A7A]">Memuat...</div>
-      </div>
-    );
+    return <LoadingState title="Menyiapkan ruang belajar" description="Kami sedang memuat sesi dan navigasimu." />;
   }
 
   return (

@@ -11,9 +11,6 @@ import {
   Eye,
   EyeOff,
   FileCode2,
-  FileText,
-  Inbox,
-  Loader2,
   Plus,
   Save,
   Search,
@@ -27,6 +24,7 @@ import { getCurrentUser } from '@/lib/auth';
 import BlockEditor from '@/components/BlockEditor';
 import { Block } from '@/lib/blocks';
 import { useToast } from '@/components/ui/Toast'
+import { Badge, Button, EmptyState, LoadingState } from '@/components/ui'
 
 const MAPEL_LIST = [
   'Matematika','Bahasa Indonesia','Bahasa Inggris','Fisika','Kimia',
@@ -35,12 +33,15 @@ const MAPEL_LIST = [
 ];
 
 const KESULITAN_CONFIG = {
-  mudah: { label: 'Mudah', color: 'bg-green-100 text-green-700' },
-  sedang: { label: 'Sedang', color: 'bg-yellow-100 text-yellow-700' },
-  sulit: { label: 'Sulit', color: 'bg-red-100 text-red-700' },
+  mudah: { label: 'Mudah', color: 'green' as const },
+  sedang: { label: 'Sedang', color: 'orange' as const },
+  sulit: { label: 'Sulit', color: 'red' as const },
 };
 
 type KontenMode = 'blocks' | 'html';
+
+const fieldClass = 'w-full border border-slate-200/80 bg-white/90 px-4 py-3 text-sm text-slate-800 shadow-[0_1px_0_rgba(255,255,255,0.7)_inset] outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#2e86c1]/70 focus:ring-4 focus:ring-[#2e86c1]/14'
+const labelClass = 'mb-1.5 block text-sm font-semibold text-slate-700'
 
 export default function GuruMateriPage() {
   const router = useRouter()
@@ -180,7 +181,7 @@ export default function GuruMateriPage() {
         const { error } = await supabase.from('materi').insert(payload);
         if (error) throw error;
       }
-      toastSuccess('Materi berhasil disimpan!');
+      toastSuccess('Materi berhasil disimpan');
       resetForm();
       await loadMateri(user.id);
     } catch (e: any) {
@@ -226,80 +227,80 @@ export default function GuruMateriPage() {
     !searchQuery || m.judul?.toLowerCase().includes(searchQuery.toLowerCase()) || m.mapel?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (!user) return <LoadingState title="Membuka kelola materi" description="Menyiapkan daftar kelas dan materi guru." />;
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="app-canvas min-h-screen">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-cyan-600 text-white shadow-lg sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-20 border-b border-white/70 bg-white/78 text-slate-950 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 md:px-6">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => router.push('/guru')}
               aria-label="Kembali"
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold flex-shrink-0"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/70 bg-white/72 text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
             >
               <ArrowLeft size={17} />
             </button>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold leading-tight truncate">Kelola Materi</h1>
-              <p className="text-blue-200 text-xs">{materiList.length} materi</p>
+              <p className="text-xs font-medium text-slate-500">Guru</p>
+              <h1 className="truncate text-xl font-semibold leading-tight text-slate-950">Kelola materi</h1>
             </div>
           </div>
           {!showForm && (
-            <button
+            <Button
               onClick={() => setShowForm(true)}
-              className="inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-white text-blue-700 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow-sm"
+              size="sm"
+              className="flex-shrink-0"
             >
               <Plus size={16} />
               Buat Materi
-            </button>
+            </Button>
           )}
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-5">
+      <main className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
         {showForm ? (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-5">
+          <section className="surface-card mb-6 overflow-hidden rounded-xl">
             {/* Form header */}
-            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 flex items-center justify-between">
-              <h2 className="inline-flex items-center gap-2 text-white font-bold">
-                {editingId ? <Edit3 size={17} /> : <Plus size={17} />}
-                {editingId ? 'Edit Materi' : 'Buat Materi Baru'}
-              </h2>
-              <button onClick={resetForm} aria-label="Tutup form" className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-lg text-white transition">
+            <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-white/55 px-5 py-4 md:px-6">
+              <div>
+                <p className="text-xs font-medium text-slate-500">{editingId ? 'Perbarui konten' : 'Materi baru'}</p>
+                <h2 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-950">
+                  {editingId ? <Edit3 size={18} /> : <Plus size={18} />}
+                  {editingId ? 'Edit materi' : 'Buat materi'}
+                </h2>
+              </div>
+              <button onClick={resetForm} aria-label="Tutup form" className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white/80 text-slate-500 transition hover:-translate-y-0.5 hover:bg-white hover:text-slate-900">
                 <X size={17} />
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="space-y-6 p-5 md:p-6">
               {/* Judul */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Judul Materi <span className="text-red-500">*</span></label>
+                <label className={labelClass}>Judul materi <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={judul}
                   onChange={(e) => setJudul(e.target.value)}
                   placeholder="Contoh: Chapter 7 – Explanation Text"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={fieldClass}
                 />
               </div>
 
               {/* Mapel + Kelas */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Mata Pelajaran</label>
-                  <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className={labelClass}>Mata pelajaran</label>
+                  <select value={mapel} onChange={(e) => setMapel(e.target.value)} className={fieldClass}>
                     {MAPEL_LIST.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kelas <span className="text-red-500">*</span></label>
-                  <select value={kelasId} onChange={(e) => setKelasId(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className={labelClass}>Kelas <span className="text-red-500">*</span></label>
+                  <select value={kelasId} onChange={(e) => setKelasId(e.target.value)} className={fieldClass}>
                     <option value="">-- Pilih Kelas --</option>
                     {kelasList.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
                   </select>
@@ -307,18 +308,18 @@ export default function GuruMateriPage() {
               </div>
 
               {/* Bab + Estimasi + Kesulitan */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Bab/Pertemuan</label>
-                  <input type="text" value={bab} onChange={(e) => setBab(e.target.value)} placeholder="Bab 3" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className={labelClass}>Bab/pertemuan</label>
+                  <input type="text" value={bab} onChange={(e) => setBab(e.target.value)} placeholder="Bab 3" className={fieldClass} />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Estimasi (menit)</label>
-                  <input type="number" value={estimasiMenit} onChange={(e) => setEstimasiMenit(parseInt(e.target.value) || 15)} min={1} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className={labelClass}>Estimasi (menit)</label>
+                  <input type="number" value={estimasiMenit} onChange={(e) => setEstimasiMenit(parseInt(e.target.value) || 15)} min={1} className={fieldClass} />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kesulitan</label>
-                  <select value={tingkatKesulitan} onChange={(e) => setTingkatKesulitan(e.target.value as any)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className={labelClass}>Kesulitan</label>
+                  <select value={tingkatKesulitan} onChange={(e) => setTingkatKesulitan(e.target.value as any)} className={fieldClass}>
                     <option value="mudah">Mudah</option>
                     <option value="sedang">Sedang</option>
                     <option value="sulit">Sulit</option>
@@ -328,78 +329,78 @@ export default function GuruMateriPage() {
 
               {/* Tujuan */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  Tujuan Pembelajaran
-                  <span className="text-xs text-gray-400 font-normal ml-1">(Setelah materi ini, siswa dapat...)</span>
+                <label className={labelClass}>
+                  Tujuan pembelajaran
+                  <span className="ml-1 text-xs font-normal text-slate-400">(Setelah materi ini, siswa dapat...)</span>
                 </label>
                 <textarea
                   value={tujuanPembelajaran} onChange={(e) => setTujuanPembelajaran(e.target.value)}
                   placeholder="1. Memahami konsep&#10;2. Menerapkan dalam kehidupan"
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className={`${fieldClass} resize-none`}
                 />
               </div>
 
               {/* Ringkasan */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ringkasan Singkat</label>
+                <label className={labelClass}>Ringkasan singkat</label>
                 <textarea
                   value={ringkasan} onChange={(e) => setRingkasan(e.target.value)}
                   placeholder="Ringkasan 1-2 kalimat untuk preview di daftar materi"
                   rows={2}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className={`${fieldClass} resize-none`}
                 />
               </div>
 
               {/* ===== MODE TOGGLE ===== */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Tipe Konten</label>
-                <div className="flex gap-2 mb-4">
+                <label className={labelClass}>Tipe konten</label>
+                <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => setKontenMode('blocks')}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all ${
                       kontenMode === 'blocks'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                        ? 'border-[#2e86c1]/40 bg-white text-[#1A4A7A] shadow-[0_12px_30px_rgba(18,61,100,0.08)]'
+                        : 'border-slate-200/80 bg-white/55 text-slate-500 hover:border-slate-300 hover:bg-white'
                     }`}
                   >
-                    <Code2 size={16} /> Block Editor
-                    {kontenMode === 'blocks' && <span className="w-2 h-2 bg-blue-500 rounded-full" />}
+                    <span className="inline-flex items-center gap-2"><Code2 size={16} /> Block editor</span>
+                    {kontenMode === 'blocks' && <span className="h-2 w-2 rounded-full bg-[#2e86c1]" />}
                   </button>
                   <button
                     type="button"
                     onClick={() => setKontenMode('html')}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all ${
                       kontenMode === 'html'
-                        ? 'border-violet-500 bg-violet-50 text-violet-700'
-                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                        ? 'border-violet-300 bg-white text-violet-700 shadow-[0_12px_30px_rgba(109,40,217,0.08)]'
+                        : 'border-slate-200/80 bg-white/55 text-slate-500 hover:border-slate-300 hover:bg-white'
                     }`}
                   >
-                    <FileCode2 size={16} /> Upload HTML
-                    {kontenMode === 'html' && <span className="w-2 h-2 bg-violet-500 rounded-full" />}
+                    <span className="inline-flex items-center gap-2"><FileCode2 size={16} /> Upload HTML</span>
+                    {kontenMode === 'html' && <span className="h-2 w-2 rounded-full bg-violet-500" />}
                   </button>
                 </div>
 
                 {/* BLOCK EDITOR */}
                 {kontenMode === 'blocks' && (
                   <div>
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{blocks.length} block</span>
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <Badge color="slate">{blocks.length} block</Badge>
                       <button
                         type="button"
                         onClick={handleAiGenerate}
                         disabled={aiGenerating}
-                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-indigo-600 transition disabled:opacity-60"
+                        className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-violet-200 bg-white/85 px-3 py-1.5 text-xs font-semibold text-violet-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white disabled:translate-y-0 disabled:opacity-60"
                       >
-                        {aiGenerating ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
-                        {aiGenerating ? 'Generating...' : 'Generate dengan AI'}
+                        <Sparkles className={aiGenerating ? 'animate-pulse' : ''} size={14} />
+                        {aiGenerating ? 'Membuat konten...' : 'Generate dengan AI'}
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 mb-4">
+                    <p className="mb-4 text-xs leading-relaxed text-slate-500">
                       {aiGenerating ? 'AI sedang membuat konten, harap tunggu...' : 'Susun materi pakai blocks, atau klik "Generate dengan AI" untuk otomatis.'}
                     </p>
-                    <div className="ml-8">
+                    <div className="rounded-xl border border-slate-200/75 bg-white/58 p-3 md:p-4">
                       <BlockEditor initialBlocks={blocks} onChange={setBlocks} />
                     </div>
                   </div>
@@ -409,9 +410,9 @@ export default function GuruMateriPage() {
                 {kontenMode === 'html' && (
                   <div className="space-y-4">
                     {/* Info box */}
-                    <div className="bg-violet-50 border border-violet-200 rounded-xl p-4">
-                      <p className="inline-flex items-center gap-2 text-sm font-semibold text-violet-800 mb-1"><FileCode2 size={16} /> Upload File HTML Interaktif</p>
-                      <p className="text-xs text-violet-600 leading-relaxed">
+                    <div className="rounded-xl border border-violet-100 bg-violet-50/70 p-4">
+                      <p className="mb-1 inline-flex items-center gap-2 text-sm font-semibold text-violet-800"><FileCode2 size={16} /> Upload file HTML interaktif</p>
+                      <p className="text-xs leading-relaxed text-violet-700/80">
                         Upload file <strong>.html</strong> yang sudah kamu buat. Semua fitur akan berjalan sempurna: quiz, animasi, tabs, dan interaksi lainnya. Maksimal <strong>5 MB</strong>.
                       </p>
                     </div>
@@ -419,27 +420,27 @@ export default function GuruMateriPage() {
                     {/* Drop zone / file picker */}
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+                      className={`cursor-pointer rounded-xl border border-dashed p-8 text-center transition-all ${
                         htmlFileName
-                          ? 'border-violet-400 bg-violet-50'
-                          : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50'
+                          ? 'border-violet-300 bg-violet-50/70'
+                          : 'border-slate-200 bg-white/62 hover:-translate-y-0.5 hover:border-violet-200 hover:bg-white'
                       }`}
                     >
                       {htmlFileName ? (
                         <>
-                          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-white text-violet-700 shadow-sm">
                             <CheckCircle2 size={24} />
                           </div>
-                          <p className="font-semibold text-violet-700 text-sm">{htmlFileName}</p>
-                          <p className="text-xs text-gray-400 mt-1">{Math.round(htmlKonten.length / 1024)} KB · Klik untuk ganti file</p>
+                          <p className="text-sm font-semibold text-violet-800">{htmlFileName}</p>
+                          <p className="mt-1 text-xs text-slate-500">{Math.round(htmlKonten.length / 1024)} KB · Klik untuk ganti file</p>
                         </>
                       ) : (
                         <>
-                          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+                          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
                             <UploadCloud size={24} />
                           </div>
-                          <p className="font-semibold text-gray-600 text-sm">Klik untuk pilih file HTML</p>
-                          <p className="text-xs text-gray-400 mt-1">Format: .html atau .htm · Maks 5 MB</p>
+                          <p className="text-sm font-semibold text-slate-700">Klik untuk pilih file HTML</p>
+                          <p className="mt-1 text-xs text-slate-500">Format: .html atau .htm · Maks 5 MB</p>
                         </>
                       )}
                       <input
@@ -458,20 +459,20 @@ export default function GuruMateriPage() {
                         <button
                           type="button"
                           onClick={() => setHtmlPreview(!htmlPreview)}
-                          className="flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-900 transition"
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 transition hover:text-violet-950"
                         >
                           {htmlPreview ? <EyeOff size={16} /> : <Eye size={16} />}
-                          {htmlPreview ? 'Sembunyikan Preview' : 'Lihat Preview HTML'}
+                          {htmlPreview ? 'Sembunyikan preview' : 'Lihat preview HTML'}
                         </button>
                         {htmlPreview && (
-                          <div className="mt-3 rounded-2xl overflow-hidden border-2 border-violet-200 shadow-lg">
-                            <div className="bg-violet-100 px-4 py-2 flex items-center gap-2 border-b border-violet-200">
+                          <div className="mt-3 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-[0_18px_44px_rgba(18,61,100,0.08)]">
+                            <div className="flex items-center gap-2 border-b border-slate-200/80 bg-slate-50/90 px-4 py-2">
                               <div className="flex gap-1.5">
-                                <div className="w-3 h-3 bg-red-400 rounded-full" />
-                                <div className="w-3 h-3 bg-yellow-400 rounded-full" />
-                                <div className="w-3 h-3 bg-green-400 rounded-full" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-slate-300" />
                               </div>
-                              <p className="text-xs text-violet-600 font-medium ml-2">Preview: {htmlFileName}</p>
+                              <p className="ml-2 text-xs font-medium text-slate-500">Preview: {htmlFileName}</p>
                             </div>
                             <iframe
                               srcDoc={htmlKonten}
@@ -490,21 +491,44 @@ export default function GuruMateriPage() {
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex gap-3">
-              <button
+            <div className="sticky bottom-0 flex gap-3 border-t border-white/70 bg-white/78 px-5 py-4 backdrop-blur-xl md:px-6">
+              <Button
                 onClick={handleSave} disabled={loading}
-                className="inline-flex flex-1 items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-bold text-sm hover:from-blue-700 hover:to-cyan-700 transition disabled:opacity-50 shadow-sm"
+                loading={loading}
+                fullWidth
               >
-                {loading ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
-                {loading ? 'Menyimpan...' : 'Simpan Materi'}
-              </button>
-              <button onClick={resetForm} disabled={loading} className="px-6 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
+                {!loading && <Save size={17} />}
+                {loading ? 'Menyimpan' : 'Simpan materi'}
+              </Button>
+              <Button onClick={resetForm} disabled={loading} variant="secondary" className="px-6">
                 Batal
-              </button>
+              </Button>
             </div>
-          </div>
+          </section>
         ) : (
-          <>
+          <div className="space-y-5">
+            <section className="surface-card rounded-xl p-5 md:p-6">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p className="text-xs font-medium text-slate-500">Perpustakaan kelas</p>
+                  <h2 className="mt-1 text-2xl font-semibold text-slate-950">Materi pembelajaran</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+                    Kelola bahan ajar, file HTML interaktif, dan block materi untuk setiap kelas dari satu tempat.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 sm:flex">
+                  <div className="rounded-lg bg-white/70 px-4 py-3 ring-1 ring-white/80">
+                    <p className="text-xs text-slate-500">Total materi</p>
+                    <p className="mt-1 text-2xl font-semibold text-slate-950">{materiList.length}</p>
+                  </div>
+                  <div className="rounded-lg bg-white/70 px-4 py-3 ring-1 ring-white/80">
+                    <p className="text-xs text-slate-500">Kelas</p>
+                    <p className="mt-1 text-2xl font-semibold text-slate-950">{kelasList.length}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Search */}
             {materiList.length > 0 && (
               <div className="relative mb-4">
@@ -513,30 +537,26 @@ export default function GuruMateriPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari materi..."
-                  className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                  className="w-full border border-slate-200/80 bg-white/88 py-3 pl-11 pr-4 text-sm text-slate-800 shadow-[0_12px_30px_rgba(18,61,100,0.06)] outline-none transition placeholder:text-slate-400 focus:border-[#2e86c1]/60 focus:ring-4 focus:ring-[#2e86c1]/14"
                 />
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               </div>
             )}
 
             {/* List */}
             {filteredMateri.length === 0 ? (
-              <div className="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-                  <Inbox size={26} />
-                </div>
-                <p className="font-semibold text-gray-600 mb-1">
-                  {materiList.length === 0 ? 'Belum ada materi' : 'Tidak ditemukan'}
-                </p>
-                <p className="text-sm text-gray-400 mb-4">
-                  {materiList.length === 0 ? 'Buat materi pertamamu sekarang.' : `Tidak ada materi untuk "${searchQuery}"`}
-                </p>
-                {materiList.length === 0 && (
-                  <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+              <div className="surface-card rounded-xl">
+                <EmptyState
+                  type="materi"
+                  title={materiList.length === 0 ? 'Belum ada materi' : 'Materi tidak ditemukan'}
+                  description={materiList.length === 0 ? 'Buat materi pertama agar siswa punya titik mulai yang jelas.' : `Tidak ada materi untuk "${searchQuery}".`}
+                  action={materiList.length === 0 ? (
+                    <Button onClick={() => setShowForm(true)} size="sm">
                     <Plus size={15} />
-                    Buat Materi Pertama
-                  </button>
-                )}
+                      Buat materi pertama
+                    </Button>
+                  ) : undefined}
+                />
               </div>
             ) : (
               <div className="space-y-2">
@@ -544,41 +564,41 @@ export default function GuruMateriPage() {
                   const k_config = KESULITAN_CONFIG[m.tingkat_kesulitan as keyof typeof KESULITAN_CONFIG] || KESULITAN_CONFIG.sedang;
                   const isHtml = m.konten && m.konten.trim().startsWith('<');
                   return (
-                    <div key={m.id} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
-                      <div className="flex items-start gap-4 p-4">
-                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isHtml ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700'}`}>
+                    <article key={m.id} className="surface-card overflow-hidden rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lifted)]">
+                      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start">
+                        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl ${isHtml ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700'}`}>
                           {isHtml ? <FileCode2 size={20} /> : <BookOpen size={20} />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                            <span className="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">{m.mapel}</span>
-                            {m.kelas && <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{m.kelas.nama}</span>}
-                            {m.tingkat_kesulitan && <span className={`text-xs px-2 py-0.5 rounded-full ${k_config.color}`}>{k_config.label}</span>}
-                            {isHtml && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold"><FileCode2 size={11} /> HTML</span>}
-                            {m.estimasi_menit && <span className="text-xs text-gray-500">{m.estimasi_menit} mnt</span>}
+                          <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                            <Badge>{m.mapel}</Badge>
+                            {m.kelas && <Badge color="slate">{m.kelas.nama}</Badge>}
+                            {m.tingkat_kesulitan && <Badge color={k_config.color}>{k_config.label}</Badge>}
+                            {isHtml && <Badge color="violet" className="gap-1"><FileCode2 size={11} /> HTML</Badge>}
+                            {m.estimasi_menit && <span className="text-xs font-medium text-slate-500">{m.estimasi_menit} mnt</span>}
                           </div>
-                          <h3 className="font-bold text-gray-800 text-sm">{m.judul}</h3>
-                          {m.bab && <p className="text-xs text-gray-500 mt-0.5">{m.bab}</p>}
-                          {m.ringkasan && <p className="text-xs text-gray-500 mt-1 line-clamp-1">{m.ringkasan}</p>}
-                          <p className="text-[10px] text-gray-400 mt-1.5">
+                          <h3 className="text-base font-semibold text-slate-950">{m.judul}</h3>
+                          {m.bab && <p className="mt-0.5 text-xs font-medium text-slate-500">{m.bab}</p>}
+                          {m.ringkasan && <p className="mt-2 line-clamp-2 max-w-3xl text-sm leading-relaxed text-slate-500">{m.ringkasan}</p>}
+                          <p className="mt-2 text-xs text-slate-400">
                             {isHtml ? `HTML · ${Math.round((m.konten?.length || 0) / 1024)} KB` : `${(m.konten_blocks?.length || 0)} block`} · {new Date(m.created_at).toLocaleDateString('id-ID')}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1.5 flex-shrink-0">
-                          <button onClick={() => handleEdit(m)} className="px-3 py-1.5 text-xs bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 font-semibold transition">
+                        <div className="flex flex-shrink-0 gap-2 sm:flex-col">
+                          <button onClick={() => handleEdit(m)} className="inline-flex items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
                             <span className="inline-flex items-center gap-1"><Edit3 size={12} /> Edit</span>
                           </button>
-                          <button onClick={() => handleDelete(m.id)} className="px-3 py-1.5 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-semibold transition">
+                          <button onClick={() => handleDelete(m.id)} className="inline-flex items-center justify-center rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
                             <span className="inline-flex items-center gap-1"><Trash2 size={12} /> Hapus</span>
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </article>
                   );
                 })}
               </div>
             )}
-          </>
+          </div>
         )}
       </main>
     </div>

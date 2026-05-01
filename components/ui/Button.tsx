@@ -41,7 +41,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <>
-            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span className="inline-flex items-center gap-1" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-1.5 w-1.5 rounded-full bg-current"
+                  style={{ animation: `loadingDot 1.15s ease-in-out ${i * 0.14}s infinite` }}
+                />
+              ))}
+            </span>
             <span>{children}</span>
           </>
         ) : children}
