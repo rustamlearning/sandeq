@@ -16,25 +16,25 @@ export default function TopBar({ title }: Props) {
   const { user } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-20 bg-white border-b border-gray-200 md:bg-transparent md:border-0">
+    <header className="sticky top-0 z-20 border-b border-white/70 bg-white/78 backdrop-blur-xl md:bg-transparent md:border-0">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
         <div className="md:hidden flex items-center gap-2">
-          <Link href="/beranda" className="flex items-center gap-2">
+          <Link href="/beranda" className="flex items-center gap-2 rounded-md">
             <SandeqLogo className="w-8 h-8" />
-            <span className="font-bold text-[#1A4A7A]">SANDEQ</span>
+            <span className="font-semibold text-[#1A4A7A]">SANDEQ</span>
           </Link>
         </div>
 
         {title && (
-          <h1 className="hidden md:block text-xl font-bold text-[#1A4A7A]">{title}</h1>
+          <h1 className="hidden md:block text-xl font-semibold text-slate-950">{title}</h1>
         )}
 
         <div className="flex items-center gap-3">
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ring-1 ${
               isOnline
-                ? 'bg-green-50 text-green-700'
-                : 'bg-orange-50 text-orange-700'
+                ? 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+                : 'bg-orange-50 text-orange-700 ring-orange-100'
             }`}
             title={isOnline ? 'Terhubung' : 'Mode Offline'}
           >
@@ -52,7 +52,7 @@ export default function TopBar({ title }: Props) {
           </div>
           <Link
             href="/pengumuman"
-            className="p-2 rounded-full hover:bg-gray-100 text-gray-600"
+            className="p-2 rounded-md hover:bg-white/80 text-slate-600 transition"
             aria-label="Pengumuman"
           >
             <Bell size={18} />

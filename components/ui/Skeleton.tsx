@@ -18,7 +18,7 @@ export function Skeleton({ width, height, className = '', style, ...props }: Ske
 
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+    <div className="surface-card rounded-lg p-5">
       <div className="flex items-start gap-3">
         <Skeleton className="w-11 h-11 rounded-xl flex-shrink-0" />
         <div className="flex-1 space-y-2">
@@ -36,7 +36,7 @@ export function SkeletonMenuGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-4">
+        <div key={i} className="surface-card rounded-lg p-4 flex items-center gap-4">
           <Skeleton className="w-11 h-11 rounded-xl flex-shrink-0" />
           <div className="flex-1 space-y-1.5">
             <Skeleton className="h-4 w-24" />
@@ -52,7 +52,7 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
   return (
     <div className="space-y-3">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-3">
+        <div key={i} className="surface-card rounded-lg p-4 flex items-center gap-3">
           <Skeleton className="w-10 h-10 rounded-xl flex-shrink-0" />
           <div className="flex-1 space-y-1.5">
             <Skeleton className="h-4 w-3/4" />
@@ -69,7 +69,7 @@ export function SkeletonStatRow() {
   return (
     <div className="grid grid-cols-3 gap-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center space-y-2">
+        <div key={i} className="surface-card rounded-lg p-4 text-center space-y-2">
           <Skeleton className="h-6 w-8 mx-auto rounded-full" />
           <Skeleton className="h-7 w-12 mx-auto" />
           <Skeleton className="h-3 w-16 mx-auto" />
@@ -81,10 +81,10 @@ export function SkeletonStatRow() {
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <div className="bg-gradient-to-r from-blue-700 to-blue-500 h-16" />
+    <div className="app-canvas">
+      <div className="h-16 border-b border-white/70 bg-white/60 backdrop-blur-xl" />
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
-        <Skeleton className="h-36 w-full rounded-3xl" />
+        <Skeleton className="h-36 w-full rounded-lg" />
         <SkeletonStatRow />
         <div className="mt-6">
           <Skeleton className="h-5 w-16 mb-3" />

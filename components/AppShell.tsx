@@ -29,18 +29,18 @@ export default function AppShell({ children, title }: Props) {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F9FF]">
-        <div className="text-[#1A4A7A]">Memuat...</div>
+      <div className="app-canvas flex items-center justify-center">
+        <div className="surface-card rounded-lg px-5 py-4 text-sm font-medium text-[#1A4A7A]">Memuat...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="app-canvas">
       <Sidebar />
       <div className="md:ml-64">
         <TopBar title={title} />
-        <main className="pb-20 md:pb-6">
+        <main className="pb-20 md:pb-8">
           {children}
         </main>
       </div>

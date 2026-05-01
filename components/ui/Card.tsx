@@ -8,7 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const paddingClasses = {
   none: '',
   sm: 'p-3',
-  md: 'p-4',
+  md: 'p-5',
   lg: 'p-6',
 }
 
@@ -16,8 +16,8 @@ export function Card({ padding = 'md', hover, children, className = '', ...props
   return (
     <div
       className={[
-        'bg-white rounded-2xl border border-slate-100 shadow-sm',
-        hover ? 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-blue-100 cursor-pointer' : '',
+        'surface-card rounded-lg',
+        hover ? 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lifted)] hover:border-white cursor-pointer' : '',
         paddingClasses[padding],
         className,
       ].join(' ')}
@@ -30,7 +30,7 @@ export function Card({ padding = 'md', hover, children, className = '', ...props
 
 export function CardHeader({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`px-4 py-3 border-b border-slate-100 bg-slate-50/60 rounded-t-2xl ${className}`} {...props}>
+    <div className={`px-5 py-4 border-b border-slate-200/70 bg-white/45 rounded-t-lg ${className}`} {...props}>
       {children}
     </div>
   )

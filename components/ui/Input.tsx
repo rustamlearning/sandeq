@@ -6,7 +6,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string
 }
 
-const baseInput = 'w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400'
+const baseInput = 'w-full bg-white/92 border border-slate-200 rounded-md px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition duration-200 focus:border-[#2e86c1] focus:ring-4 focus:ring-[#2e86c1]/14 disabled:bg-slate-50 disabled:text-slate-400'
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, className = '', ...props }, ref) => (
@@ -68,15 +68,15 @@ Textarea.displayName = 'Textarea'
 
 export function Badge({ children, color = 'blue', className = '' }: { children: React.ReactNode; color?: 'blue' | 'green' | 'orange' | 'red' | 'violet' | 'slate'; className?: string }) {
   const colors = {
-    blue: 'bg-blue-100 text-blue-700',
-    green: 'bg-emerald-100 text-emerald-700',
-    orange: 'bg-orange-100 text-orange-700',
-    red: 'bg-red-100 text-red-700',
-    violet: 'bg-violet-100 text-violet-700',
-    slate: 'bg-slate-100 text-slate-600',
+    blue: 'bg-blue-50 text-blue-700 ring-1 ring-blue-100',
+    green: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100',
+    orange: 'bg-orange-50 text-orange-700 ring-1 ring-orange-100',
+    red: 'bg-red-50 text-red-700 ring-1 ring-red-100',
+    violet: 'bg-violet-50 text-violet-700 ring-1 ring-violet-100',
+    slate: 'bg-slate-100/80 text-slate-600 ring-1 ring-slate-200',
   }
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${colors[color]} ${className}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${colors[color]} ${className}`}>
       {children}
     </span>
   )
