@@ -229,10 +229,15 @@ export default function KuisBuilderPage() {
       };
 
       const prompt = `Buat ${aiJumlah} soal ${tipeLabel[aiTipe]} dengan tingkat kesulitan ${aiTingkat} untuk topik: "${aiTopik}".\n\nMata pelajaran: ${kuis.mapel || 'umum'}.\n\nKembalikan HANYA array JSON valid (tanpa penjelasan, tanpa markdown), dengan format setiap soal:\n${formatMap[aiTipe]}\n\nKembalikan array dengan ${aiJumlah} soal. Jangan ada teks lain selain array JSON.`;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Session login tidak ditemukan');
 
       const res = await fetch('/api/generate-soal', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ prompt }),
       });
 

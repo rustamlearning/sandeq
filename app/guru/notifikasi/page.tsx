@@ -63,7 +63,7 @@ export default function GuruNotifikasiPage() {
     const threeDaysLater = new Date(now.getTime() + 3 * 86400000).toISOString()
 
     const [{ data: kuisGuru }, { data: forumPosts }] = await Promise.all([
-      supabase.from('kuis').select('id, judul, tanggal_selesai').eq('guru_id', u.id).eq('aktif', true),
+      supabase.from('kuis').select('id, judul, tanggal_selesai').eq('guru_id', u.id).eq('is_published', true),
       supabase.from('forum').select('id').eq('author_id', u.id).is('parent_id', null),
     ])
 

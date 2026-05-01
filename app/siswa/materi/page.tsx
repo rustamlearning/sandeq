@@ -62,7 +62,7 @@ function HtmlViewer({ html, title }: { html: string; title: string }) {
       <iframe
         ref={iframeRef}
         srcDoc={html}
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        sandbox="allow-scripts"
         onLoad={handleLoad}
         title={title}
         className="w-full block bg-white"

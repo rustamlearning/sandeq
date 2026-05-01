@@ -44,7 +44,7 @@ export default function GuruDashboard() {
     const [materi, kuis, kuisIds] = await Promise.all([
       supabase.from('materi').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
       supabase.from('kuis').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
-      supabase.from('kuis').select('id').eq('guru_id', guruId).eq('aktif', true),
+      supabase.from('kuis').select('id').eq('guru_id', guruId).eq('is_published', true),
     ])
     setStats({ totalMateri: materi.count || 0, totalKuis: kuis.count || 0 })
 
@@ -53,7 +53,7 @@ export default function GuruDashboard() {
     if (ids.length > 0) {
       const [pengerjaan, deadline] = await Promise.all([
         supabase.from('pengerjaan').select('id', { count: 'exact', head: true }).in('kuis_id', ids).gte('created_at', threeDaysAgo),
-        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('guru_id', guruId).eq('aktif', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
+        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('guru_id', guruId).eq('is_published', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
       ])
       notifTotal = (pengerjaan.count || 0) + (deadline.count || 0)
     }

@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimitApiUser, requireApiUser } from '@/lib/api-auth'
+
+const MAX_FIELD_LENGTH = 2000
+const AI_RATE_LIMIT = 10
+const AI_RATE_WINDOW_MS = 60_000
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireApiUser(req, ['guru', 'admin'])
+    if ('response' in auth) return auth.response
+    const limited = rateLimitApiUser(auth.user.id, 'generate-materi', AI_RATE_LIMIT, AI_RATE_WINDOW_MS)
+    if (limited) return limited
+
     const { judul, mapel, tujuan, kelas } = await req.json()
     if (!judul || !mapel) return NextResponse.json({ error: 'judul dan mapel wajib diisi' }, { status: 400 })
+    if ([judul, mapel, tujuan, kelas].some((value) => typeof value === 'string' && value.length > MAX_FIELD_LENGTH)) {
+      return NextResponse.json({ error: 'Input terlalu panjang' }, { status: 413 })
+    }
 
     const prompt = `Kamu adalah guru ${mapel} yang berpengalaman di Indonesia. Buat konten materi pembelajaran dalam Bahasa Indonesia yang lengkap dan jelas.
 
@@ -42,6 +55,10 @@ Output HANYA array JSON:`
         messages: [{ role: 'user', content: prompt }],
       }),
     })
+
+    if (!res.ok) {
+      return NextResponse.json({ error: 'AI request gagal' }, { status: 502 })
+    }
 
     const data = await res.json()
     const text: string = data.choices?.[0]?.message?.content ?? '[]'

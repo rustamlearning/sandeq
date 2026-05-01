@@ -3,8 +3,18 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
-import { supabase, User, Kuis, Soal } from '@/lib/supabase'
+import { supabase, User, Kuis } from '@/lib/supabase'
 import { useToast } from '@/components/ui/Toast'
+
+type SafeSoal = {
+  id: string
+  kuis_id: string
+  teks: string
+  tipe: 'pg' | 'pilgan' | 'true_false' | 'benar_salah' | 'isian' | 'matching' | 'essay'
+  pilihan: string[] | Record<string, string> | null
+  pembahasan?: null
+  penjelasan?: null
+}
 
 export default function KerjakanKuisPage() {
   const router = useRouter()
@@ -14,7 +24,7 @@ export default function KerjakanKuisPage() {
 
   const [user, setUser] = useState<User | null>(null)
   const [kuis, setKuis] = useState<Kuis | null>(null)
-  const [soalList, setSoalList] = useState<Soal[]>([])
+  const [soalList, setSoalList] = useState<SafeSoal[]>([])
   const [loading, setLoading] = useState(true)
 
   const [currentIdx, setCurrentIdx] = useState(0)
@@ -32,34 +42,32 @@ export default function KerjakanKuisPage() {
       }
       setUser(u)
 
-      // Cek apakah sudah dikerjakan
-      const { data: existing } = await supabase
-        .from('pengerjaan')
-        .select('id, skor')
-        .eq('siswa_id', u.id)
-        .eq('kuis_id', kuisId)
-        .maybeSingle()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.replace('/login')
+        return
+      }
 
-      if (existing) {
+      const res = await fetch(`/api/siswa/kuis/${kuisId}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+
+      if (res.status === 409) {
         toastWarning('Kamu sudah pernah mengerjakan kuis ini.')
         router.replace('/siswa/kuis')
         return
       }
 
-      const [{ data: kuisData }, { data: soalData }] = await Promise.all([
-        supabase.from('kuis').select('*').eq('id', kuisId).single(),
-        supabase.from('soal').select('*').eq('kuis_id', kuisId).order('id', { ascending: true }),
-      ])
-
-      if (!kuisData || !soalData || soalData.length === 0) {
-        toastError('Kuis tidak tersedia.')
+      if (!res.ok || !data.kuis || !data.soal?.length) {
+        toastError(data.error || 'Kuis tidak tersedia.')
         router.replace('/siswa/kuis')
         return
       }
 
-      setKuis(kuisData)
-      setSoalList(soalData)
-      setTimeLeft((kuisData.durasi_menit || 30) * 60)
+      setKuis(data.kuis)
+      setSoalList(data.soal)
+      setTimeLeft((data.kuis.durasi_menit || 30) * 60)
       setLoading(false)
     }
     init()
@@ -70,42 +78,21 @@ export default function KerjakanKuisPage() {
     setSubmitting(true)
     try {
 
-    // Hitung skor
-    let benar = 0
-    soalList.forEach((s) => {
-      const userJawab = (jawaban[s.id] || '').trim()
-      const correct = (s.jawaban_benar || s.jawaban || '').trim()
-      if (s.tipe === 'isian') {
-        if (userJawab.toLowerCase() === correct.toLowerCase()) benar++
-      } else {
-        if (userJawab === correct) benar++
-      }
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Session login tidak ditemukan')
+
+    const res = await fetch(`/api/siswa/kuis/${kuisId}/submit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ jawaban }),
     })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Gagal mengirim jawaban')
 
-    const skor = Math.round((benar / soalList.length) * 100)
-
-    await supabase.from('pengerjaan').insert({
-      siswa_id: user.id,
-      kuis_id: kuisId,
-      jawaban_siswa: jawaban,
-      skor,
-    })
-
-    // Kalau ulangan, masukkan ke nilai
-    if (kuis?.tipe === 'ulangan') {
-      await supabase.from('nilai').insert({
-        siswa_id: user.id,
-        mapel: kuis.mapel,
-        komponen: kuis.judul,
-        bobot: 1,
-        nilai: skor,
-        semester: 1,
-        diinput_oleh: kuis.guru_id,
-        catatan: 'Otomatis dari ulangan',
-      })
-    }
-
-    setHasil({ skor, benar, total: soalList.length })
+    setHasil(data.hasil)
     } catch (e: any) {
       console.error('Submit error:', e)
       alert('Gagal kirim: ' + (e?.message || JSON.stringify(e)))
@@ -226,7 +213,7 @@ export default function KerjakanKuisPage() {
           <p className="text-xs text-gray-500 mb-2">Soal {currentIdx + 1} dari {totalSoal}</p>
           <p className="text-lg text-gray-800 mb-6 whitespace-pre-wrap">{soal.teks}</p>
 
-          {soal.tipe === 'pg' && soal.pilihan && (
+          {(soal.tipe === 'pg' || soal.tipe === 'pilgan') && Array.isArray(soal.pilihan) && (
             <div className="space-y-2">
               {soal.pilihan.map((p, i) => {
                 if (!p) return null
@@ -249,7 +236,7 @@ export default function KerjakanKuisPage() {
             </div>
           )}
 
-          {soal.tipe === 'true_false' && (
+          {(soal.tipe === 'true_false' || soal.tipe === 'benar_salah') && (
             <div className="space-y-2">
               {['Benar', 'Salah'].map((p) => {
                 const isSelected = jawaban[soal.id] === p

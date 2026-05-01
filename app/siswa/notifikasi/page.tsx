@@ -66,7 +66,7 @@ export default function NotifikasiPage() {
       supabase.from('pengumuman').select('id, judul, konten, created_at, kategori')
         .gte('created_at', sevenDaysAgo).order('created_at', { ascending: false }).limit(10),
       supabase.from('kuis').select('id, judul, mapel, tanggal_selesai, created_at')
-        .eq('kelas_id', u.kelas_id).eq('aktif', true)
+        .eq('kelas_id', u.kelas_id).eq('is_published', true)
         .order('created_at', { ascending: false }),
       supabase.from('pengerjaan').select('kuis_id').eq('siswa_id', u.id),
     ])

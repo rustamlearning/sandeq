@@ -753,7 +753,7 @@ function generateGreeting(ctx: TutorContext): TutorResponse {
 
   const templates = [
     `${timeGreet} ${name}! ${pick(['🌟', '✨', '👋', '🚀'])}\n\nAku Tutor SANDEQ, asisten belajarmu untuk "${judul}". ${pick(['Mau aku bantu pahamin yang mana?', 'Ada yang mau ditanyain?', 'Gas, mulai dari mana?', 'Aku siap nemenin kamu belajar.'])}`,
-    `${pick(['Halo', 'Hi', 'Hai'])} ${name}! ${mapel.icon} ${pick(mapel.catchphrases)}\n\nBelajar "${judul}" yaa. ${pick(['Apa yang mau kita bahas?', 'Mulai dari mana nih?', 'Aku dengerin nih.'])}`,
+    `${pick(['Halo', 'Hi', 'Hai'])} ${name}! ${mapel.icon} ${pick<string>((mapel.catchphrases as string[] | undefined) || [])}\n\nBelajar "${judul}" yaa. ${pick(['Apa yang mau kita bahas?', 'Mulai dari mana nih?', 'Aku dengerin nih.'])}`,
     `${timeGreet}! ${pick(['Senengnya ketemu kamu', 'Asik, ada teman belajar', 'Wih, semangat banget'])} ${name} ${pick(['🌟', '💫', '✨'])}\n\nLagi belajar **${judul}** ya? ${pick(['Yuk gas pahamin bareng!', 'Aku bantu deh!', 'Gas kita kupas tuntas!'])}`,
     `${pick(['Wih', 'Eh', 'Yuhuu'])} ${name}! ${pick(CLOSINGS.emoji)}\n\n${pick(['Selamat datang di tutoring session!', 'Ready untuk belajar?', 'Siap jadi pinter hari ini?'])} Topik kita: **${judul}**.`,
   ];
@@ -782,7 +782,7 @@ function generateSimplify(ctx: TutorContext): TutorResponse {
 
   const opener = buildOpening(ctx.user, 'thoughtful');
   const transition = pick(TRANSITIONS);
-  const metaphor = pick(mapel.metaphors || ['itu kayak puzzle yang harus disusun']);
+  const metaphor = pick<string>((mapel.metaphors as string[] | undefined) || ['itu kayak puzzle yang harus disusun']);
 
   let text = `${opener} ${pick([
     'aku coba pakai bahasa lebih santai ya',
@@ -843,7 +843,7 @@ function generateExample(ctx: TutorContext): TutorResponse {
   let text = `${opener} aku kasih ${pick(['contoh seru', 'contoh konkret', 'contoh nyata', 'beberapa contoh'])} buat **${judul}** ${pick(CLOSINGS.emoji)}\n\n`;
 
   // Pick 3 random real-world examples
-  const examples = pickN(mapel.realworld || [], 3);
+  const examples = pickN<string>((mapel.realworld as string[] | undefined) || [], 3);
   if (examples.length > 0) {
     text += `**${pick(['Coba liat di sekitar kamu', 'Aplikasi nyata sehari-hari', 'Contoh yang relate banget'])}:**\n\n`;
     examples.forEach((ex: string) => {
@@ -854,7 +854,7 @@ function generateExample(ctx: TutorContext): TutorResponse {
 
   // Add metaphor
   if (mapel.metaphors) {
-    text += `${pick(TRANSITIONS)} kalo dianalogikan, **${judul}** itu ${pick(mapel.metaphors).toLowerCase()}.\n\n`;
+    text += `${pick(TRANSITIONS)} kalo dianalogikan, **${judul}** itu ${pick<string>(mapel.metaphors as string[]).toLowerCase()}.\n\n`;
   }
 
   // Local context 40%
@@ -946,7 +946,7 @@ function generateRealWorld(ctx: TutorContext): TutorResponse {
   ])}\n\n`;
 
   // Show 4-5 random examples
-  const examples = pickN(mapel.realworld || [], 5);
+  const examples = pickN<string>((mapel.realworld as string[] | undefined) || [], 5);
   if (examples.length > 0) {
     text += `**${pick(['Aplikasi nyata di hidupmu:', 'Yang kepake banget:', 'Contoh real-world:'])}**\n\n`;
     examples.forEach((ex: string) => {
@@ -956,13 +956,13 @@ function generateRealWorld(ctx: TutorContext): TutorResponse {
   }
 
   // Career angle
-  if (mapel.realworld && mapel.realworld.some((r: string) => /gaji|profesi|karir/i.test(r))) {
+  if (mapel.realworld && (mapel.realworld as string[]).some((r: string) => /gaji|profesi|karir/i.test(r))) {
     text += `**💼 Career angle:** Banyak profesi tinggi yang butuh skill ini. Kalo kamu master sekarang, masa depanmu cerah!\n\n`;
   }
 
   // Famous figure 30%
   if (maybe(0.3) && mapel.famous) {
-    text += `**🌟 Inspirasi:** ${pick(mapel.famous)}\n\n`;
+    text += `**🌟 Inspirasi:** ${pick<string>(mapel.famous as string[])}\n\n`;
   }
 
   // Local context
@@ -1022,7 +1022,7 @@ function generateMotivation(ctx: TutorContext): TutorResponse {
       'Otakmu butuh STRESS (kesulitan) untuk belajar.',
       'Diamond formed under pressure. So are smart brains.',
       'Pohon yang kuat itu yang akarnya berkembang di tanah keras.',
-    ])}\n\n${pick(mapel.catchphrases || ['Kamu pasti bisa!'])}\n\n${pick([
+    ])}\n\n${pick<string>((mapel.catchphrases as string[] | undefined) || ['Kamu pasti bisa!'])}\n\n${pick([
       'Coba 1 quiz aja dulu, kasih reward ke diri sendiri abis itu.',
       'Pomodoro 25 menit, lalu istirahat. Repeat.',
       'Pecah materi jadi 3 bagian kecil, kerjakan 1 aja.',
@@ -1280,7 +1280,7 @@ function generateStudyTips(ctx: TutorContext): TutorResponse {
   // Mapel-specific tips
   if (mapel.tips && mapel.tips.length > 0) {
     text += `**${pick(['💎 Tips khusus', '⚡ Strategi efektif', '🎯 Cara cerdas'])}:**\n\n`;
-    pickN(mapel.tips, 3).forEach((tip: string, i: number) => {
+    pickN<string>(mapel.tips as string[], 3).forEach((tip: string, i: number) => {
       text += `${i + 1}. ${tip}\n`;
     });
     text += `\n`;

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimitApiUser, requireApiUser } from '@/lib/api-auth'
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
+const MAX_MESSAGE_LENGTH = 2000
+const AI_RATE_LIMIT = 20
+const AI_RATE_WINDOW_MS = 60_000
 
 function buildSystemPrompt(materi: any, blocks: any[]): string {
   const judulMateri = materi?.judul || 'materi ini'
@@ -63,10 +67,18 @@ ${konten || 'Konten materi belum tersedia.'}
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireApiUser(req)
+    if ('response' in auth) return auth.response
+    const limited = rateLimitApiUser(auth.user.id, 'tutor', AI_RATE_LIMIT, AI_RATE_WINDOW_MS)
+    if (limited) return limited
+
     const { messages, materi, blocks } = await req.json()
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages' }, { status: 400 })
+    }
+    if (messages.some((m: any) => typeof m?.content !== 'string' || m.content.length > MAX_MESSAGE_LENGTH)) {
+      return NextResponse.json({ error: 'Pesan tidak valid atau terlalu panjang' }, { status: 413 })
     }
 
     const apiKey = process.env.GROQ_API_KEY
@@ -101,9 +113,8 @@ export async function POST(req: NextRequest) {
     })
 
     if (!response.ok) {
-      const err = await response.text()
-      console.error('Groq API error:', err)
-      return NextResponse.json({ error: 'Groq API error', detail: err }, { status: 500 })
+      console.error('Groq API error:', await response.text())
+      return NextResponse.json({ error: 'AI request gagal' }, { status: 502 })
     }
 
     const data = await response.json()

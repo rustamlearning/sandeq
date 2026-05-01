@@ -70,7 +70,7 @@ export default function KuisSiswaPage() {
       .from('kuis')
       .select('*, guru:guru_id(nama)')
       .eq('kelas_id', currentUser.kelas_id)
-      .eq('aktif', true)
+      .eq('is_published', true)
       .order('created_at', { ascending: false })
 
     if (!kuisData) { setKuisList([]); return }

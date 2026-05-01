@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
+import { supabase } from '@/lib/supabase'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -52,9 +53,14 @@ export default function AITutorPage() {
   async function sendToAPI(msgs: { role: string; content: string }[], isGreeting = false) {
     setThinking(true)
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session login tidak ditemukan')
       const res = await fetch('/api/tutor', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ messages: msgs, materi: null, blocks: [] }),
       })
       if (!res.ok) throw new Error('API error')

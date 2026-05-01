@@ -106,10 +106,15 @@ export default function TutorChat({ materi, blocks, user, isOpen, onClose }: Tut
       const messagesToSend = isGreeting
         ? [{ role: 'user', content: `Sapa saya dan perkenalkan diri kamu sebagai Tutor SANDEQ. Materi yang akan kita pelajari: "${materi?.judul}". Berikan sambutan yang hangat dan singkat.` }]
         : currentMessages.map((m) => ({ role: m.role, content: m.content }));
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Session login tidak ditemukan');
 
       const res = await fetch('/api/tutor', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({
           messages: messagesToSend,
           materi,

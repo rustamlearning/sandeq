@@ -4,6 +4,7 @@ import { Poppins, Inter } from 'next/font/google';
 import './globals.css';
 import DatabaseProvider from '@/components/DatabaseProvider';
 import { ToastProvider } from '@/components/ui/Toast';
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body className={`${poppins.variable} ${inter.variable} font-sans antialiased`}>
+        <ServiceWorkerRegister />
         <DatabaseProvider>
           <ToastProvider>{children}</ToastProvider>
         </DatabaseProvider>

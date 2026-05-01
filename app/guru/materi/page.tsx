@@ -182,9 +182,14 @@ export default function GuruMateriPage() {
     setAiGenerating(true)
     try {
       const kelasTerpilih = kelasList.find((k) => k.id === kelasId)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session login tidak ditemukan')
       const res = await fetch('/api/generate-materi', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ judul, mapel, tujuan: tujuanPembelajaran, kelas: kelasTerpilih?.nama }),
       })
       const data = await res.json()
@@ -439,7 +444,7 @@ export default function GuruMateriPage() {
                             </div>
                             <iframe
                               srcDoc={htmlKonten}
-                              sandbox="allow-scripts allow-same-origin"
+                              sandbox="allow-scripts"
                               className="w-full bg-white"
                               style={{ height: '600px', border: 'none' }}
                               title="Preview materi HTML"
