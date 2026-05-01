@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, GraduationCap, Inbox, Loader2, PartyPopper, UserRound } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -80,7 +81,9 @@ export default function JadwalPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">📅</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-600">Memuat jadwal...</p>
         </div>
       </div>
@@ -95,9 +98,10 @@ export default function JadwalPage() {
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push(backPath)}
+            aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Jadwal Pelajaran</h1>
@@ -132,7 +136,9 @@ export default function JadwalPage() {
         {/* Daftar jadwal */}
         {jadwal.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">📭</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Inbox size={26} />
+            </div>
             <p className="font-semibold text-gray-700">Belum ada jadwal</p>
             <p className="text-sm text-gray-500 mt-1">
               {user?.role === 'guru'
@@ -142,11 +148,13 @@ export default function JadwalPage() {
           </div>
         ) : jadwalHari.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">🎉</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
+              <PartyPopper size={26} />
+            </div>
             <p className="font-semibold text-gray-700">
               Tidak ada pelajaran hari {HARI_LIST.find((h) => h.num === selectedHari)?.full}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Selamat beristirahat!</p>
+            <p className="text-sm text-gray-500 mt-1">Selamat beristirahat.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -166,10 +174,10 @@ export default function JadwalPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-base truncate">{j.mapel}</h3>
                   {user?.role === 'siswa' && j.guru && (
-                    <p className="text-sm opacity-70 mt-0.5">👤 {j.guru.nama}</p>
+                    <p className="inline-flex items-center gap-1.5 text-sm opacity-70 mt-0.5"><UserRound size={14} /> {j.guru.nama}</p>
                   )}
                   {user?.role === 'guru' && j.kelas && (
-                    <p className="text-sm opacity-70 mt-0.5">🏫 {j.kelas.nama}</p>
+                    <p className="inline-flex items-center gap-1.5 text-sm opacity-70 mt-0.5"><GraduationCap size={14} /> {j.kelas.nama}</p>
                   )}
                   {user?.role === 'admin' && (
                     <p className="text-sm opacity-70 mt-0.5">
