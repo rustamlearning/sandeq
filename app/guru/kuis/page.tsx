@@ -3,6 +3,24 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import {
+  ArrowLeft,
+  BarChart3,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardCheck,
+  Edit3,
+  FileQuestion,
+  Inbox,
+  Loader2,
+  Pause,
+  Play,
+  Plus,
+  Search,
+  Target,
+  Timer,
+  Trash2,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast'
@@ -25,23 +43,15 @@ interface KuisItem {
   _avg_score?: number;
 }
 
-const MAPEL_ICONS: Record<string, string> = {
-  'Matematika': '🧮',
-  'Bahasa Indonesia': '📖',
-  'Bahasa Inggris': '🌐',
-  'Fisika': '⚛️',
-  'Kimia': '🧪',
-  'Biologi': '🧬',
-  'Sejarah Indonesia': '📜',
-  'Geografi': '🗺️',
-  'Ekonomi': '💰',
-  'Sosiologi': '👥',
-  'PPKn': '🏛️',
-  'PAI': '🕌',
-  'Seni Budaya': '🎨',
-  'Penjaskes': '⚽',
-  'Informatika': '💻',
-};
+function getMapelInitial(mapel: string) {
+  return (mapel || 'Kuis')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+}
 
 export default function KuisListPage() {
   const router = useRouter()
@@ -141,8 +151,10 @@ export default function KuisListPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">⛵</div>
+          <div className="text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-600">Memuat kuis...</p>
         </div>
       </div>
@@ -155,9 +167,10 @@ export default function KuisListPage() {
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
+            aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-bold text-white">Kuis & Ulangan</h1>
@@ -169,7 +182,7 @@ export default function KuisListPage() {
             href="/guru/kuis/builder/new"
             className="bg-white text-orange-600 hover:bg-orange-50 px-5 py-2.5 rounded-xl font-semibold shadow-md transition flex items-center gap-2"
           >
-            <span className="text-xl">+</span>
+            <Plus size={18} />
             <span>Buat Kuis Baru</span>
           </Link>
         </div>
@@ -179,7 +192,7 @@ export default function KuisListPage() {
         {kuisList.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="md:col-span-2">
-              <label className="text-xs font-medium text-gray-600 block mb-1">🔍 Cari</label>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Cari</label>
               <input
                 type="text"
                 value={search}
@@ -216,7 +229,7 @@ export default function KuisListPage() {
                   filterStatus === 'published' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                ✅ Aktif ({kuisList.filter((k) => k.is_published).length})
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={13} /> Aktif ({kuisList.filter((k) => k.is_published).length})</span>
               </button>
               <button
                 onClick={() => setFilterStatus('draft')}
@@ -224,7 +237,7 @@ export default function KuisListPage() {
                   filterStatus === 'draft' ? 'bg-yellow-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                📝 Draft ({kuisList.filter((k) => !k.is_published).length})
+                <span className="inline-flex items-center gap-1.5"><FileQuestion size={13} /> Draft ({kuisList.filter((k) => !k.is_published).length})</span>
               </button>
             </div>
           </div>
@@ -232,7 +245,9 @@ export default function KuisListPage() {
 
         {kuisList.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-6xl mb-4">📝</div>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <FileQuestion size={30} />
+            </div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Belum ada kuis</h2>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
               Mulai dengan membuat kuis pertama. Kamu bisa generate soal otomatis dengan AI atau buat manual.
@@ -241,13 +256,15 @@ export default function KuisListPage() {
               href="/guru/kuis/builder/new"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
             >
-              <span className="text-xl">🚀</span>
+              <Plus size={18} />
               <span>Buat Kuis Pertama</span>
             </Link>
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">🔍</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Search size={26} />
+            </div>
             <p className="text-gray-600">Tidak ada kuis yang cocok dengan filter</p>
             <button
               onClick={() => {
@@ -286,7 +303,7 @@ function KuisCard({
   onDelete: () => void;
   onTogglePublish: () => void;
 }) {
-  const icon = MAPEL_ICONS[kuis.mapel] || '📚';
+  const mapelInitial = getMapelInitial(kuis.mapel);
   const tanggalDibuat = new Date(kuis.created_at).toLocaleDateString('id-ID', {
     day: 'numeric',
     month: 'short',
@@ -299,7 +316,9 @@ function KuisCard({
 
       <div className="p-4">
         <div className="flex items-start gap-3 mb-3">
-          <div className="text-3xl flex-shrink-0">{icon}</div>
+          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50 text-sm font-black text-blue-700">
+            {mapelInitial}
+          </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-gray-900 truncate">{kuis.judul}</h3>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -333,48 +352,53 @@ function KuisCard({
         </div>
 
         <div className="flex items-center justify-between text-xs text-gray-500 mb-3 flex-wrap gap-1">
-          <span>⏱ {kuis.durasi_menit} menit</span>
-          <span>🎯 KKM {kuis.kkm}</span>
-          <span>📅 {tanggalDibuat}</span>
+          <span className="inline-flex items-center gap-1"><Timer size={12} /> {kuis.durasi_menit} menit</span>
+          <span className="inline-flex items-center gap-1"><Target size={12} /> KKM {kuis.kkm}</span>
+          <span className="inline-flex items-center gap-1"><CalendarDays size={12} /> {tanggalDibuat}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-2 mb-2">
           <Link
             href={`/guru/kuis/builder/${kuis.id}`}
-            className="text-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition"
           >
-            ✏️ Kelola
+            <Edit3 size={14} />
+            Kelola
           </Link>
           <Link
             href={`/guru/kuis/${kuis.id}/analytics`}
-            className="text-center px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm font-medium transition"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm font-medium transition"
           >
-            📊 Analytics
+            <BarChart3 size={14} />
+            Analytics
           </Link>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
           <Link
             href={`/guru/kuis/${kuis.id}/grading`}
-            className="text-center px-2 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-medium transition"
+            className="inline-flex items-center justify-center gap-1 px-2 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-medium transition"
           >
-            📝 Grading
+            <ClipboardCheck size={13} />
+            Grading
           </Link>
           <button
             onClick={onTogglePublish}
-            className={`px-2 py-1.5 rounded-lg text-xs font-medium transition ${
+            className={`inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition ${
               kuis.is_published
                 ? 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700'
                 : 'bg-green-50 hover:bg-green-100 text-green-700'
             }`}
           >
-            {kuis.is_published ? '⏸ Pause' : '▶️ Publish'}
+            {kuis.is_published ? <Pause size={13} /> : <Play size={13} />}
+            {kuis.is_published ? 'Pause' : 'Publish'}
           </button>
           <button
             onClick={onDelete}
-            className="px-2 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium transition"
+            className="inline-flex items-center justify-center gap-1 px-2 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium transition"
           >
-            🗑 Hapus
+            <Trash2 size={13} />
+            Hapus
           </button>
         </div>
       </div>

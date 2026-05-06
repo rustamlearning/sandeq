@@ -23,8 +23,8 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-40 safe-bottom">
-      <div className="grid grid-cols-5 max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-white/70 bg-white/82 backdrop-blur-xl md:hidden z-40 safe-bottom">
+      <div className="grid grid-cols-5 max-w-md mx-auto px-2">
         {items.map((item) => {
           const Icon = item.icon;
           const active =
@@ -34,16 +34,17 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center py-2 px-1 text-xs min-h-[56px] ${
-                active ? 'text-[#1A4A7A]' : 'text-gray-500'
+              className={`relative flex flex-col items-center justify-center py-2 px-1 text-xs min-h-[58px] rounded-md transition-colors ${
+                active ? 'text-[#1A4A7A]' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
+              {active && <span className="absolute inset-x-2 top-1 h-8 rounded-md bg-[#eef6fb]" />}
               <Icon
                 size={22}
-                className={active ? 'text-[#1A4A7A]' : 'text-gray-500'}
+                className={`relative ${active ? 'text-[#1A4A7A]' : 'text-slate-500'}`}
                 strokeWidth={active ? 2.5 : 2}
               />
-              <span className={`mt-0.5 ${active ? 'font-semibold' : ''}`}>
+              <span className={`relative mt-0.5 ${active ? 'font-semibold' : ''}`}>
                 {item.label}
               </span>
             </Link>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft, Inbox, Loader2, Plus, Save, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { getCurrentUser } from '@/lib/auth'
 import { useToast } from '@/components/ui/Toast'
@@ -110,7 +111,9 @@ export default function AdminJadwalPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">📅</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-500">Memuat jadwal...</p>
         </div>
       </div>
@@ -128,9 +131,10 @@ export default function AdminJadwalPage() {
         <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/admin')}
+            aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Kelola Jadwal</h1>
@@ -138,9 +142,10 @@ export default function AdminJadwalPage() {
           </div>
           <button
             onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(!showForm) }}
-            className="bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
+            className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
           >
-            {showForm ? '✕ Tutup' : '+ Tambah'}
+            {showForm ? <X size={15} /> : <Plus size={15} />}
+            {showForm ? 'Tutup' : 'Tambah'}
           </button>
         </div>
 
@@ -231,9 +236,10 @@ export default function AdminJadwalPage() {
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleAdd} disabled={saving}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-slate-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-slate-700 transition disabled:opacity-50"
+                  className="inline-flex flex-1 items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-indigo-600 to-slate-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-slate-700 transition disabled:opacity-50"
                 >
-                  {saving ? '⏳ Menyimpan...' : '💾 Simpan Jadwal'}
+                  {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                  {saving ? 'Menyimpan...' : 'Simpan Jadwal'}
                 </button>
                 <button
                   onClick={() => setShowForm(false)}
@@ -249,14 +255,17 @@ export default function AdminJadwalPage() {
         {/* Jadwal per hari */}
         {jadwalList.length === 0 && !showForm ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">📭</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Inbox size={26} />
+            </div>
             <p className="font-semibold text-gray-700">Belum ada jadwal untuk kelas ini</p>
             <p className="text-sm text-gray-400 mt-1">Tambah jadwal pelajaran untuk kelas {selectedKelasNama}</p>
             <button
               onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(true) }}
-              className="mt-4 px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
+              className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
             >
-              + Tambah Jadwal Pertama
+              <Plus size={15} />
+              Tambah Jadwal Pertama
             </button>
           </div>
         ) : (

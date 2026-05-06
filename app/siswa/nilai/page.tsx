@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Nilai } from '@/lib/supabase'
+import { ArrowLeft, BarChart3, ChevronDown, Loader2 } from 'lucide-react'
 
 interface NilaiGrouped {
   mapel: string
@@ -63,7 +64,7 @@ export default function NilaiSiswaPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#1A4A7A]" />
           <p className="text-gray-500 text-sm">Memuat nilai...</p>
         </div>
       </div>
@@ -80,8 +81,9 @@ export default function NilaiSiswaPage() {
           <button
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
+            aria-label="Kembali ke dashboard siswa"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div>
             <h1 className="text-lg font-bold leading-tight">Nilai Saya</h1>
@@ -109,7 +111,7 @@ export default function NilaiSiswaPage() {
       <main className="max-w-2xl mx-auto px-4 py-5">
         {grouped.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-            <div className="text-5xl mb-3">📊</div>
+            <BarChart3 className="mx-auto mb-3 h-10 w-10 text-slate-300" />
             <p className="font-semibold text-gray-700">Belum ada nilai</p>
             <p className="text-sm text-gray-500 mt-1">Selesaikan ulangan untuk mendapat nilai.</p>
           </div>
@@ -136,7 +138,7 @@ export default function NilaiSiswaPage() {
                     <div className="text-right">
                       <p className={`text-2xl font-black ${g_info.color}`}>{g.rata}</p>
                     </div>
-                    <span className={`text-gray-400 text-xs transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+                    <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Progress bar */}

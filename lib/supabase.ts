@@ -22,6 +22,10 @@ export interface User {
   role: UserRole
   kelas_id: string | null
   aktif: boolean
+  xp?: number
+  level?: number
+  current_streak?: number
+  hide_from_leaderboard?: boolean
   created_at: string
 }
 
@@ -52,7 +56,8 @@ export interface Kuis {
   guru_id: string
   tipe: 'latihan' | 'ulangan'
   durasi_menit: number | null
-  aktif: boolean
+  is_published: boolean
+  aktif?: boolean
   tanggal_mulai?: string | null
   tanggal_selesai?: string | null
   created_at: string

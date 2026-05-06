@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
+import { ArrowLeft, Bell, CheckCircle2, ClipboardList, Megaphone, Timer, TriangleAlert } from 'lucide-react'
 
 interface Notif {
   id: string
@@ -37,9 +38,9 @@ function timeUntil(dateStr: string) {
 }
 
 const TIPE_CONFIG = {
-  pengumuman: { icon: '📢', bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', label: 'Pengumuman' },
-  kuis_baru: { icon: '✏️', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Baru' },
-  kuis_deadline: { icon: '⏰', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
+  pengumuman: { icon: Megaphone, bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', label: 'Pengumuman' },
+  kuis_baru: { icon: ClipboardList, bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Baru' },
+  kuis_deadline: { icon: Timer, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
 }
 
 export default function NotifikasiPage() {
@@ -66,7 +67,7 @@ export default function NotifikasiPage() {
       supabase.from('pengumuman').select('id, judul, konten, created_at, kategori')
         .gte('created_at', sevenDaysAgo).order('created_at', { ascending: false }).limit(10),
       supabase.from('kuis').select('id, judul, mapel, tanggal_selesai, created_at')
-        .eq('kelas_id', u.kelas_id).eq('aktif', true)
+        .eq('kelas_id', u.kelas_id).eq('is_published', true)
         .order('created_at', { ascending: false }),
       supabase.from('pengerjaan').select('kuis_id').eq('siswa_id', u.id),
     ])
@@ -139,7 +140,7 @@ export default function NotifikasiPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">🔔</div>
+          <Bell className="mx-auto mb-3 h-8 w-8 animate-pulse text-[#1A4A7A]" />
           <p className="text-gray-500">Memuat notifikasi...</p>
         </div>
       </div>
@@ -155,8 +156,9 @@ export default function NotifikasiPage() {
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
+            aria-label="Kembali ke dashboard siswa"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Notifikasi</h1>
@@ -175,13 +177,14 @@ export default function NotifikasiPage() {
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">🎉</div>
+            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-emerald-500" />
             <p className="font-semibold text-gray-700">Semua beres!</p>
             <p className="text-sm text-gray-400 mt-1">Tidak ada notifikasi baru dalam 7 hari terakhir</p>
           </div>
         ) : (
           notifs.map((n) => {
             const cfg = TIPE_CONFIG[n.tipe]
+            const Icon = cfg.icon
             return (
               <button
                 key={n.id}
@@ -193,7 +196,7 @@ export default function NotifikasiPage() {
                 {n.urgent && <div className="h-1 bg-red-500" />}
                 <div className="p-4 flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center text-xl flex-shrink-0`}>
-                    {cfg.icon}
+                    <Icon size={19} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
@@ -201,7 +204,7 @@ export default function NotifikasiPage() {
                         {cfg.label}
                       </span>
                       {n.urgent && (
-                        <span className="text-xs font-bold text-red-600 animate-pulse">⚠️ Mendesak</span>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 animate-pulse"><TriangleAlert size={12} /> Mendesak</span>
                       )}
                     </div>
                     <p className="font-semibold text-gray-800 text-sm leading-snug">{n.judul}</p>

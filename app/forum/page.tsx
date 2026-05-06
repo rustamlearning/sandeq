@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft, CheckCircle2, Loader2, MessageCircle, Plus, Send, ThumbsUp, X } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 import { useToast } from '@/components/ui/Toast'
@@ -115,7 +116,9 @@ export default function ForumPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">💬</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-500">Memuat forum...</p>
         </div>
       </div>
@@ -128,9 +131,10 @@ export default function ForumPage() {
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={backToHome}
+            aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Forum Diskusi</h1>
@@ -138,9 +142,10 @@ export default function ForumPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-white text-sky-600 hover:bg-sky-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
+            className="inline-flex items-center gap-2 bg-white text-sky-600 hover:bg-sky-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
           >
-            {showForm ? '✕ Tutup' : '+ Tanya'}
+            {showForm ? <X size={15} /> : <Plus size={15} />}
+            {showForm ? 'Tutup' : 'Tanya'}
           </button>
         </div>
 
@@ -209,9 +214,10 @@ export default function ForumPage() {
               <div className="flex gap-2">
                 <button
                   type="submit" disabled={submitting}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold text-sm hover:from-[#0d3562] hover:to-[#1A4A7A] transition disabled:opacity-50"
+                  className="inline-flex flex-1 items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold text-sm hover:from-[#0d3562] hover:to-[#1A4A7A] transition disabled:opacity-50"
                 >
-                  {submitting ? '⏳ Mengirim...' : '📤 Kirim Pertanyaan'}
+                  {submitting ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />}
+                  {submitting ? 'Mengirim...' : 'Kirim Pertanyaan'}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
                   Batal
@@ -224,11 +230,14 @@ export default function ForumPage() {
         {/* List pertanyaan */}
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">💬</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+              <MessageCircle size={26} />
+            </div>
             <p className="font-semibold text-gray-700">Belum ada pertanyaan</p>
-            <p className="text-sm text-gray-400 mt-1">Jadilah yang pertama bertanya!</p>
-            <button onClick={() => setShowForm(true)} className="mt-4 px-5 py-2 bg-sky-500 text-white rounded-xl text-sm font-semibold hover:bg-sky-600 transition">
-              + Buat Pertanyaan
+            <p className="text-sm text-gray-400 mt-1">Jadilah yang pertama bertanya.</p>
+            <button onClick={() => setShowForm(true)} className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-sky-500 text-white rounded-xl text-sm font-semibold hover:bg-sky-600 transition">
+              <Plus size={15} />
+              Buat Pertanyaan
             </button>
           </div>
         ) : (
@@ -252,13 +261,13 @@ export default function ForumPage() {
 
                     <div className="flex items-center gap-3 mt-3">
                       <button onClick={() => toggleLike(post)} className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-600 transition">
-                        👍 {post.likes}
+                        <ThumbsUp size={13} /> {post.likes}
                       </button>
                       <button
                         onClick={() => { setReplyTo(replyTo === post.id ? null : post.id); setReplyText('') }}
                         className="flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 font-medium transition"
                       >
-                        💬 {post.replies?.length || 0} Balas
+                        <MessageCircle size={13} /> {post.replies?.length || 0} Balas
                       </button>
                       {(user?.id === post.author_id || user?.role === 'admin' || user?.role === 'guru') && (
                         <button onClick={() => handleDelete(post.id)} className="text-xs text-red-400 hover:text-red-600 ml-auto transition">
@@ -276,7 +285,7 @@ export default function ForumPage() {
                   {post.replies.map((reply) => (
                     <div key={reply.id} className={`px-4 py-3 pl-8 ${reply.is_jawaban_terbaik ? 'bg-emerald-50' : ''}`}>
                       {reply.is_jawaban_terbaik && (
-                        <span className="text-xs font-bold text-emerald-600 block mb-1">✅ Jawaban Terbaik</span>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 mb-1"><CheckCircle2 size={13} /> Jawaban Terbaik</span>
                       )}
                       <div className="flex items-start gap-2">
                         <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs flex-shrink-0">

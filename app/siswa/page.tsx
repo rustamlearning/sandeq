@@ -8,18 +8,18 @@ import { getLevelInfo } from '@/lib/gamification';
 import { PageLoader } from '@/components/ui/Skeleton';
 import DailyCheckIn from '@/components/DailyCheckIn';
 
-const menuItems: { icon: string; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
-  { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
-  { icon: '✏️', title: 'Kuis', description: 'Kerjakan latihan & ulangan', path: '/siswa/kuis', color: 'text-violet-600 bg-violet-50' },
-  { icon: '📊', title: 'Nilai', description: 'Lihat nilai & rapor', path: '/siswa/nilai', color: 'text-emerald-600 bg-emerald-50' },
-  { icon: '🗓️', title: 'Jadwal', description: 'Jadwal pelajaran harian', path: '/jadwal', color: 'text-indigo-600 bg-indigo-50' },
-  { icon: '📅', title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-600 bg-amber-50' },
-  { icon: '📢', title: 'Pengumuman', description: 'Info dari sekolah', path: '/siswa/pengumuman', color: 'text-rose-600 bg-rose-50' },
-  { icon: '🔔', title: 'Notifikasi', description: 'Pengumuman & deadline kuis', path: '/siswa/notifikasi', color: 'text-amber-600 bg-amber-50' },
-  { icon: '🤖', title: 'AI Tutor', description: 'Tanya AI, belajar 24/7', path: '/siswa/ai-tutor', color: 'text-purple-600 bg-purple-50' },
-  { icon: '💬', title: 'Forum', description: 'Diskusi dengan teman & guru', path: '/forum', color: 'text-sky-600 bg-sky-50' },
-  { icon: '⭐', title: 'Profil & Stats', description: 'XP, level, badges', path: '/profil', color: 'text-yellow-600 bg-yellow-50', highlight: true },
-  { icon: '🏆', title: 'Leaderboard', description: 'Ranking kelas', path: '/siswa/leaderboard', color: 'text-orange-600 bg-orange-50', highlight: true },
+const menuItems: { icon: LucideIcon; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
+  { icon: BookOpen, title: 'Materi', description: 'Lanjutkan bahan belajar kelas', path: '/siswa/materi', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
+  { icon: ClipboardList, title: 'Kuis', description: 'Kerjakan latihan dan ulangan', path: '/siswa/kuis', color: 'text-violet-700 bg-violet-50 ring-violet-100' },
+  { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai dan rapor', path: '/siswa/nilai', color: 'text-emerald-700 bg-emerald-50 ring-emerald-100' },
+  { icon: CalendarDays, title: 'Jadwal', description: 'Lihat pelajaran hari ini', path: '/jadwal', color: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
+  { icon: CalendarCheck, title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-700 bg-amber-50 ring-amber-100' },
+  { icon: Megaphone, title: 'Pengumuman', description: 'Info penting sekolah', path: '/siswa/pengumuman', color: 'text-rose-700 bg-rose-50 ring-rose-100' },
+  { icon: Bell, title: 'Notifikasi', description: 'Deadline dan kabar terbaru', path: '/siswa/notifikasi', color: 'text-orange-700 bg-orange-50 ring-orange-100' },
+  { icon: Bot, title: 'AI Tutor', description: 'Tanya materi saat buntu', path: '/siswa/ai-tutor', color: 'text-purple-700 bg-purple-50 ring-purple-100' },
+  { icon: MessageSquare, title: 'Forum', description: 'Diskusi dengan kelas', path: '/forum', color: 'text-sky-700 bg-sky-50 ring-sky-100' },
+  { icon: UserRound, title: 'Profil & Stats', description: 'XP, level, dan badge', path: '/profil', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100', highlight: true },
+  { icon: Trophy, title: 'Leaderboard', description: 'Peringkat belajar kelas', path: '/siswa/leaderboard', color: 'text-orange-700 bg-orange-50 ring-orange-100', highlight: true },
 ]
 
 export default function SiswaDashboardPage() {
@@ -43,7 +43,7 @@ export default function SiswaDashboardPage() {
         supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id),
         supabase.from('pengumuman').select('id', { count: 'exact', head: true }),
         supabase.from('pengumuman').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
-        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id).eq('aktif', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
+        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('kelas_id', u.kelas_id).eq('is_published', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
       ]);
       setStats({ materiCount: materiRes.count || 0, kuisCount: kuisRes.count || 0, pengumumanCount: pengumumanRes.count || 0 });
       setNotifCount((recentPengumuman.count || 0) + (deadlineKuis.count || 0));

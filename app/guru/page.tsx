@@ -6,6 +6,22 @@ import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 import { PageLoader } from '@/components/ui/Skeleton'
+import {
+  BarChart3,
+  Bell,
+  BookOpen,
+  CalendarDays,
+  ChevronRight,
+  ClipboardCheck,
+  ClipboardList,
+  Download,
+  LogOut,
+  Megaphone,
+  MessageSquare,
+  PenLine,
+  Target,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 interface Stats {
   totalMateri: number
@@ -178,29 +194,28 @@ export default function GuruDashboard() {
   const nama = user?.nama?.split(' ')[0] ?? 'Guru'
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
-        <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
+    <div className="app-canvas">
+      <header className="border-b border-white/70 bg-white/78 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
             <div>
-              <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
-              <p className="text-blue-200 text-xs">Portal Guru</p>
+              <h1 className="font-semibold text-lg leading-tight text-slate-950">SANDEQ</h1>
+              <p className="text-slate-500 text-xs">Portal Guru</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium">{user?.nama}</p>
-              <p className="text-blue-200 text-xs">Guru</p>
+              <p className="text-sm font-medium text-slate-900">{user?.nama}</p>
+              <p className="text-slate-500 text-xs">Guru</p>
             </div>
             <button
               onClick={() => router.push('/guru/notifikasi')}
               className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
             >
-              🔔
+              <Bell size={17} />
               {notifCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {notifCount > 9 ? '9+' : notifCount}
                 </span>
               )}
@@ -209,7 +224,8 @@ export default function GuruDashboard() {
               onClick={async () => { await logout(); router.replace('/login') }}
               className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
             >
-              Keluar
+              <LogOut size={15} />
+              <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
         </div>
@@ -276,7 +292,7 @@ export default function GuruDashboard() {
               <QuickBtn label={`Nilai Essay (${stats.essayBelumDinilai})`} onClick={() => router.push('/guru/kuis')} color="bg-red-600" />
             )}
           </div>
-        </div>
+        </section>
 
         {/* Menu Grid */}
         <div>

@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle2,
+  KeyRound,
+  Loader2,
+  Plus,
+  UserPlus,
+  Users,
+  X,
+} from 'lucide-react'
 import { getCurrentUser, registerUser } from '@/lib/auth'
 import { supabase, User, Kelas, UserRole } from '@/lib/supabase'
 
@@ -100,7 +111,9 @@ export default function KelolaUsersPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">👤</div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
           <p className="text-gray-500">Memuat pengguna...</p>
         </div>
       </div>
@@ -111,16 +124,17 @@ export default function KelolaUsersPage() {
     <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button onClick={() => router.push('/admin')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">←</button>
+          <button onClick={() => router.push('/admin')} aria-label="Kembali" className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"><ArrowLeft size={18} /></button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Kelola Pengguna</h1>
             <p className="text-white/70 text-sm">{users.length} pengguna terdaftar</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-white text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
+            className="inline-flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
           >
-            {showForm ? '✕ Tutup' : '+ Tambah'}
+            {showForm ? <X size={15} /> : <Plus size={15} />}
+            {showForm ? 'Tutup' : 'Tambah'}
           </button>
         </div>
 
@@ -187,8 +201,9 @@ export default function KelolaUsersPage() {
               {formError && <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-lg">{formError}</p>}
               <div className="flex gap-2 pt-1">
                 <button type="submit" disabled={submitting}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-semibold text-sm hover:from-slate-700 hover:to-slate-800 transition disabled:opacity-50">
-                  {submitting ? '⏳ Menyimpan...' : '👤 Tambah Pengguna'}
+                  className="inline-flex flex-1 items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-semibold text-sm hover:from-slate-700 hover:to-slate-800 transition disabled:opacity-50">
+                  {submitting ? <Loader2 className="animate-spin" size={16} /> : <UserPlus size={16} />}
+                  {submitting ? 'Menyimpan...' : 'Tambah Pengguna'}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)}
                   className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
@@ -202,7 +217,9 @@ export default function KelolaUsersPage() {
         {/* User list */}
         {filteredUsers.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-            <div className="text-5xl mb-3">👤</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">
+              <Users size={26} />
+            </div>
             <p className="font-semibold text-gray-700">Belum ada pengguna</p>
           </div>
         ) : (
@@ -226,7 +243,7 @@ export default function KelolaUsersPage() {
                       onClick={() => { setResetTarget(u); setResetPassword(''); setResetMsg(null) }}
                       className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex-shrink-0"
                     >
-                      🔑 Reset
+                      <span className="inline-flex items-center gap-1"><KeyRound size={12} /> Reset</span>
                     </button>
                   </div>
                 )
@@ -245,14 +262,17 @@ export default function KelolaUsersPage() {
                 <h3 className="text-white font-bold">Reset Password</h3>
                 <p className="text-white/80 text-xs mt-0.5">{resetTarget.nama}</p>
               </div>
-              <button onClick={() => setResetTarget(null)} className="text-white/80 hover:text-white text-xl">✕</button>
+              <button onClick={() => setResetTarget(null)} className="text-white/80 hover:text-white text-xl"><X size={17} /></button>
             </div>
             <form onSubmit={handleResetPassword} className="p-5 space-y-4">
               {resetMsg && (
                 <div className={`text-sm px-3 py-2.5 rounded-xl font-medium ${
                   resetMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
                 }`}>
-                  {resetMsg.type === 'success' ? '✅ ' : '⚠️ '}{resetMsg.text}
+                  <span className="inline-flex items-center gap-1.5">
+                    {resetMsg.type === 'success' ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                    {resetMsg.text}
+                  </span>
                 </div>
               )}
               <div>
@@ -263,8 +283,9 @@ export default function KelolaUsersPage() {
               </div>
               <div className="flex gap-2">
                 <button type="submit" disabled={resetting}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold text-sm hover:from-amber-600 hover:to-orange-600 transition disabled:opacity-50">
-                  {resetting ? '⏳ Mereset...' : '🔑 Reset Password'}
+                  className="inline-flex flex-1 items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold text-sm hover:from-amber-600 hover:to-orange-600 transition disabled:opacity-50">
+                  {resetting ? <Loader2 className="animate-spin" size={16} /> : <KeyRound size={16} />}
+                  {resetting ? 'Mereset...' : 'Reset Password'}
                 </button>
                 <button type="button" onClick={() => setResetTarget(null)}
                   className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">

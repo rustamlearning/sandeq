@@ -11,17 +11,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-gradient-to-r from-blue-700 to-blue-500 text-white hover:from-blue-800 hover:to-blue-600 shadow-sm shadow-blue-200 disabled:from-blue-300 disabled:to-blue-300 disabled:shadow-none',
-  secondary: 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm disabled:opacity-50',
-  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 disabled:opacity-50',
-  danger: 'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 shadow-sm disabled:opacity-50',
-  success: 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-700 hover:to-emerald-600 shadow-sm disabled:opacity-50',
+  primary: 'bg-[#1a4a7a] text-white shadow-[0_14px_28px_rgba(26,74,122,0.20)] hover:bg-[#153f68] disabled:bg-[#8fb0ca] disabled:shadow-none',
+  secondary: 'bg-white/86 text-slate-700 border border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-sm disabled:opacity-50',
+  ghost: 'bg-transparent text-slate-600 hover:bg-white/70 disabled:opacity-50',
+  danger: 'bg-red-600 text-white hover:bg-red-700 shadow-[0_14px_28px_rgba(220,38,38,0.16)] disabled:opacity-50',
+  success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-[0_14px_28px_rgba(5,150,105,0.16)] disabled:opacity-50',
 }
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'px-3 py-1.5 text-xs rounded-lg gap-1.5',
-  md: 'px-4 py-2.5 text-sm rounded-xl gap-2',
-  lg: 'px-6 py-3 text-base rounded-xl gap-2',
+  sm: 'px-3 py-1.5 text-xs rounded-md gap-1.5',
+  md: 'px-4 py-2.5 text-sm rounded-md gap-2',
+  lg: 'px-6 py-3 text-base rounded-lg gap-2',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -31,7 +31,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={[
-          'inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-[0.97] select-none',
+          'inline-flex items-center justify-center font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#2e86c1]/18 active:translate-y-0 select-none',
           variantClasses[variant],
           sizeClasses[size],
           fullWidth ? 'w-full' : '',
@@ -41,7 +41,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <>
-            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span className="inline-flex items-center gap-1" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-1.5 w-1.5 rounded-full bg-current"
+                  style={{ animation: `loadingDot 1.15s ease-in-out ${i * 0.14}s infinite` }}
+                />
+              ))}
+            </span>
             <span>{children}</span>
           </>
         ) : children}

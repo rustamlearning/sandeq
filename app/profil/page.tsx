@@ -2,6 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  Flame,
+  History,
+  Lock,
+  Medal,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Trophy,
+} from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserStats, UserStats, LEVELS } from '@/lib/gamification';
 import { supabase } from '@/lib/supabase';
@@ -90,7 +108,7 @@ export default function SiswaProfilPage() {
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
           >
-            ←
+            <ArrowLeft size={17} />
           </button>
           <h1 className="text-lg font-bold">Profil Saya</h1>
         </div>
@@ -98,8 +116,8 @@ export default function SiswaProfilPage() {
         {/* Hero card */}
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
-              {stats.levelInfo.emoji}
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <Sparkles size={30} />
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-xl font-black truncate">{user.nama}</h2>
@@ -109,7 +127,7 @@ export default function SiswaProfilPage() {
                 </span>
                 {stats.currentStreak > 0 && (
                   <span className="bg-orange-500/40 text-xs px-2 py-0.5 rounded-full font-semibold">
-                    🔥 {stats.currentStreak} hari
+                    <span className="inline-flex items-center gap-1"><Flame size={12} /> {stats.currentStreak} hari</span>
                   </span>
                 )}
               </div>
@@ -130,10 +148,10 @@ export default function SiswaProfilPage() {
             </div>
             {stats.nextLevel ? (
               <p className="text-xs text-blue-200 mt-1">
-                {(stats.nextLevel.minXp - stats.xp).toLocaleString()} XP lagi → Lv {stats.nextLevel.level} {stats.nextLevel.title}
+                {(stats.nextLevel.minXp - stats.xp).toLocaleString()} XP lagi ke Lv {stats.nextLevel.level} {stats.nextLevel.title}
               </p>
             ) : (
-              <p className="text-xs text-yellow-300 mt-1 font-semibold">🌟 MAX LEVEL — Legenda Sandeq!</p>
+              <p className="text-xs text-yellow-300 mt-1 font-semibold">MAX LEVEL - Legenda Sandeq</p>
             )}
           </div>
         </div>
@@ -143,13 +161,13 @@ export default function SiswaProfilPage() {
         {/* Quick stats */}
         <div className="grid grid-cols-4 gap-2">
           {[
-            { icon: '📚', label: 'Dibaca', value: stats.totalMateriRead },
-            { icon: '✅', label: 'Selesai', value: stats.totalMateriCompleted },
-            { icon: '🎯', label: 'Benar', value: stats.totalQuizCorrect },
-            { icon: '🏆', label: 'Mastery', value: stats.totalMastered },
+            { icon: BookOpen, label: 'Dibaca', value: stats.totalMateriRead },
+            { icon: CheckCircle2, label: 'Selesai', value: stats.totalMateriCompleted },
+            { icon: Target, label: 'Benar', value: stats.totalQuizCorrect },
+            { icon: Trophy, label: 'Mastery', value: stats.totalMastered },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl p-3 text-center shadow-sm">
-              <div className="text-xl mb-0.5">{s.icon}</div>
+              <s.icon className="mx-auto mb-0.5 text-blue-700" size={20} />
               <div className="text-lg font-black text-gray-800">{s.value}</div>
               <div className="text-[10px] text-gray-500">{s.label}</div>
             </div>
@@ -169,10 +187,16 @@ export default function SiswaProfilPage() {
                     : 'text-white/80 hover:text-white'
                 }`}
               >
-                {tab === 'stats' ? '📊 Stats'
-                  : tab === 'badges' ? `🏅 Badges (${stats.totalBadges})`
-                  : tab === 'history' ? '📜 Riwayat'
-                  : '🔐 Password'}
+                <span className="inline-flex items-center gap-1.5">
+                  {tab === 'stats' ? <BarChart3 size={14} />
+                    : tab === 'badges' ? <Medal size={14} />
+                    : tab === 'history' ? <History size={14} />
+                    : <Lock size={14} />}
+                  {tab === 'stats' ? 'Stats'
+                    : tab === 'badges' ? `Badges (${stats.totalBadges})`
+                    : tab === 'history' ? 'Riwayat'
+                    : 'Password'}
+                </span>
               </button>
             ))}
           </div>
@@ -181,17 +205,17 @@ export default function SiswaProfilPage() {
             {activeTab === 'stats' && (
               <div className="space-y-0">
                 {[
-                  { label: 'Streak Saat Ini', value: `🔥 ${stats.currentStreak} hari` },
-                  { label: 'Streak Terpanjang', value: `💎 ${stats.longestStreak} hari` },
-                  { label: 'Total XP', value: `⭐ ${stats.xp.toLocaleString()} XP` },
-                  { label: 'Level', value: `${stats.levelInfo.emoji} Lv ${stats.level}` },
+                  { label: 'Streak Saat Ini', value: `${stats.currentStreak} hari` },
+                  { label: 'Streak Terpanjang', value: `${stats.longestStreak} hari` },
+                  { label: 'Total XP', value: `${stats.xp.toLocaleString()} XP` },
+                  { label: 'Level', value: `Lv ${stats.level}` },
                   {
                     label: 'Akurasi Quiz',
                     value: stats.totalQuizAttempted > 0
                       ? `${Math.round((stats.totalQuizCorrect / stats.totalQuizAttempted) * 100)}%`
                       : '-'
                   },
-                  { label: 'Total Badge', value: `🏅 ${stats.totalBadges}` },
+                  { label: 'Total Badge', value: `${stats.totalBadges}` },
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
                     <span className="text-sm text-gray-600">{row.label}</span>
@@ -229,7 +253,9 @@ export default function SiswaProfilPage() {
                           owned ? rarityColors[badge.rarity] : 'bg-gray-50 border-gray-100 opacity-50'
                         }`}
                       >
-                        <div className="text-2xl mb-1">{owned ? badge.icon : '🔒'}</div>
+                        <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-white/60">
+                          {owned ? <Medal size={18} /> : <Lock size={16} />}
+                        </div>
                         <div className="text-[10px] font-bold truncate leading-tight">{badge.name}</div>
                         <div className="text-[9px] text-gray-500 mt-0.5 capitalize">{badge.rarity}</div>
                       </div>
@@ -246,7 +272,10 @@ export default function SiswaProfilPage() {
                   <div className={`text-sm px-3 py-2.5 rounded-xl font-medium ${
                     passwordMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
                   }`}>
-                    {passwordMsg.type === 'success' ? '✅ ' : '⚠️ '}{passwordMsg.text}
+                    <span className="inline-flex items-center gap-1.5">
+                      {passwordMsg.type === 'success' ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                      {passwordMsg.text}
+                    </span>
                   </div>
                 )}
                 <div>
@@ -269,7 +298,10 @@ export default function SiswaProfilPage() {
                   type="submit" disabled={changingPassword}
                   className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition disabled:opacity-50"
                 >
-                  {changingPassword ? '⏳ Menyimpan...' : '🔐 Simpan Password Baru'}
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Save size={15} />
+                    {changingPassword ? 'Menyimpan...' : 'Simpan Password Baru'}
+                  </span>
                 </button>
               </form>
             )}
@@ -284,7 +316,7 @@ export default function SiswaProfilPage() {
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0 ${
                         tx.amount > 0 ? 'bg-green-100' : 'bg-red-100'
                       }`}>
-                        {tx.amount > 0 ? '⬆' : '⬇'}
+                        {tx.amount > 0 ? <ArrowUp size={15} /> : <ArrowDown size={15} />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-800 truncate">{tx.reason}</p>
@@ -303,7 +335,7 @@ export default function SiswaProfilPage() {
 
         {/* All levels */}
         <div className="bg-white rounded-2xl shadow-sm p-4">
-          <h3 className="font-bold text-sm text-gray-800 mb-3">🎖️ Semua Level</h3>
+          <h3 className="inline-flex items-center gap-2 font-bold text-sm text-gray-800 mb-3"><ShieldCheck size={16} /> Semua Level</h3>
           <div className="space-y-1.5">
             {LEVELS.map((lvl) => {
               const reached = stats.level >= lvl.level;
@@ -314,12 +346,12 @@ export default function SiswaProfilPage() {
                     reached ? 'bg-indigo-50' : 'bg-gray-50 opacity-50'
                   }`}
                 >
-                  <span className="text-xl">{lvl.emoji}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-xs font-black text-indigo-700">Lv</span>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-gray-800">Lv {lvl.level} · {lvl.title}</p>
                     <p className="text-xs text-gray-500">{lvl.minXp.toLocaleString()} XP{lvl.maxXp < 999999 ? ` – ${lvl.maxXp.toLocaleString()} XP` : '+'}</p>
                   </div>
-                  {reached && <span className="text-green-500 text-sm font-bold">✓</span>}
+                  {reached && <CheckCircle2 className="text-green-500" size={16} />}
                 </div>
               );
             })}

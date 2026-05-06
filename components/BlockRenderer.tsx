@@ -6,6 +6,8 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { InlineMath, BlockMath } from 'react-katex';
+import { CheckCircle2, FileDown, Info, Lightbulb, ShieldAlert, TriangleAlert, XCircle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Block } from '@/lib/blocks';
 import { recordActivity } from '@/lib/gamification';
@@ -84,11 +86,12 @@ function SingleBlock({ block, materiId, userId }: { block: Block; materiId: stri
       warning: 'bg-yellow-50 border-yellow-400 text-yellow-900',
       danger: 'bg-red-50 border-red-400 text-red-900',
     };
-    const icons: Record<string, string> = { info: 'ℹ️', tip: '💡', warning: '⚠️', danger: '🚨' };
+    const icons: Record<string, LucideIcon> = { info: Info, tip: Lightbulb, warning: TriangleAlert, danger: ShieldAlert };
+    const Icon = icons[block.style] || Info;
     return (
       <div className={`border-l-4 p-4 rounded-r-lg ${styles[block.style]}`}>
         <div className="flex gap-3">
-          <span className="text-2xl">{icons[block.style]}</span>
+          <Icon size={22} />
           <div className="prose prose-sm max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{block.text}</ReactMarkdown>
           </div>
@@ -151,7 +154,7 @@ function SingleBlock({ block, materiId, userId }: { block: Block; materiId: stri
   if (block.type === 'file') {
     return (
       <a href={block.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg my-4 transition">
-        <span className="text-3xl">📎</span>
+        <FileDown className="text-blue-600" size={24} />
         <div className="flex-1">
           <p className="font-medium text-gray-900">{block.filename}</p>
           {block.size && <p className="text-sm text-gray-500">{block.size}</p>}
@@ -208,7 +211,7 @@ function CheckBlockRender({ block, materiId, userId }: { block: any; materiId: s
   return (
     <div className="my-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-2xl">✅</span>
+        <CheckCircle2 className="text-blue-700" size={22} />
         <h4 className="font-semibold text-blue-900">Cek Pemahaman</h4>
       </div>
       <p className="text-gray-800 mb-4 font-medium">{block.question}</p>
@@ -248,7 +251,10 @@ function CheckBlockRender({ block, materiId, userId }: { block: any; materiId: s
       </div>
       {submitted && (
         <div className={`mt-3 p-3 rounded-lg ${isCorrect ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}>
-          <p className="font-semibold">{isCorrect ? '🎉 Benar!' : '❌ Belum tepat'}</p>
+          <p className="inline-flex items-center gap-1.5 font-semibold">
+            {isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+            {isCorrect ? 'Benar' : 'Belum tepat'}
+          </p>
           {block.explanation && <p className="text-sm mt-1">{block.explanation}</p>}
         </div>
       )}

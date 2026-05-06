@@ -4,16 +4,18 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Pengumuman } from '@/lib/supabase'
+import { ArrowLeft, BookOpen, Inbox, Megaphone, Pin, Target, TriangleAlert } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 interface PengumumanWithAuthor extends Pengumuman {
   author?: { nama: string; role: string }
 }
 
-const KATEGORI_CONFIG: Record<string, { label: string; icon: string; bg: string; text: string; border: string }> = {
-  umum:     { label: 'Umum',     icon: '📢', bg: 'bg-gray-100',  text: 'text-gray-700',  border: 'border-l-gray-300'  },
-  akademik: { label: 'Akademik', icon: '📚', bg: 'bg-blue-100',  text: 'text-blue-700',  border: 'border-l-blue-400'  },
-  kegiatan: { label: 'Kegiatan', icon: '🎯', bg: 'bg-green-100', text: 'text-green-700', border: 'border-l-green-400' },
-  darurat:  { label: 'Darurat',  icon: '🚨', bg: 'bg-red-100',   text: 'text-red-700',   border: 'border-l-red-500'   },
+const KATEGORI_CONFIG: Record<string, { label: string; icon: LucideIcon; bg: string; text: string; border: string }> = {
+  umum:     { label: 'Umum',     icon: Megaphone, bg: 'bg-gray-100',  text: 'text-gray-700',  border: 'border-l-gray-300'  },
+  akademik: { label: 'Akademik', icon: BookOpen,  bg: 'bg-blue-100',  text: 'text-blue-700',  border: 'border-l-blue-400'  },
+  kegiatan: { label: 'Kegiatan', icon: Target,    bg: 'bg-green-100', text: 'text-green-700', border: 'border-l-green-400' },
+  darurat:  { label: 'Darurat',  icon: TriangleAlert, bg: 'bg-red-100', text: 'text-red-700', border: 'border-l-red-500' },
 }
 
 export default function PengumumanSiswaPage() {
@@ -42,7 +44,7 @@ export default function PengumumanSiswaPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">📢</div>
+          <Megaphone className="mx-auto mb-3 h-8 w-8 animate-pulse text-[#1A4A7A]" />
           <p className="text-gray-500">Memuat pengumuman...</p>
         </div>
       </div>
@@ -56,8 +58,9 @@ export default function PengumumanSiswaPage() {
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
+            aria-label="Kembali ke dashboard siswa"
           >
-            ←
+            <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Pengumuman</h1>
@@ -88,7 +91,7 @@ export default function PengumumanSiswaPage() {
                       filterKategori === key ? 'bg-white text-rose-600' : 'bg-white/20 text-white hover:bg-white/30'
                     }`}
                   >
-                    {cfg.icon} {cfg.label} ({count})
+                    {cfg.label} ({count})
                   </button>
                 )
               })}
@@ -100,7 +103,7 @@ export default function PengumumanSiswaPage() {
       <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">📭</div>
+            <Inbox className="mx-auto mb-3 h-10 w-10 text-slate-300" />
             <p className="font-semibold text-gray-700">Belum ada pengumuman</p>
             <p className="text-sm text-gray-400 mt-1">Pengumuman dari sekolah akan muncul di sini</p>
           </div>
@@ -134,6 +137,7 @@ export default function PengumumanSiswaPage() {
 function PengumumanCard({ item }: { item: PengumumanWithAuthor }) {
   const [expanded, setExpanded] = useState(false)
   const cfg = KATEGORI_CONFIG[item.kategori] || KATEGORI_CONFIG.umum
+  const Icon = cfg.icon
   const isLong = item.konten.length > 200
 
   return (
@@ -141,7 +145,7 @@ function PengumumanCard({ item }: { item: PengumumanWithAuthor }) {
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className={`w-9 h-9 rounded-lg ${cfg.bg} flex items-center justify-center text-lg flex-shrink-0`}>
-            {item.dipin ? '📌' : cfg.icon}
+            {item.dipin ? <Pin size={17} /> : <Icon size={17} />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">

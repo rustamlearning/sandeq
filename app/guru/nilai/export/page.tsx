@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, Download, Eye, FileText, Lightbulb, Loader2, MousePointer2, User, Users } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { fetchRaporData, generateRaporPDF, RaporData } from '@/lib/exportRapor';
@@ -125,9 +126,9 @@ export default function ExportRaporPage() {
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru')} className="text-blue-600 text-sm">
-            ← Dashboard
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Dashboard</span>
           </button>
-          <h1 className="text-xl font-bold flex-1">📄 Export Rapor</h1>
+          <h1 className="inline-flex items-center gap-2 text-xl font-bold flex-1"><FileText size={20} /> Export Rapor</h1>
         </div>
       </header>
 
@@ -141,7 +142,7 @@ export default function ExportRaporPage() {
                 !bulkMode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
               }`}
             >
-              👤 Per Siswa
+              <span className="inline-flex items-center justify-center gap-1.5"><User size={15} /> Per Siswa</span>
             </button>
             <button
               onClick={() => setBulkMode(true)}
@@ -149,7 +150,7 @@ export default function ExportRaporPage() {
                 bulkMode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
               }`}
             >
-              👥 Bulk (Satu Kelas)
+              <span className="inline-flex items-center justify-center gap-1.5"><Users size={15} /> Bulk (Satu Kelas)</span>
             </button>
           </div>
 
@@ -194,7 +195,8 @@ export default function ExportRaporPage() {
         {!bulkMode && previewData && (
           <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
             <h2 className="text-lg font-bold flex items-center gap-2">
-              👁️ Preview Rapor
+              <Eye size={18} />
+              Preview Rapor
             </h2>
 
             {/* Identitas */}
@@ -208,7 +210,7 @@ export default function ExportRaporPage() {
                 <div className="col-span-2">
                   <span className="text-gray-500">Level:</span>{' '}
                   <strong>
-                    {getLevelInfo(previewData.siswa.xp).emoji} {getLevelInfo(previewData.siswa.xp).title} (Lvl {previewData.siswa.level}) - {previewData.siswa.xp.toLocaleString()} XP
+                    {getLevelInfo(previewData.siswa.xp).title} (Lvl {previewData.siswa.level}) - {previewData.siswa.xp.toLocaleString()} XP
                   </strong>
                 </div>
               </div>
@@ -305,7 +307,10 @@ export default function ExportRaporPage() {
                 disabled={generating}
                 className="flex-1 px-5 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-lg font-medium hover:from-[#0d3562] hover:to-[#1A4A7A] disabled:opacity-50"
               >
-                {generating ? '⏳ Generating...' : '📥 Download PDF Rapor'}
+                <span className="inline-flex items-center justify-center gap-2">
+                  {generating ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
+                  {generating ? 'Generating...' : 'Download PDF Rapor'}
+                </span>
               </button>
             </div>
           </div>
@@ -314,7 +319,9 @@ export default function ExportRaporPage() {
         {/* PER SISWA: Empty state */}
         {!bulkMode && !previewData && (
           <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">👆</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <MousePointer2 size={26} />
+            </div>
             <p className="text-gray-600 font-medium">Pilih siswa untuk melihat preview rapor</p>
           </div>
         )}
@@ -322,7 +329,7 @@ export default function ExportRaporPage() {
         {/* BULK MODE */}
         {bulkMode && (
           <div className="bg-white rounded-xl shadow-sm p-5">
-            <h2 className="text-lg font-bold mb-3">👥 Bulk Export</h2>
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold mb-3"><Users size={18} /> Bulk Export</h2>
             <p className="text-sm text-gray-600 mb-4">
               Generate rapor untuk <strong>semua {siswaList.length} siswa</strong> di kelas terpilih.
               Browser akan download satu per satu.
@@ -330,7 +337,7 @@ export default function ExportRaporPage() {
 
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded mb-4">
               <p className="text-xs text-yellow-800">
-                💡 <strong>Tip:</strong> Browser mungkin minta izin untuk multiple downloads. Klik "Allow" / "Izinkan".
+                <span className="inline-flex items-center gap-1.5"><Lightbulb size={13} /> <strong>Tip:</strong> Browser mungkin minta izin untuk multiple downloads. Klik "Allow" / "Izinkan".</span>
               </p>
             </div>
 
@@ -355,8 +362,8 @@ export default function ExportRaporPage() {
               className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 disabled:opacity-50"
             >
               {generating
-                ? `⏳ Generating ${progress.current}/${progress.total}...`
-                : `📥 Generate ${siswaList.length} Rapor Sekaligus`}
+                ? <span className="inline-flex items-center justify-center gap-2"><Loader2 className="animate-spin" size={16} /> Generating {progress.current}/{progress.total}...</span>
+                : <span className="inline-flex items-center justify-center gap-2"><Download size={16} /> Generate {siswaList.length} Rapor Sekaligus</span>}
             </button>
 
             {/* List preview */}

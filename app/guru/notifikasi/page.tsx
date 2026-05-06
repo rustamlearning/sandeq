@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
+import { ArrowLeft, Bell, CheckCircle2, ClipboardList, MessageSquare, Timer, TriangleAlert } from 'lucide-react'
 
 interface Notif {
   id: string
@@ -37,9 +38,9 @@ function timeUntil(dateStr: string) {
 }
 
 const TIPE_CONFIG = {
-  kuis_dikerjakan: { icon: '✏️', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Dikerjakan' },
-  forum_reply:     { icon: '💬', bg: 'bg-sky-50',    border: 'border-sky-200',    text: 'text-sky-700',    label: 'Forum' },
-  kuis_deadline:   { icon: '⏰', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
+  kuis_dikerjakan: { icon: ClipboardList, bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', label: 'Kuis Dikerjakan' },
+  forum_reply:     { icon: MessageSquare, bg: 'bg-sky-50',    border: 'border-sky-200',    text: 'text-sky-700',    label: 'Forum' },
+  kuis_deadline:   { icon: Timer, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Deadline' },
 }
 
 export default function GuruNotifikasiPage() {
@@ -63,7 +64,7 @@ export default function GuruNotifikasiPage() {
     const threeDaysLater = new Date(now.getTime() + 3 * 86400000).toISOString()
 
     const [{ data: kuisGuru }, { data: forumPosts }] = await Promise.all([
-      supabase.from('kuis').select('id, judul, tanggal_selesai').eq('guru_id', u.id).eq('aktif', true),
+      supabase.from('kuis').select('id, judul, tanggal_selesai').eq('guru_id', u.id).eq('is_published', true),
       supabase.from('forum').select('id').eq('author_id', u.id).is('parent_id', null),
     ])
 
@@ -147,7 +148,7 @@ export default function GuruNotifikasiPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-4xl mb-3 animate-pulse">🔔</div>
+          <Bell className="mx-auto mb-3 h-8 w-8 animate-pulse text-[#1A4A7A]" />
           <p className="text-gray-500">Memuat notifikasi...</p>
         </div>
       </div>
@@ -160,7 +161,9 @@ export default function GuruNotifikasiPage() {
     <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button onClick={() => router.push('/guru')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">←</button>
+          <button onClick={() => router.push('/guru')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition" aria-label="Kembali ke dashboard guru">
+            <ArrowLeft size={18} />
+          </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Notifikasi</h1>
             <p className="text-white/80 text-sm">{notifs.length} notifikasi{urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}</p>
@@ -174,13 +177,14 @@ export default function GuruNotifikasiPage() {
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="text-5xl mb-3">🎉</div>
+            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-emerald-500" />
             <p className="font-semibold text-gray-700">Tidak ada notifikasi baru</p>
             <p className="text-sm text-gray-400 mt-1">Aktivitas siswa & deadline akan muncul di sini</p>
           </div>
         ) : (
           notifs.map((n) => {
             const cfg = TIPE_CONFIG[n.tipe]
+            const Icon = cfg.icon
             return (
               <button
                 key={n.id}
@@ -192,12 +196,12 @@ export default function GuruNotifikasiPage() {
                 {n.urgent && <div className="h-1 bg-red-500" />}
                 <div className="p-4 flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center text-xl flex-shrink-0`}>
-                    {cfg.icon}
+                    <Icon size={19} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>{cfg.label}</span>
-                      {n.urgent && <span className="text-xs font-bold text-red-600 animate-pulse">⚠️ Mendesak</span>}
+                      {n.urgent && <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 animate-pulse"><TriangleAlert size={12} /> Mendesak</span>}
                     </div>
                     <p className="font-semibold text-gray-800 text-sm leading-snug">{n.judul}</p>
                     {n.deskripsi && <p className="text-xs text-gray-500 mt-0.5 truncate">{n.deskripsi}</p>}

@@ -24,7 +24,7 @@ const icons: Record<ToastType, string> = {
   success: '✓',
   error: '✕',
   info: 'ℹ',
-  warning: '⚠',
+  warning: '!',
 }
 
 const styles: Record<ToastType, string> = {

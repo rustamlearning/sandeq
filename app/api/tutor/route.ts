@@ -3,6 +3,9 @@ import { createClient } from '@supabase/supabase-js'
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
+const MAX_MESSAGE_LENGTH = 2000
+const AI_RATE_LIMIT = 20
+const AI_RATE_WINDOW_MS = 60_000
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -109,6 +112,9 @@ export async function POST(req: NextRequest) {
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages' }, { status: 400 })
+    }
+    if (messages.some((m: any) => typeof m?.content !== 'string' || m.content.length > MAX_MESSAGE_LENGTH)) {
+      return NextResponse.json({ error: 'Pesan tidak valid atau terlalu panjang' }, { status: 413 })
     }
 
     const apiKey = process.env.GROQ_API_KEY

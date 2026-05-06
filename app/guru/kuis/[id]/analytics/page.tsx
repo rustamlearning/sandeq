@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import {
+  ArrowLeft,
+  BarChart3,
+  CheckCircle2,
+  Clock3,
+  Edit3,
+  FileQuestion,
+  Lightbulb,
+  LineChart,
+  Target,
+  Timer,
+  Users,
+  XCircle,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { Kuis, getKuisAnalytics, formatDuration, getNilaiColor } from '@/lib/kuis';
@@ -114,10 +129,10 @@ export default function KuisAnalyticsPage() {
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru/analytics')} className="text-blue-600 text-sm">
-            ← Analytics
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Analytics</span>
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold truncate">📊 {kuis.judul}</h1>
+            <h1 className="inline-flex items-center gap-2 text-lg font-bold truncate"><BarChart3 size={18} /> {kuis.judul}</h1>
             <p className="text-xs text-gray-500">{kuis.mapel} • KKM {kuis.kkm}</p>
           </div>
 
@@ -126,14 +141,14 @@ export default function KuisAnalyticsPage() {
               onClick={() => router.push(`/guru/kuis/${kuisId}/grading`)}
               className="px-3 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 flex items-center gap-1"
             >
-              ⏳ Grading ({pendingGrading})
+              <Clock3 size={15} /> Grading ({pendingGrading})
             </button>
           )}
           <button
             onClick={() => router.push(`/guru/kuis/builder/${kuisId}`)}
             className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-50"
           >
-            ✏️ Edit
+            <span className="inline-flex items-center gap-1.5"><Edit3 size={14} /> Edit</span>
           </button>
         </div>
       </header>
@@ -141,7 +156,9 @@ export default function KuisAnalyticsPage() {
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {!analytics || (analytics.total_selesai === 0) ? (
           <div className="bg-white rounded-xl p-12 text-center">
-            <div className="text-5xl mb-3">📊</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <BarChart3 size={26} />
+            </div>
             <p className="text-gray-600 font-medium">Belum ada siswa yang mengerjakan</p>
             <p className="text-sm text-gray-500 mt-1">
               Statistik akan muncul setelah ada siswa submit kuis
@@ -156,28 +173,28 @@ export default function KuisAnalyticsPage() {
                 value={`${analytics.total_selesai}/${analytics.total_peserta}`}
                 sub={`${Math.round((analytics.total_selesai / Math.max(analytics.total_peserta, 1)) * 100)}% selesai`}
                 color="blue"
-                icon="👥"
+                icon={Users}
               />
               <BigStatCard
                 label="Rata-rata"
                 value={analytics.rata_rata.toFixed(1)}
                 sub={`Median: ${analytics.median.toFixed(0)}`}
                 color="green"
-                icon="📊"
+                icon={BarChart3}
               />
               <BigStatCard
                 label="Lulus KKM"
                 value={`${analytics.passing_rate.toFixed(0)}%`}
                 sub={`KKM: ${kuis.kkm}`}
                 color="purple"
-                icon="🎯"
+                icon={Target}
               />
               <BigStatCard
                 label="Durasi Rata"
                 value={formatDuration(analytics.rata_durasi_detik || 0)}
                 sub={`Limit: ${kuis.durasi_menit}m`}
                 color="orange"
-                icon="⏱️"
+                icon={Timer}
               />
             </div>
 
@@ -195,7 +212,7 @@ export default function KuisAnalyticsPage() {
 
             {/* Distribusi Nilai - Histogram */}
             <section className="bg-white rounded-xl p-5 shadow-sm">
-              <h2 className="text-lg font-bold mb-4">📈 Distribusi Nilai</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold mb-4"><LineChart size={18} /> Distribusi Nilai</h2>
               <div className="space-y-2">
                 {buckets.map((b) => (
                   <div key={b.range} className="flex items-center gap-3">
@@ -214,14 +231,14 @@ export default function KuisAnalyticsPage() {
                 ))}
               </div>
               <p className="text-xs text-gray-500 mt-3">
-                💡 Hijau: lulus KKM ({kuis.kkm}+) • Merah: belum lulus
+                <span className="inline-flex items-center gap-1.5"><Lightbulb size={13} /> Hijau: lulus KKM ({kuis.kkm}+) • Merah: belum lulus</span>
               </p>
             </section>
 
             {/* Per-Soal Performance */}
             {soalStats.length > 0 && (
               <section className="bg-white rounded-xl p-5 shadow-sm">
-                <h2 className="text-lg font-bold mb-4">📝 Performa per Soal</h2>
+                <h2 className="inline-flex items-center gap-2 text-lg font-bold mb-4"><FileQuestion size={18} /> Performa per Soal</h2>
                 <div className="space-y-3">
                   {soalStats.map((s, i) => (
                     <div key={s.id} className="border-l-4 pl-3 py-2" style={{
@@ -242,22 +259,22 @@ export default function KuisAnalyticsPage() {
                         </div>
                       </div>
                       <div className="flex gap-2 text-xs">
-                        <span className="text-green-600">✅ {s.benar} benar</span>
-                        <span className="text-red-600">❌ {s.salah} salah</span>
-                        {s.ungraded > 0 && <span className="text-yellow-600">⏳ {s.ungraded} pending</span>}
+                        <span className="inline-flex items-center gap-1 text-green-600"><CheckCircle2 size={12} /> {s.benar} benar</span>
+                        <span className="inline-flex items-center gap-1 text-red-600"><XCircle size={12} /> {s.salah} salah</span>
+                        {s.ungraded > 0 && <span className="inline-flex items-center gap-1 text-yellow-600"><Clock3 size={12} /> {s.ungraded} pending</span>}
                       </div>
                     </div>
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 mt-3">
-                  💡 Soal dengan akurasi {'<'}50% (merah) mungkin perlu di-review/perjelas
+                  <span className="inline-flex items-center gap-1.5"><Lightbulb size={13} /> Soal dengan akurasi {'<'}50% (merah) mungkin perlu di-review/perjelas</span>
                 </p>
               </section>
             )}
 
             {/* Daftar Attempts */}
             <section className="bg-white rounded-xl p-5 shadow-sm">
-              <h2 className="text-lg font-bold mb-4">🎯 Hasil Siswa</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold mb-4"><Target size={18} /> Hasil Siswa</h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50">
@@ -288,15 +305,15 @@ export default function KuisAnalyticsPage() {
                           <td className="px-3 py-3 text-center">
                             {a.needs_grading ? (
                               <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">
-                                ⏳ Pending
+                                <span className="inline-flex items-center gap-1"><Clock3 size={12} /> Pending</span>
                               </span>
                             ) : lulus ? (
                               <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                                ✅ Lulus
+                                <span className="inline-flex items-center gap-1"><CheckCircle2 size={12} /> Lulus</span>
                               </span>
                             ) : (
                               <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">
-                                ❌ Belum Lulus
+                                <span className="inline-flex items-center gap-1"><XCircle size={12} /> Belum Lulus</span>
                               </span>
                             )}
                           </td>
@@ -317,7 +334,7 @@ export default function KuisAnalyticsPage() {
   );
 }
 
-function BigStatCard({ label, value, sub, color, icon }: any) {
+function BigStatCard({ label, value, sub, color, icon: Icon }: { label: string; value: string; sub: string; color: string; icon: LucideIcon }) {
   const colorMap: Record<string, string> = {
     blue: 'from-blue-500 to-blue-600',
     green: 'from-green-500 to-emerald-600',
@@ -327,7 +344,7 @@ function BigStatCard({ label, value, sub, color, icon }: any) {
   return (
     <div className={`bg-gradient-to-br ${colorMap[color]} text-white rounded-xl p-4 shadow-md`}>
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl">{icon}</span>
+        <Icon size={22} />
         <span className="text-xs uppercase tracking-wider opacity-90">{label}</span>
       </div>
       <p className="text-3xl font-bold">{value}</p>
