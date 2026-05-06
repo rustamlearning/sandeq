@@ -6,9 +6,12 @@ import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 import { PageLoader } from '@/components/ui/Skeleton';
-import DailyCheckIn from '@/components/DailyCheckIn';
+import DailyCheckIn from '@/components/DailyCheckIn'
+import React from 'react'
+import { BookOpen, ClipboardList, BarChart3, CalendarDays, CalendarCheck, Megaphone, Bell, Bot, MessageSquare, UserRound, Trophy } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
-const menuItems: { icon: LucideIcon; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
+const menuItems: { icon: React.ElementType; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
   { icon: BookOpen, title: 'Materi', description: 'Lanjutkan bahan belajar kelas', path: '/siswa/materi', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
   { icon: ClipboardList, title: 'Kuis', description: 'Kerjakan latihan dan ulangan', path: '/siswa/kuis', color: 'text-violet-700 bg-violet-50 ring-violet-100' },
   { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai dan rapor', path: '/siswa/nilai', color: 'text-emerald-700 bg-emerald-50 ring-emerald-100' },
@@ -170,7 +173,7 @@ export default function SiswaDashboardPage() {
                 }`}
               >
                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
-                  {item.icon}
+                  <item.icon />
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
