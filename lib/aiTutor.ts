@@ -782,7 +782,7 @@ function generateSimplify(ctx: TutorContext): TutorResponse {
 
   const opener = buildOpening(ctx.user, 'thoughtful');
   const transition = pick(TRANSITIONS);
-  const metaphor = pick(mapel.metaphors || ['itu kayak puzzle yang harus disusun']);
+  const metaphor = pick((mapel.metaphors as string[]) || ['itu kayak puzzle yang harus disusun']);
 
   let text = `${opener} ${pick([
     'aku coba pakai bahasa lebih santai ya',
@@ -846,7 +846,7 @@ function generateExample(ctx: TutorContext): TutorResponse {
   const examples = pickN(mapel.realworld || [], 3);
   if (examples.length > 0) {
     text += `**${pick(['Coba liat di sekitar kamu', 'Aplikasi nyata sehari-hari', 'Contoh yang relate banget'])}:**\n\n`;
-    examples.forEach((ex: string) => {
+(examples as string[]).forEach((ex: string) => {
       text += `${ex}\n`;
     });
     text += `\n`;
@@ -854,7 +854,7 @@ function generateExample(ctx: TutorContext): TutorResponse {
 
   // Add metaphor
   if (mapel.metaphors) {
-    text += `${pick(TRANSITIONS)} kalo dianalogikan, **${judul}** itu ${pick(mapel.metaphors).toLowerCase()}.\n\n`;
+    text += `${pick(TRANSITIONS)} kalo dianalogikan, **${judul}** itu ${pick(mapel.metaphors as string[]).toLowerCase()}.\n\n`;
   }
 
   // Local context 40%
@@ -949,7 +949,7 @@ function generateRealWorld(ctx: TutorContext): TutorResponse {
   const examples = pickN(mapel.realworld || [], 5);
   if (examples.length > 0) {
     text += `**${pick(['Aplikasi nyata di hidupmu:', 'Yang kepake banget:', 'Contoh real-world:'])}**\n\n`;
-    examples.forEach((ex: string) => {
+(examples as string[]).forEach((ex: string) => {
       text += `${ex}\n`;
     });
     text += `\n`;
@@ -1280,7 +1280,7 @@ function generateStudyTips(ctx: TutorContext): TutorResponse {
   // Mapel-specific tips
   if (mapel.tips && mapel.tips.length > 0) {
     text += `**${pick(['💎 Tips khusus', '⚡ Strategi efektif', '🎯 Cara cerdas'])}:**\n\n`;
-    pickN(mapel.tips, 3).forEach((tip: string, i: number) => {
+    pickN(mapel.tips as string[], 3).forEach((tip: string, i: number) => {
       text += `${i + 1}. ${tip}\n`;
     });
     text += `\n`;

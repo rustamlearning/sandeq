@@ -230,7 +230,7 @@ export default function AdminDashboard() {
                       cx="50%"
                       cy="50%"
                       outerRadius={70}
-                      label={({ status, percent }) => `${status} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }: PieLabelRenderProps) => `${name ?? ''} ${(((percent as number) ?? 0) * 100).toFixed(0)}%`}
                       labelLine={false}
                     >
                       {absensiData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}

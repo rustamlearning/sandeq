@@ -11,7 +11,8 @@ import XPNotification, { useXPNotifications } from '@/components/XPNotification'
 import { recordActivity } from '@/lib/gamification';
 import { useToast } from '@/components/ui/Toast'
 import { PageLoader } from '@/components/ui/Skeleton'
-import RefleksiMateri from '@/components/RefleksiMateri';
+import RefleksiMateri from '@/components/RefleksiMateri'
+import { catatDimensiAktivitas, getDimensiFromMapel } from '@/lib/dimensi';
 
 const masteryConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   belum_mulai: { label: 'Belum mulai', color: 'text-slate-500', bg: 'bg-slate-100', dot: 'bg-slate-400' },
@@ -150,6 +151,8 @@ export default function SiswaMateriPage() {
       toastSuccess('Materi sudah ditandai selesai!');
     }
     await loadProgress(user.id);
+    const dimensi = getDimensiFromMapel(selectedMateri?.mapel || "")
+    await catatDimensiAktivitas(user.id, "materi", selectedMateri?.id, dimensi, selectedMateri?.judul)
     setShowRefleksi(true);
   };
 

@@ -1,4 +1,5 @@
 'use client'
+import { getDimensiKelas, DIMENSI, DimensiKey } from '@/lib/dimensi'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -49,6 +50,7 @@ export default function GuruDashboard() {
   })
   const [alerts, setAlerts] = useState<AlertItem[]>([])
   const [notifCount, setNotifCount] = useState(0)
+  const [dimensiKelas, setDimensiKelas] = useState<Record<DimensiKey, number> | null>(null)
 
   useEffect(() => {
     async function init() {
@@ -167,6 +169,7 @@ export default function GuruDashboard() {
       siswaAktifMingguIni: siswaAktif,
     })
     setAlerts(newAlerts)
+    if (kelasId) getDimensiKelas(kelasId).then(setDimensiKelas)
     setNotifCount(essayCount + deadlineCount)
   }
 
@@ -293,6 +296,24 @@ export default function GuruDashboard() {
             ))}
           </div>
         </div>
+      {dimensiKelas && (
+        <section className="px-4 pb-6">
+          <h3 className="font-semibold text-slate-700 mb-3">Dimensi Belajar Kelas</h3>
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-3">
+            {(Object.keys(DIMENSI) as DimensiKey[]).map(key => {
+              const d = DIMENSI[key]
+              const total = Math.max(Object.values(dimensiKelas).reduce((a,b)=>a+b,0),1)
+              const pct = Math.round((dimensiKelas[key] / total) * 100)
+              return (
+                <div key={key}>
+                  <div className="flex justify-between text-sm mb-1"><span>{d.emoji} {d.label}</span><span className="text-gray-400">{pct}%</span></div>
+                  <div className="w-full bg-gray-100 rounded-full h-2"><div className="h-2 rounded-full bg-blue-400" style={{width:`${pct}%`}}/></div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
       </main>
     </div>
   )

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from "@/lib/supabase"
 import { awardXp } from '@/lib/gamification'
+import { catatDimensiAktivitas, getDimensiFromMapel } from '@/lib/dimensi'
 
 type TipeSoal = 'pg' | 'true_false' | 'isian' | 'essay' | 'matching'
 
@@ -28,6 +29,7 @@ interface Kuis {
   acak_pilihan?: boolean
   tanggal_buka?: string
   tanggal_tutup?: string
+  mapel?: string
 }
 
 export default function KuisAttemptPage() {
@@ -250,11 +252,11 @@ export default function KuisAttemptPage() {
       const xpAmount = nilaiPersen >= 80 ? 60 : nilaiPersen >= 60 ? 30 : 5;
       await awardXp(user.id, xpAmount, nilaiPersen >= 60 ? 'Selesaikan quiz' : 'Mencoba quiz', 'kuis', id)
     }
-
+    const dimensiKuis = getDimensiFromMapel(kuis?.mapel || '')
+    await catatDimensiAktivitas(user.id, 'kuis', id, dimensiKuis, kuis?.judul)
     router.push(`/siswa/kuis/${id}/result?attempt=${attemptId}`)
-  }
-
-  const formatWaktu = (detik: number) => {
+   }
+    const formatWaktu = (detik: number) => {
     const m = Math.floor(detik / 60).toString().padStart(2, '0')
     const s = (detik % 60).toString().padStart(2, '0')
     return `${m}:${s}`
