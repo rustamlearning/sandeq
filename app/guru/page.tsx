@@ -39,6 +39,7 @@ const menuItems = [
   { title: 'Forum', icon: '💬', path: '/forum', iconBg: 'bg-sky-100 text-sky-600' },
   { title: 'Jadwal', icon: '📅', path: '/jadwal', iconBg: 'bg-indigo-100 text-indigo-600' },
   { title: 'Live Quiz', icon: '🎮', path: '/guru/live', iconBg: 'bg-green-100 text-green-600' },
+  { title: 'Analytics Pro', icon: '🔬', path: '/guru/analytics-pro', iconBg: 'bg-red-100 text-red-600' },
 ]
 
 export default function GuruDashboard() {
