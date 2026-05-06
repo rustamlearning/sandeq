@@ -6,24 +6,48 @@ import { getCurrentUser, logout } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 import { PageLoader } from '@/components/ui/Skeleton'
 
+interface Stats {
+  totalMateri: number
+  totalKuis: number
+  totalSiswa: number
+  hadirHariIni: number
+  essayBelumDinilai: number
+  kuisDeadlineDekat: number
+  avgNilaiKelas: number
+  siswaAktifMingguIni: number
+}
+
+interface AlertItem {
+  id: string
+  tipe: 'essay' | 'deadline' | 'tidak_aktif'
+  pesan: string
+  path: string
+  urgensi: 'tinggi' | 'sedang'
+}
+
 const menuItems = [
-  { title: 'Buat Materi', description: 'Tambah materi pelajaran', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-blue-600', featured: false },
-  { title: 'Buat Kuis', description: 'Buat ulangan & latihan', icon: '✏️', path: '/guru/kuis', iconBg: 'bg-violet-100 text-violet-600', featured: false },
-  { title: 'Absensi', description: 'Catat kehadiran siswa', icon: '📋', path: '/guru/absensi', iconBg: 'bg-emerald-100 text-emerald-600', featured: false },
-  { title: 'Input Nilai', description: 'Masukkan nilai siswa', icon: '🏅', path: '/guru/nilai', iconBg: 'bg-amber-100 text-amber-600', featured: false },
-  { title: 'Export Rapor', description: 'Download rapor PDF siswa', icon: '📄', path: '/guru/nilai/export', iconBg: 'bg-teal-100 text-teal-600', featured: true },
-  { title: 'Jadwal', description: 'Lihat jadwal mengajar', icon: '📅', path: '/jadwal', iconBg: 'bg-indigo-100 text-indigo-600', featured: false },
-  { title: 'Mastery Tracker', description: 'Penguasaan materi per siswa', icon: '🎯', path: '/guru/mastery', iconBg: 'bg-orange-100 text-orange-600', featured: false },
-  { title: 'Analytics Kelas', description: 'Lihat progress & data siswa', icon: '📊', path: '/guru/analytics', iconBg: 'bg-blue-100 text-blue-700', featured: true },
-  { title: 'Forum', description: 'Diskusi dengan siswa', icon: '💬', path: '/forum', iconBg: 'bg-sky-100 text-sky-600', featured: false },
-  { title: 'Pengumuman', description: 'Buat pengumuman kelas', icon: '📢', path: '/guru/pengumuman', iconBg: 'bg-rose-100 text-rose-600', featured: false },
+  { title: 'Buat Materi', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-blue-600' },
+  { title: 'Buat Kuis', icon: '✏️', path: '/guru/kuis', iconBg: 'bg-violet-100 text-violet-600' },
+  { title: 'Absensi', icon: '📋', path: '/guru/absensi', iconBg: 'bg-emerald-100 text-emerald-600' },
+  { title: 'Input Nilai', icon: '🏅', path: '/guru/nilai', iconBg: 'bg-amber-100 text-amber-600' },
+  { title: 'Analytics', icon: '📊', path: '/guru/analytics', iconBg: 'bg-blue-100 text-blue-700' },
+  { title: 'Mastery', icon: '🎯', path: '/guru/mastery', iconBg: 'bg-orange-100 text-orange-600' },
+  { title: 'Pengumuman', icon: '📢', path: '/guru/pengumuman', iconBg: 'bg-rose-100 text-rose-600' },
+  { title: 'Export Rapor', icon: '📄', path: '/guru/nilai/export', iconBg: 'bg-teal-100 text-teal-600' },
+  { title: 'Forum', icon: '💬', path: '/forum', iconBg: 'bg-sky-100 text-sky-600' },
+  { title: 'Jadwal', icon: '📅', path: '/jadwal', iconBg: 'bg-indigo-100 text-indigo-600' },
 ]
 
 export default function GuruDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({ totalMateri: 0, totalKuis: 0 })
+  const [stats, setStats] = useState<Stats>({
+    totalMateri: 0, totalKuis: 0, totalSiswa: 0,
+    hadirHariIni: 0, essayBelumDinilai: 0,
+    kuisDeadlineDekat: 0, avgNilaiKelas: 0, siswaAktifMingguIni: 0,
+  })
+  const [alerts, setAlerts] = useState<AlertItem[]>([])
   const [notifCount, setNotifCount] = useState(0)
 
   useEffect(() => {
@@ -32,40 +56,123 @@ export default function GuruDashboard() {
       if (!currentUser) { router.replace('/login'); return }
       if (currentUser.role !== 'guru') { router.replace('/'); return }
       setUser(currentUser)
-      await loadStats(currentUser.id)
+      await loadStats(currentUser.id, currentUser.kelas_id ?? undefined)
       setLoading(false)
     }
     init()
   }, [router])
 
-  async function loadStats(guruId: string) {
-    const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString()
-    const threeDaysLater = new Date(Date.now() + 3 * 86400000).toISOString()
-    const [materi, kuis, kuisIds] = await Promise.all([
+  async function loadStats(guruId: string, kelasId?: string) {
+    const now = new Date()
+    const hariIni = now.toISOString().split('T')[0]
+    const tigaHariLagi = new Date(Date.now() + 3 * 86400000).toISOString()
+    const semingguLalu = new Date(Date.now() - 7 * 86400000).toISOString()
+
+    const [
+      materiRes, kuisRes, siswaRes,
+      absensiRes, kuisIds,
+    ] = await Promise.all([
       supabase.from('materi').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
       supabase.from('kuis').select('*', { count: 'exact', head: true }).eq('guru_id', guruId),
-      supabase.from('kuis').select('id').eq('guru_id', guruId).eq('aktif', true),
+      kelasId
+        ? supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'siswa').eq('kelas_id', kelasId)
+        : supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'siswa'),
+      kelasId
+        ? supabase.from('absensi').select('*', { count: 'exact', head: true }).eq('tanggal', hariIni).eq('status', 'hadir').eq('kelas_id', kelasId)
+        : { count: 0 },
+      supabase.from('kuis').select('id').eq('guru_id', guruId),
     ])
-    setStats({ totalMateri: materi.count || 0, totalKuis: kuis.count || 0 })
 
-    const ids = (kuisIds.data || []).map((k) => k.id)
-    let notifTotal = 0
+    const ids = (kuisIds.data || []).map((k: any) => k.id)
+    let essayCount = 0
+    let deadlineCount = 0
+    let avgNilai = 0
+    let siswaAktif = 0
+    const newAlerts: AlertItem[] = []
+
     if (ids.length > 0) {
-      const [pengerjaan, deadline] = await Promise.all([
-        supabase.from('pengerjaan').select('id', { count: 'exact', head: true }).in('kuis_id', ids).gte('created_at', threeDaysAgo),
-        supabase.from('kuis').select('id', { count: 'exact', head: true }).eq('guru_id', guruId).eq('aktif', true).lte('tanggal_selesai', threeDaysLater).gte('tanggal_selesai', new Date().toISOString()),
+      const [essayRes, deadlineRes, nilaiRes] = await Promise.all([
+        supabase.from('kuis_attempts')
+          .select('id, kuis:kuis_id(judul)', { count: 'exact' })
+          .in('kuis_id', ids)
+          .eq('needs_grading', true)
+          .eq('selesai', true)
+          .limit(5),
+        supabase.from('kuis')
+          .select('id, judul, tanggal_selesai')
+          .eq('guru_id', guruId)
+          .eq('is_published', true)
+          .lte('tanggal_selesai', tigaHariLagi)
+          .gte('tanggal_selesai', now.toISOString()),
+        supabase.from('kuis_attempts')
+          .select('nilai_persen')
+          .in('kuis_id', ids)
+          .eq('selesai', true)
+          .gte('submitted_at', semingguLalu),
       ])
-      notifTotal = (pengerjaan.count || 0) + (deadline.count || 0)
-    }
-    setNotifCount(notifTotal)
-  }
 
-  async function handleLogout() {
-    await logout()
-    router.replace('/login')
+      essayCount = essayRes.count || 0
+
+      // Essay alerts
+      if (essayCount > 0) {
+        newAlerts.push({
+          id: 'essay',
+          tipe: 'essay',
+          pesan: `${essayCount} jawaban essay menunggu penilaian`,
+          path: '/guru/kuis',
+          urgensi: essayCount >= 5 ? 'tinggi' : 'sedang',
+        })
+      }
+
+      // Deadline alerts
+      const deadlineData = deadlineRes.data || []
+      deadlineCount = deadlineData.length
+      deadlineData.slice(0, 2).forEach((k: any) => {
+        const sisa = Math.ceil((new Date(k.tanggal_selesai).getTime() - Date.now()) / 86400000)
+        newAlerts.push({
+          id: k.id,
+          tipe: 'deadline',
+          pesan: `"${k.judul}" tutup dalam ${sisa} hari`,
+          path: `/guru/kuis/${k.id}/analytics`,
+          urgensi: sisa <= 1 ? 'tinggi' : 'sedang',
+        })
+      })
+
+      // Avg nilai
+      const nilaiData = nilaiRes.data || []
+      avgNilai = nilaiData.length
+        ? Math.round(nilaiData.reduce((s: number, n: any) => s + (n.nilai_persen || 0), 0) / nilaiData.length)
+        : 0
+    }
+
+    // Siswa aktif minggu ini
+    if (kelasId) {
+      const { count } = await supabase
+        .from('users')
+        .select('id', { count: 'exact', head: true })
+        .eq('role', 'siswa')
+        .eq('kelas_id', kelasId)
+        .gte('updated_at', semingguLalu)
+      siswaAktif = count || 0
+    }
+
+    setStats({
+      totalMateri: materiRes.count || 0,
+      totalKuis: kuisRes.count || 0,
+      totalSiswa: siswaRes.count || 0,
+      hadirHariIni: absensiRes.count || 0,
+      essayBelumDinilai: essayCount,
+      kuisDeadlineDekat: deadlineCount,
+      avgNilaiKelas: avgNilai,
+      siswaAktifMingguIni: siswaAktif,
+    })
+    setAlerts(newAlerts)
+    setNotifCount(essayCount + deadlineCount)
   }
 
   if (loading) return <PageLoader />
+
+  const nama = user?.nama?.split(' ')[0] ?? 'Guru'
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
@@ -73,9 +180,7 @@ export default function GuruDashboard() {
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
         <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">
-              S
-            </div>
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
             <div>
               <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
               <p className="text-blue-200 text-xs">Portal Guru</p>
@@ -88,7 +193,6 @@ export default function GuruDashboard() {
             </div>
             <button
               onClick={() => router.push('/guru/notifikasi')}
-              aria-label="Notifikasi"
               className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
             >
               🔔
@@ -99,8 +203,7 @@ export default function GuruDashboard() {
               )}
             </button>
             <button
-              onClick={handleLogout}
-              aria-label="Keluar dari aplikasi"
+              onClick={async () => { await logout(); router.replace('/login') }}
               className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
             >
               Keluar
@@ -109,55 +212,112 @@ export default function GuruDashboard() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {/* Welcome */}
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-slate-800">Selamat mengajar, {user?.nama?.split(' ')[0]} 👋</h2>
-          <p className="text-slate-500 text-sm mt-0.5">Hari ini ada yang perlu diperbarui?</p>
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">Selamat mengajar, {nama} 👋</h2>
+          <p className="text-slate-500 text-sm mt-0.5">Berikut ringkasan kelas hari ini</p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-2xl">📖</span>
-              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-medium">Total</span>
-            </div>
-            <p className="text-3xl font-bold text-slate-800">{stats.totalMateri}</p>
-            <p className="text-sm text-slate-500 mt-1">Materi dibuat</p>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard icon="👥" label="Total Siswa" value={stats.totalSiswa} color="text-blue-600" sub="terdaftar" />
+          <StatCard icon="✅" label="Hadir Hari Ini" value={stats.hadirHariIni} color="text-green-600" sub="siswa" />
+          <StatCard icon="📊" label="Avg Nilai" value={stats.avgNilaiKelas ? `${stats.avgNilaiKelas}` : '-'} color="text-violet-600" sub="minggu ini" />
+          <StatCard icon="⚡" label="Siswa Aktif" value={stats.siswaAktifMingguIni} color="text-orange-600" sub="7 hari terakhir" />
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard icon="📖" label="Materi" value={stats.totalMateri} color="text-blue-600" sub="dibuat" />
+          <StatCard icon="✏️" label="Kuis" value={stats.totalKuis} color="text-violet-600" sub="dibuat" />
+          <StatCard icon="⏳" label="Essay Pending" value={stats.essayBelumDinilai} color={stats.essayBelumDinilai > 0 ? 'text-red-600' : 'text-gray-400'} sub="belum dinilai" />
+          <StatCard icon="⏰" label="Deadline Dekat" value={stats.kuisDeadlineDekat} color={stats.kuisDeadlineDekat > 0 ? 'text-orange-600' : 'text-gray-400'} sub="dalam 3 hari" />
+        </div>
+
+        {/* Alerts */}
+        {alerts.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">⚠️ Perlu Perhatian</h3>
+            {alerts.map(alert => (
+              <button
+                key={alert.id}
+                onClick={() => router.push(alert.path)}
+                className={`w-full flex items-center justify-between p-4 rounded-xl border-2 text-left transition hover:shadow-md ${
+                  alert.urgensi === 'tinggi'
+                    ? 'bg-red-50 border-red-200 hover:border-red-400'
+                    : 'bg-orange-50 border-orange-200 hover:border-orange-400'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">
+                    {alert.tipe === 'essay' ? '📝' : alert.tipe === 'deadline' ? '⏰' : '🚨'}
+                  </span>
+                  <span className={`text-sm font-medium ${alert.urgensi === 'tinggi' ? 'text-red-800' : 'text-orange-800'}`}>
+                    {alert.pesan}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-400">Buka →</span>
+              </button>
+            ))}
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-2xl">✏️</span>
-              <span className="text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">Total</span>
-            </div>
-            <p className="text-3xl font-bold text-slate-800">{stats.totalKuis}</p>
-            <p className="text-sm text-slate-500 mt-1">Kuis dibuat</p>
+        )}
+
+        {/* Quick Actions */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Aksi Cepat</h3>
+          <div className="flex gap-2 flex-wrap">
+            <QuickBtn label="+ Materi" onClick={() => router.push('/guru/materi')} color="bg-blue-600" />
+            <QuickBtn label="+ Kuis" onClick={() => router.push('/guru/kuis')} color="bg-violet-600" />
+            <QuickBtn label="Absensi Sekarang" onClick={() => router.push('/guru/absensi')} color="bg-emerald-600" />
+            {stats.essayBelumDinilai > 0 && (
+              <QuickBtn label={`Nilai Essay (${stats.essayBelumDinilai})`} onClick={() => router.push('/guru/kuis')} color="bg-red-600" />
+            )}
           </div>
         </div>
 
-        {/* Menu */}
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu Utama</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {menuItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => router.push(item.path)}
-              aria-label={item.title}
-              className="group relative p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md bg-white border border-slate-100 shadow-sm hover:border-blue-100"
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-3 ${item.iconBg}`}>
-                {item.icon}
-              </div>
-              <h4 className="font-semibold text-sm text-slate-800">{item.title}</h4>
-              <p className="text-xs mt-0.5 text-slate-400">{item.description}</p>
-              {item.featured && (
-                <div className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full" />
-              )}
-            </button>
-          ))}
+        {/* Menu Grid */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {menuItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => router.push(item.path)}
+                className="group p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md bg-white border border-slate-100 shadow-sm hover:border-blue-100"
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-3 ${item.iconBg}`}>
+                  {item.icon}
+                </div>
+                <h4 className="font-semibold text-sm text-slate-800">{item.title}</h4>
+              </button>
+            ))}
+          </div>
         </div>
       </main>
     </div>
+  )
+}
+
+function StatCard({ icon, label, value, color, sub }: {
+  icon: string; label: string; value: any; color: string; sub: string
+}) {
+  return (
+    <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+      <div className="text-2xl mb-2">{icon}</div>
+      <p className={`text-2xl font-bold ${color}`}>{value}</p>
+      <p className="text-xs text-slate-500 mt-0.5">{label}</p>
+      <p className="text-xs text-slate-400">{sub}</p>
+    </div>
+  )
+}
+
+function QuickBtn({ label, onClick, color }: { label: string; onClick: () => void; color: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`${color} text-white text-sm font-medium px-4 py-2 rounded-xl hover:opacity-90 transition active:scale-95`}
+    >
+      {label}
+    </button>
   )
 }

@@ -10,7 +10,8 @@ import TutorChat from '@/components/TutorChat';
 import XPNotification, { useXPNotifications } from '@/components/XPNotification';
 import { recordActivity } from '@/lib/gamification';
 import { useToast } from '@/components/ui/Toast'
-import { PageLoader } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/Skeleton'
+import RefleksiMateri from '@/components/RefleksiMateri';
 
 const masteryConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   belum_mulai: { label: 'Belum mulai', color: 'text-slate-500', bg: 'bg-slate-100', dot: 'bg-slate-400' },
@@ -83,7 +84,8 @@ export default function SiswaMateriPage() {
   const [mastery, setMastery] = useState<Record<string, any>>({});
   const [tutorOpen, setTutorOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
-  const [openMapel, setOpenMapel] = useState<string | null>(null);
+  const [openMapel, setOpenMapel] = useState<string | null>(null)
+  const [showRefleksi, setShowRefleksi] = useState(false);
   const { notifications, dismiss, showActivityResult } = useXPNotifications();
 
   useEffect(() => { init(); }, []);
@@ -148,7 +150,7 @@ export default function SiswaMateriPage() {
       toastSuccess('Materi sudah ditandai selesai!');
     }
     await loadProgress(user.id);
-    setSelectedMateri(null);
+    setShowRefleksi(true);
   };
 
   if (pageLoading) return <PageLoader />;
@@ -389,6 +391,14 @@ export default function SiswaMateriPage() {
             })}
           </div>
         </main>
+      {showRefleksi && selectedMateri && (
+        <RefleksiMateri
+          userId={user.id}
+          materiId={selectedMateri.id}
+          judulMateri={selectedMateri.judul}
+          onSelesai={() => { setShowRefleksi(false); setSelectedMateri(null); }}
+        />
+      )}
       </div>
     );
   }

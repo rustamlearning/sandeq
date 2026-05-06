@@ -55,7 +55,7 @@ export default function AITutorPage() {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: msgs, materi: null, blocks: [] }),
+        body: JSON.stringify({ messages: msgs, materi: null, blocks: [], userId: user?.id }),
       })
       if (!res.ok) throw new Error('API error')
       const data = await res.json()

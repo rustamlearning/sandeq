@@ -15,6 +15,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export type UserRole = 'siswa' | 'guru' | 'admin'
 
 export interface User {
+  hide_from_leaderboard?: boolean
   id: string
   nis_nip: string
   nama: string

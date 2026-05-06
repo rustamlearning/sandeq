@@ -6,6 +6,7 @@ import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 import { PageLoader } from '@/components/ui/Skeleton';
+import DailyCheckIn from '@/components/DailyCheckIn';
 
 const menuItems: { icon: string; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
   { icon: '📚', title: 'Materi', description: 'Pelajari materi pelajaran', path: '/siswa/materi', color: 'text-blue-600 bg-blue-50' },
@@ -26,6 +27,7 @@ export default function SiswaDashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState({ materiCount: 0, kuisCount: 0, pengumumanCount: 0 });
   const [notifCount, setNotifCount] = useState(0);
+  const [showCheckIn, setShowCheckIn] = useState(true);
 
   useEffect(() => { init(); }, []);
 
@@ -58,114 +60,128 @@ export default function SiswaDashboardPage() {
   const xpProgress = Math.min(100, Math.round(((xp - levelInfo.minXp) / (levelInfo.maxXp - levelInfo.minXp)) * 100)) || 0;
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
-        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
-            <div>
-              <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
-              <p className="text-blue-200 text-xs">Portal Siswa</p>
+    <>
+      {showCheckIn && (
+        <DailyCheckIn
+          userId={user.id}
+          onSelesai={() => setShowCheckIn(false)}
+          onSkip={() => setShowCheckIn(false)}
+        />
+      )}
+
+      <div className="min-h-screen bg-[#F4F9FF]">
+        {/* Header */}
+        <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
+          <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
+              <div>
+                <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
+                <p className="text-blue-200 text-xs">Portal Siswa</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => router.push('/siswa/notifikasi')}
+                aria-label="Notifikasi"
+                className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
+              >
+                🔔
+                {notifCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {notifCount > 9 ? '9+' : notifCount}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={handleLogout}
+                aria-label="Keluar dari aplikasi"
+                className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
+              >
+                Keluar
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push('/siswa/notifikasi')}
-              aria-label="Notifikasi" className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
-            >
-              🔔
-              {notifCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {notifCount > 9 ? '9+' : notifCount}
-                </span>
+        </header>
+
+        <main className="max-w-3xl mx-auto px-4 py-6">
+          {/* Gamification Hero Card */}
+          <div className="relative bg-gradient-to-br from-blue-700 via-blue-500 to-indigo-600 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
+            <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
+            <div className="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full" />
+            <div className="relative flex items-start gap-4">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
+                {levelInfo.emoji}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white/70 text-xs mb-0.5">Selamat belajar, {user.nama?.split(' ')[0]}!</p>
+                <p className="font-bold text-xl leading-tight">{levelInfo.title}</p>
+                <p className="text-white/80 text-sm">Level {levelInfo.level} · {xp.toLocaleString()} XP</p>
+                <div className="mt-3">
+                  <div className="flex justify-between text-xs text-white/60 mb-1">
+                    <span>Progress ke Level {levelInfo.level + 1}</span>
+                    <span>{xpToNext > 0 ? `${xpToNext} XP lagi` : 'Max!'}</span>
+                  </div>
+                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-500"
+                      style={{ width: `${xpProgress}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+              {user.current_streak > 0 && (
+                <div className="bg-orange-500/30 border border-orange-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
+                  <div className="text-2xl">🔥</div>
+                  <div className="text-xs font-bold">{user.current_streak}</div>
+                  <div className="text-xs text-white/60">hari</div>
+                </div>
               )}
-            </button>
-            <button onClick={handleLogout} aria-label="Keluar dari aplikasi" className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20">
-              Keluar
-            </button>
+            </div>
           </div>
-        </div>
-      </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-6">
-        {/* Gamification Hero Card */}
-        <div className="relative bg-gradient-to-br from-blue-700 via-blue-500 to-indigo-600 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
-          {/* Decorative circles */}
-          <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
-          <div className="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full" />
-
-          <div className="relative flex items-start gap-4">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
-              {levelInfo.emoji}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white/70 text-xs mb-0.5">Selamat belajar, {user.nama?.split(' ')[0]}!</p>
-              <p className="font-bold text-xl leading-tight">{levelInfo.title}</p>
-              <p className="text-white/80 text-sm">Level {levelInfo.level} · {xp.toLocaleString()} XP</p>
-
-              {/* XP Progress bar */}
-              <div className="mt-3">
-                <div className="flex justify-between text-xs text-white/60 mb-1">
-                  <span>Progress ke Level {levelInfo.level + 1}</span>
-                  <span>{xpToNext > 0 ? `${xpToNext} XP lagi` : 'Max!'}</span>
-                </div>
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
-                </div>
+          {/* Stats Row */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {[
+              { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-[#1A4A7A]' },
+              { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-[#2E86C1]' },
+              { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-[#E74C3C]' },
+            ].map(s => (
+              <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
+                <span className="text-xl">{s.icon}</span>
+                <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
               </div>
-            </div>
-            {user.current_streak > 0 && (
-              <div className="bg-orange-500/30 border border-orange-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
-                <div className="text-2xl">🔥</div>
-                <div className="text-xs font-bold">{user.current_streak}</div>
-                <div className="text-xs text-white/60">hari</div>
-              </div>
-            )}
+            ))}
           </div>
-        </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          {[
-            { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-[#1A4A7A]' },
-            { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-[#2E86C1]' },
-            { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-[#E74C3C]' },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
-              <span className="text-xl">{s.icon}</span>
-              <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Menu */}
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {menuItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => router.push(item.path)}
-              aria-label={item.title}
-              className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
-                item.highlight
-                  ? 'bg-gradient-to-r from-[#fef3e2] to-[#fef9ee] border-2 border-[#F39C12]/30 shadow-sm'
-                  : 'bg-white border border-slate-100 shadow-sm hover:border-[#2E86C1]/30'
-              }`}
-            >
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
-                {item.icon}
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
-                <p className="text-xs text-slate-400 mt-0.5 truncate">{item.description}</p>
-              </div>
-              <span className="ml-auto text-slate-300 group-hover:text-[#2E86C1] transition text-lg">›</span>
-            </button>
-          ))}
-        </div>
-      </main>
-    </div>
+          {/* Menu */}
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {menuItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => router.push(item.path)}
+                aria-label={item.title}
+                className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                  item.highlight
+                    ? 'bg-gradient-to-r from-[#fef3e2] to-[#fef9ee] border-2 border-[#F39C12]/30 shadow-sm'
+                    : 'bg-white border border-slate-100 shadow-sm hover:border-[#2E86C1]/30'
+                }`}
+              >
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
+                  {item.icon}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5 truncate">{item.description}</p>
+                </div>
+                <span className="ml-auto text-slate-300 group-hover:text-[#2E86C1] transition text-lg">›</span>
+              </button>
+            ))}
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
