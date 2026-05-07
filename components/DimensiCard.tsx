@@ -28,10 +28,7 @@ export default function DimensiCard({ userId }: { userId: string }) {
                 <span className="text-gray-400">{counts[key]}x</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full transition-all ${d.warna.split(' ')[0].replace('bg-', 'bg-').replace('100', '400')}`}
-                  style={{ width: `${pct}%` }}
-                />
+                <div className="h-2 rounded-full bg-blue-400 transition-all" style={{ width: `${pct}%` }} />
               </div>
             </div>
           )
