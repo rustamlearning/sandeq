@@ -23,6 +23,10 @@ const menuItems: { icon: React.ElementType; title: string; description: string; 
   { icon: MessageSquare, title: 'Forum', description: 'Diskusi dengan kelas', path: '/forum', color: 'text-sky-700 bg-sky-50 ring-sky-100' },
   { icon: UserRound, title: 'Profil & Stats', description: 'XP, level, dan badge', path: '/profil', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100', highlight: true },
   { icon: Trophy, title: 'Leaderboard', description: 'Peringkat belajar kelas', path: '/siswa/leaderboard', color: 'text-orange-700 bg-orange-50 ring-orange-100', highlight: true },
+  { icon: MessageSquare, title: 'Koding', description: 'Belajar Python dari nol', path: '/siswa/koding', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
+  { icon: Bot, title: 'KKA', description: 'Kecerdasan Artifisial', path: '/siswa/kka', color: 'text-purple-700 bg-purple-50 ring-purple-100' },
+  { icon: Trophy, title: 'Olimpiade', description: 'Mode kompetisi & lomba', path: '/siswa/olimpiade', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100' },
+  { icon: BookOpen, title: 'Muatan Lokal', description: 'Budaya & potensi Sulsel', path: '/siswa/muatan-lokal', color: 'text-teal-700 bg-teal-50 ring-teal-100' },
 ]
 
 export default function SiswaDashboardPage() {
