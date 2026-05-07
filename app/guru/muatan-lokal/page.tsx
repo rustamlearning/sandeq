@@ -26,6 +26,7 @@ export default function GuruMuatanLokalPage() {
 
   async function load() {
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
     const { data } = await supabase
       .from('muatan_lokal')
       .select('id, judul, kategori, is_published, created_at')

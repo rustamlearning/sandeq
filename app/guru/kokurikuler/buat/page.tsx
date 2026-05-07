@@ -37,7 +37,7 @@ export default function BuatKokurikulerPage() {
   useEffect(() => {
     async function loadKelas() {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data } = await supabase.from('kelas').select('id, nama').eq('guru_id', user!.id)
+      const { data } = await supabase.from('kelas').select('id, nama').order('nama')
       setKelas(data || [])
       if (data && data.length > 0) setKelasId(data[0].id)
     }

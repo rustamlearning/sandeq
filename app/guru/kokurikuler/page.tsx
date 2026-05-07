@@ -23,6 +23,7 @@ export default function GuruKokurikulerPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
       const { data } = await supabase.from('kokurikuler_logs')
         .select('*').eq('guru_id', user!.id).order('created_at', { ascending: false })
       setItems(data || [])

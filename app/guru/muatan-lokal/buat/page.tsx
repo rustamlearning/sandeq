@@ -40,6 +40,7 @@ export default function BuatMuatanLokalPage() {
     }
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { router.push('/login'); return }
     const { error } = await supabase.from('muatan_lokal').insert({
       judul, kategori, konten, is_published: published, guru_id: user!.id
     })
