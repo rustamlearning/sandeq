@@ -94,7 +94,7 @@ export default function BuatMuatanLokalPage() {
         {konten.map((blok, i) => (
           <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-blue-600">{BLOK_LABEL[blok.tipe]}</span>
+              <span className="text-xs font-semibold text-emerald-600">{BLOK_LABEL[blok.tipe]}</span>
               <button onClick={() => hapusBlok(i)} className="text-red-400 text-xs">Hapus</button>
             </div>
             {blok.tipe === 'gambar' ? (

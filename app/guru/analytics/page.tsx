@@ -110,7 +110,7 @@ export default function GuruAnalyticsPage() {
     if (!s.last_active_at) return { label: 'Belum aktif', color: 'bg-slate-100 text-slate-500' };
     const diff = (Date.now() - new Date(s.last_active_at).getTime()) / 86400000;
     if (diff <= 1) return { label: 'Aktif hari ini', color: 'bg-emerald-100 text-emerald-700' };
-    if (diff <= 3) return { label: '1-3 hari lalu', color: 'bg-blue-100 text-blue-700' };
+    if (diff <= 3) return { label: '1-3 hari lalu', color: 'bg-blue-100 text-emerald-700' };
     if (diff <= 7) return { label: '4-7 hari lalu', color: 'bg-amber-100 text-amber-700' };
     return { label: `${Math.floor(diff)} hari lalu`, color: 'bg-red-100 text-red-600' };
   };
@@ -132,7 +132,7 @@ export default function GuruAnalyticsPage() {
   );
 
   const statCards = overview ? [
-    { icon: Users, label: 'Total Siswa', value: overview.totalSiswa, sub: 'terdaftar', accent: 'border-blue-400 bg-blue-50', val: 'text-blue-700' },
+    { icon: Users, label: 'Total Siswa', value: overview.totalSiswa, sub: 'terdaftar', accent: 'border-blue-400 bg-emerald-50', val: 'text-emerald-700' },
     { icon: CheckCircle2, label: 'Aktif 7 Hari', value: overview.aktif7hari, sub: 'siswa', accent: 'border-emerald-400 bg-emerald-50', val: 'text-emerald-700' },
     { icon: AlertTriangle, label: 'Perlu Perhatian', value: overview.perluPerhatian, sub: 'siswa', accent: 'border-red-400 bg-red-50', val: 'text-red-600' },
     { icon: Star, label: 'Rata-rata XP', value: overview.rataXP, sub: 'XP/siswa', accent: 'border-violet-400 bg-violet-50', val: 'text-violet-700' },
@@ -143,7 +143,7 @@ export default function GuruAnalyticsPage() {
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-20 shadow-lg">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -239,14 +239,14 @@ export default function GuruAnalyticsPage() {
                     i === 0 ? 'bg-yellow-100 text-yellow-700' :
                     i === 1 ? 'bg-slate-100 text-slate-500' :
                     i === 2 ? 'bg-orange-100 text-orange-600' :
-                    'bg-blue-50 text-blue-500'
+                    'bg-emerald-50 text-blue-500'
                   }`}>{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-slate-800 text-sm truncate">{s.nama}</p>
                     <p className="text-xs text-slate-400">{s.total_materi_selesai || 0} materi · {s.current_streak || 0} hari streak</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-blue-600 text-sm">{(s.xp || 0).toLocaleString()} XP</p>
+                    <p className="font-bold text-emerald-600 text-sm">{(s.xp || 0).toLocaleString()} XP</p>
                     <p className="text-xs text-slate-400">Lvl {s.level || 1}</p>
                   </div>
                 </div>
@@ -330,9 +330,9 @@ export default function GuruAnalyticsPage() {
                             <p className="font-semibold text-slate-800">{s.nama}</p>
                             <p className="text-xs text-slate-400">{s.nis_nip}</p>
                           </td>
-                          <td className="px-4 py-3 font-bold text-blue-600">{(s.xp || 0).toLocaleString()}</td>
+                          <td className="px-4 py-3 font-bold text-emerald-600">{(s.xp || 0).toLocaleString()}</td>
                           <td className="px-4 py-3">
-                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-lg font-medium">Lvl {s.level || 1}</span>
+                            <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg font-medium">Lvl {s.level || 1}</span>
                           </td>
                           <td className="px-4 py-3">
                             <span className="font-semibold text-slate-700">{s.total_materi_selesai || 0}</span>
@@ -402,7 +402,7 @@ export default function GuruAnalyticsPage() {
                             <p className="text-xs text-slate-400">{m.mapel}{m.estimasi_menit ? ` · ${m.estimasi_menit} mnt` : ''}</p>
                           </td>
                           <td className="px-4 py-3 font-semibold text-slate-600">{m.total_dibaca || 0}</td>
-                          <td className="px-4 py-3 font-semibold text-blue-600">{m.total_selesai || 0}</td>
+                          <td className="px-4 py-3 font-semibold text-emerald-600">{m.total_selesai || 0}</td>
                           <td className="px-4 py-3 font-semibold text-emerald-600">{m.total_dikuasai || 0}</td>
                           <td className="px-4 py-3">
                             {accuracy !== null ? (

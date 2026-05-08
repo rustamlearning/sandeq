@@ -28,16 +28,16 @@ interface AlertItem {
 }
 
 const menuItems = [
-  { title: 'Buat Materi', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-blue-600' },
+  { title: 'Buat Materi', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-emerald-600' },
   { title: 'Buat Kuis', icon: '✏️', path: '/guru/kuis', iconBg: 'bg-violet-100 text-violet-600' },
   { title: 'Absensi', icon: '📋', path: '/guru/absensi', iconBg: 'bg-emerald-100 text-emerald-600' },
   { title: 'Input Nilai', icon: '🏅', path: '/guru/nilai', iconBg: 'bg-amber-100 text-amber-600' },
-  { title: 'Analytics', icon: '📊', path: '/guru/analytics', iconBg: 'bg-blue-100 text-blue-700' },
+  { title: 'Analytics', icon: '📊', path: '/guru/analytics', iconBg: 'bg-blue-100 text-emerald-700' },
   { title: 'Mastery', icon: '🎯', path: '/guru/mastery', iconBg: 'bg-orange-100 text-orange-600' },
   { title: 'Pengumuman', icon: '📢', path: '/guru/pengumuman', iconBg: 'bg-rose-100 text-rose-600' },
   { title: 'Export Rapor', icon: '📄', path: '/guru/nilai/export', iconBg: 'bg-teal-100 text-teal-600' },
   { title: 'Forum', icon: '💬', path: '/forum', iconBg: 'bg-sky-100 text-sky-600' },
-  { title: 'Jadwal', icon: '📅', path: '/jadwal', iconBg: 'bg-indigo-100 text-indigo-600' },
+  { title: 'Jadwal', icon: '📅', path: '/jadwal', iconBg: 'bg-emerald-100 text-emerald-600' },
   { title: 'Live Quiz', icon: '🎮', path: '/guru/live', iconBg: 'bg-green-100 text-green-600' },
   { title: 'Analytics Pro', icon: '🔬', path: '/guru/analytics-pro', iconBg: 'bg-red-100 text-red-600' },
 ]
@@ -182,14 +182,14 @@ export default function GuruDashboard() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard icon="👥" label="Total Siswa" value={stats.totalSiswa} color="text-blue-600" sub="terdaftar" />
+          <StatCard icon="👥" label="Total Siswa" value={stats.totalSiswa} color="text-emerald-600" sub="terdaftar" />
           <StatCard icon="✅" label="Hadir Hari Ini" value={stats.hadirHariIni} color="text-green-600" sub="siswa" />
           <StatCard icon="📊" label="Avg Nilai" value={stats.avgNilaiKelas || '-'} color="text-violet-600" sub="minggu ini" />
           <StatCard icon="⚡" label="Siswa Aktif" value={stats.siswaAktifMingguIni} color="text-orange-600" sub="7 hari terakhir" />
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard icon="📖" label="Materi" value={stats.totalMateri} color="text-blue-600" sub="dibuat" />
+          <StatCard icon="📖" label="Materi" value={stats.totalMateri} color="text-emerald-600" sub="dibuat" />
           <StatCard icon="✏️" label="Kuis" value={stats.totalKuis} color="text-violet-600" sub="dibuat" />
           <StatCard icon="⏳" label="Essay Pending" value={stats.essayBelumDinilai} color={stats.essayBelumDinilai > 0 ? 'text-red-600' : 'text-gray-400'} sub="belum dinilai" />
           <StatCard icon="⏰" label="Deadline Dekat" value={stats.kuisDeadlineDekat} color={stats.kuisDeadlineDekat > 0 ? 'text-orange-600' : 'text-gray-400'} sub="dalam 3 hari" />

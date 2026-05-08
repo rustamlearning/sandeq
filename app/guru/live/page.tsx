@@ -75,7 +75,7 @@ export default function LivePage() {
           <select
             value={selectedKuis}
             onChange={e => setSelectedKuis(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">Pilih Quiz...</option>
             {kuis.map(k => <option key={k.id} value={k.id}>{k.judul}</option>)}
@@ -83,7 +83,7 @@ export default function LivePage() {
           <select
             value={selectedKelas}
             onChange={e => setSelectedKelas(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">Pilih Kelas...</option>
             {kelas.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}

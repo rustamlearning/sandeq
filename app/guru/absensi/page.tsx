@@ -27,7 +27,7 @@ interface SiswaWithStatus {
 const STATUS_CONFIG: Record<Status, { label: string; short: string; active: string; bg: string; text: string }> = {
   hadir: { label: 'Hadir',  short: 'H', active: 'bg-emerald-500 text-white', bg: 'bg-emerald-50', text: 'text-emerald-700' },
   sakit: { label: 'Sakit',  short: 'S', active: 'bg-yellow-500 text-white',  bg: 'bg-yellow-50',  text: 'text-yellow-700' },
-  izin:  { label: 'Izin',   short: 'I', active: 'bg-blue-500 text-white',    bg: 'bg-blue-50',    text: 'text-blue-700'   },
+  izin:  { label: 'Izin',   short: 'I', active: 'bg-emerald-500 text-white',    bg: 'bg-emerald-50',    text: 'text-emerald-700'   },
   alpha: { label: 'Alpha',  short: 'A', active: 'bg-red-500 text-white',     bg: 'bg-red-50',     text: 'text-red-700'    },
 }
 
@@ -111,7 +111,7 @@ export default function AbsensiGuruPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
             <Loader2 className="animate-spin" size={24} />
           </div>
           <p className="text-gray-500">Memuat absensi...</p>
@@ -122,7 +122,7 @@ export default function AbsensiGuruPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
@@ -169,7 +169,7 @@ export default function AbsensiGuruPage() {
       <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
         {!selectedKelas ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
               <GraduationCap size={27} />
             </div>
             <p className="font-semibold text-gray-700">Pilih kelas di atas</p>
@@ -177,7 +177,7 @@ export default function AbsensiGuruPage() {
           </div>
         ) : loadingSiswa ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
               <Loader2 className="animate-spin" size={24} />
             </div>
             <p className="text-gray-500">Memuat daftar siswa...</p>
@@ -258,7 +258,7 @@ export default function AbsensiGuruPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="inline-flex w-full items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition disabled:opacity-50 shadow-sm"
+                  className="inline-flex w-full items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-xl font-semibold hover:from-emerald-800 hover:to-teal-700 transition disabled:opacity-50 shadow-sm"
                 >
                   {saving ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
                   {saving ? 'Menyimpan...' : 'Simpan Absensi'}

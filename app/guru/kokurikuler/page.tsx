@@ -67,7 +67,7 @@ export default function GuruKokurikulerPage() {
               <div className="flex items-start justify-between mb-2">
                 <h3 className="font-semibold text-gray-800 flex-1 pr-2">{item.judul}</h3>
                 <span className={`text-xs px-2 py-1 rounded-full font-medium shrink-0 ${
-                  item.status === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                  item.status === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-emerald-700'
                 }`}>
                   {item.status === 'selesai' ? '✅ Selesai' : '🔄 Aktif'}
                 </span>

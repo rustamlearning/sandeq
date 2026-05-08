@@ -566,7 +566,7 @@ export default function GuruMateriPage() {
                   return (
                     <article key={m.id} className="surface-card overflow-hidden rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lifted)]">
                       <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start">
-                        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl ${isHtml ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700'}`}>
+                        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl ${isHtml ? 'bg-violet-50 text-violet-700' : 'bg-emerald-50 text-emerald-700'}`}>
                           {isHtml ? <FileCode2 size={20} /> : <BookOpen size={20} />}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -585,7 +585,7 @@ export default function GuruMateriPage() {
                           </p>
                         </div>
                         <div className="flex flex-shrink-0 gap-2 sm:flex-col">
-                          <button onClick={() => handleEdit(m)} className="inline-flex items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
+                          <button onClick={() => handleEdit(m)} className="inline-flex items-center justify-center rounded-lg border border-blue-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-blue-100">
                             <span className="inline-flex items-center gap-1"><Edit3 size={12} /> Edit</span>
                           </button>
                           <button onClick={() => handleDelete(m.id)} className="inline-flex items-center justify-center rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
