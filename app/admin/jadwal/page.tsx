@@ -22,7 +22,7 @@ interface JadwalItem {
 const HARI_LIST = [
   { num: 1, label: 'Senin',  color: 'bg-blue-50 text-blue-700 border-blue-200' },
   { num: 2, label: 'Selasa', color: 'bg-violet-50 text-violet-700 border-violet-200' },
-  { num: 3, label: 'Rabu',   color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { num: 3, label: 'Rabu',   color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
   { num: 4, label: 'Kamis',  color: 'bg-orange-50 text-orange-700 border-orange-200' },
   { num: 5, label: 'Jumat',  color: 'bg-rose-50 text-rose-700 border-rose-200' },
 ]

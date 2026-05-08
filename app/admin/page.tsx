@@ -31,7 +31,7 @@ const MENU = [
 
 const STATS_CONFIG = [
   { key: 'totalSiswa', label: 'Siswa', icon: GraduationCap, tone: 'text-blue-700 bg-blue-50 ring-blue-100' },
-  { key: 'totalGuru', label: 'Guru', icon: Users, tone: 'text-emerald-700 bg-emerald-50 ring-emerald-100' },
+  { key: 'totalGuru', label: 'Guru', icon: Users, tone: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
   { key: 'totalKelas', label: 'Kelas', icon: School, tone: 'text-violet-700 bg-violet-50 ring-violet-100' },
   { key: 'totalMateri', label: 'Materi', icon: BookOpen, tone: 'text-orange-700 bg-orange-50 ring-orange-100' },
 ]
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
       const map: Record<string, number> = {}
       absensi.forEach((a) => { map[a.status] = (map[a.status] || 0) + 1 })
       setAbsensiData([
-        { status: 'Hadir', count: map.hadir || 0, fill: '#10b981' },
+        { status: 'Hadir', count: map.hadir || 0, fill: '#4f46e5' },
         { status: 'Sakit', count: map.sakit || 0, fill: '#f59e0b' },
         { status: 'Izin', count: map.izin || 0, fill: '#3b82f6' },
         { status: 'Alpha', count: map.alpha || 0, fill: '#ef4444' },
@@ -200,7 +200,7 @@ export default function AdminDashboard() {
             {[
               { label: 'Total Kuis', value: kuisStats.totalKuis, icon: ClipboardList, tone: 'text-violet-700 bg-violet-50 ring-violet-100' },
               { label: 'Pengerjaan', value: kuisStats.totalPengerjaan, icon: BarChart3, tone: 'text-blue-700 bg-blue-50 ring-blue-100' },
-              { label: 'Rata-rata Skor', value: kuisStats.avgSkor > 0 ? `${kuisStats.avgSkor}` : '-', icon: BarChart3, tone: 'text-emerald-700 bg-emerald-50 ring-emerald-100' },
+              { label: 'Rata-rata Skor', value: kuisStats.avgSkor > 0 ? `${kuisStats.avgSkor}` : '-', icon: BarChart3, tone: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
             ].map((s) => {
               const Icon = s.icon
               return (

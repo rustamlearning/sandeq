@@ -257,7 +257,7 @@ export default function EssayGradingPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {j.graded_by_ai && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-blue-100 text-emerald-600 rounded-full"><Bot size={12} /> AI Scored</span>
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-blue-100 text-indigo-600 rounded-full"><Bot size={12} /> AI Scored</span>
                       )}
                       {sudahDinilai && (
                         <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">✓ Dinilai</span>
@@ -326,7 +326,7 @@ export default function EssayGradingPage() {
                       {/* Poin bar */}
                       <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2">
                         <div
-                          className={`h-1.5 rounded-full transition-all ${pctPoin >= 75 ? 'bg-green-500' : pctPoin >= 50 ? 'bg-emerald-500' : pctPoin >= 25 ? 'bg-amber-500' : 'bg-red-400'}`}
+                          className={`h-1.5 rounded-full transition-all ${pctPoin >= 75 ? 'bg-green-500' : pctPoin >= 50 ? 'bg-indigo-500' : pctPoin >= 25 ? 'bg-amber-500' : 'bg-red-400'}`}
                           style={{ width: `${pctPoin}%` }}
                         />
                       </div>

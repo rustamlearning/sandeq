@@ -33,7 +33,7 @@ const MASTERY_CONFIG: Record<MasteryLevel, { label: string; color: string; bg: s
   belum_mulai: { label: 'Belum Mulai', color: '#94a3b8', bg: '#f1f5f9', icon: '○' },
   familiar:    { label: 'Familiar',    color: '#f59e0b', bg: '#fef3c7', icon: '◑' },
   berkembang:  { label: 'Berkembang',  color: '#3b82f6', bg: '#dbeafe', icon: '◕' },
-  dikuasai:    { label: 'Dikuasai',    color: '#10b981', bg: '#d1fae5', icon: '●' },
+  dikuasai:    { label: 'Dikuasai',    color: '#4f46e5', bg: '#d1fae5', icon: '●' },
 };
 
 export default function MasteryTrackerPage() {
@@ -155,7 +155,7 @@ export default function MasteryTrackerPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-slate-500 text-sm">Memuat mastery tracker...</p>
         </div>
       </div>
@@ -179,7 +179,7 @@ export default function MasteryTrackerPage() {
           <select
             value={selectedKelas}
             onChange={(e) => setSelectedKelas(e.target.value)}
-            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
           >
             {kelasList.map((k) => (
               <option key={k.id} value={k.id}>{k.nama}</option>
@@ -214,7 +214,7 @@ export default function MasteryTrackerPage() {
           {selectedMateri && (
             <button
               onClick={() => setSelectedMateri(null)}
-              className="ml-2 text-xs text-emerald-600 hover:underline"
+              className="ml-2 text-xs text-indigo-600 hover:underline"
             >
               ✕ Reset filter materi
             </button>
@@ -308,7 +308,7 @@ export default function MasteryTrackerPage() {
                         {/* Nama siswa */}
                         <td className="sticky left-0 z-10 bg-white px-4 py-3 border-r border-slate-100">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xs flex-shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs flex-shrink-0">
                               {s.nama?.[0] || '?'}
                             </div>
                             <div>

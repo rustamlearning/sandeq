@@ -13,7 +13,7 @@ interface MuatanLokal {
 const KATEGORI_INFO: Record<string, { emoji: string; label: string; warna: string }> = {
   budaya: { emoji: '🎭', label: 'Budaya', warna: 'bg-orange-100 text-orange-700' },
   bahasa: { emoji: '📜', label: 'Bahasa Daerah', warna: 'bg-blue-100 text-blue-700' },
-  potensi_lokal: { emoji: '🌊', label: 'Potensi Lokal', warna: 'bg-teal-100 text-teal-700' },
+  potensi_lokal: { emoji: '🌊', label: 'Potensi Lokal', warna: 'bg-blue-100 text-blue-700' },
   sejarah: { emoji: '🏛️', label: 'Sejarah', warna: 'bg-amber-100 text-amber-700' },
 }
 
@@ -42,7 +42,7 @@ export default function MuatanLokalPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition"><ArrowLeft size={18} /></button>
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition"><ArrowLeft size={18} /></button>
         <div>
           <h1 className="text-xl font-bold text-gray-800">Muatan Lokal</h1>
           <p className="text-xs text-gray-400">Budaya & Potensi Sulawesi Selatan</p>

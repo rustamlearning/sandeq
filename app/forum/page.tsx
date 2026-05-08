@@ -283,9 +283,9 @@ export default function ForumPage() {
               {post.replies && post.replies.length > 0 && (
                 <div className="bg-gray-50 border-t border-gray-100 divide-y divide-gray-100">
                   {post.replies.map((reply) => (
-                    <div key={reply.id} className={`px-4 py-3 pl-8 ${reply.is_jawaban_terbaik ? 'bg-emerald-50' : ''}`}>
+                    <div key={reply.id} className={`px-4 py-3 pl-8 ${reply.is_jawaban_terbaik ? 'bg-indigo-50' : ''}`}>
                       {reply.is_jawaban_terbaik && (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 mb-1"><CheckCircle2 size={13} /> Jawaban Terbaik</span>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 mb-1"><CheckCircle2 size={13} /> Jawaban Terbaik</span>
                       )}
                       <div className="flex items-start gap-2">
                         <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs flex-shrink-0">
@@ -298,7 +298,7 @@ export default function ForumPage() {
                             {user?.id === post.author_id && !reply.is_jawaban_terbaik && (
                               <button
                                 onClick={() => tandaiJawabanTerbaik(reply.id, post.id)}
-                                className="text-xs text-emerald-600 hover:text-emerald-800 font-medium"
+                                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
                               >
                                 ✓ Tandai Terbaik
                               </button>

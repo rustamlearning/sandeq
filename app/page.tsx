@@ -15,7 +15,7 @@ const FEATURES = [
   { icon: BarChart3,   title: 'Analytics Pro',        desc: 'Guru memantau perkembangan siswa secara real-time dengan deteksi at-risk.',color: 'bg-green-50 text-green-600' },
   { icon: MessageSquare,title: 'Live Quiz',           desc: 'Kuis interaktif real-time ala Kahoot — seru dan kompetitif.',             color: 'bg-rose-50 text-rose-600' },
   { icon: Code2,       title: 'Mapel Koding & KKA',   desc: 'Python sandbox dan 6 modul Kecerdasan Artifisial eksklusif.',            color: 'bg-cyan-50 text-cyan-600' },
-  { icon: Globe,       title: 'Muatan Lokal Pangkep', desc: 'Konten budaya, alam, dan ekonomi Pangkajene dan Kepulauan.',             color: 'bg-teal-50 text-teal-600' },
+  { icon: Globe,       title: 'Muatan Lokal Pangkep', desc: 'Konten budaya, alam, dan ekonomi Pangkajene dan Kepulauan.',             color: 'bg-teal-50 text-blue-600' },
   { icon: GraduationCap,title: 'Portfolio Digital',  desc: 'Siswa mendokumentasikan karya dan prestasi dalam portfolio pribadi.',     color: 'bg-indigo-50 text-indigo-600' },
 ]
 

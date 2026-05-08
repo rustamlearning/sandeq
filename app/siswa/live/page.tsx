@@ -39,7 +39,7 @@ export default function LiveJoinPage() {
           onChange={e => setKode(e.target.value.toUpperCase())}
           maxLength={6}
           placeholder="XXXXXX"
-          className="w-full text-center text-3xl font-mono font-black tracking-widest border-2 border-gray-200 rounded-2xl px-4 py-4 mb-4 focus:outline-none focus:border-emerald-500 uppercase"
+          className="w-full text-center text-3xl font-mono font-black tracking-widest border-2 border-gray-200 rounded-2xl px-4 py-4 mb-4 focus:outline-none focus:border-indigo-500 uppercase"
         />
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
@@ -47,7 +47,7 @@ export default function LiveJoinPage() {
         <button
           onClick={joinSesi}
           disabled={kode.length < 6 || loading}
-          className="w-full bg-emerald-600 text-white rounded-2xl py-4 font-bold text-lg disabled:opacity-50"
+          className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-bold text-lg disabled:opacity-50"
         >
           {loading ? 'Mencari...' : 'Join Sekarang!'}
         </button>

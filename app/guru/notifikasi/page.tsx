@@ -159,7 +159,7 @@ export default function GuruNotifikasiPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button onClick={() => router.push('/guru')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition" aria-label="Kembali ke dashboard guru">
             <ArrowLeft size={18} />
@@ -177,7 +177,7 @@ export default function GuruNotifikasiPage() {
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-emerald-500" />
+            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-indigo-500" />
             <p className="font-semibold text-gray-700">Tidak ada notifikasi baru</p>
             <p className="text-sm text-gray-400 mt-1">Aktivitas siswa & deadline akan muncul di sini</p>
           </div>

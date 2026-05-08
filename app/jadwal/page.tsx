@@ -33,7 +33,7 @@ const MAPEL_COLORS: Record<string, string> = {
   'Bahasa Inggris': 'bg-purple-50 border-purple-200 text-purple-800',
   'Fisika': 'bg-cyan-50 border-cyan-200 text-cyan-800',
   'Kimia': 'bg-orange-50 border-orange-200 text-orange-800',
-  'Biologi': 'bg-emerald-50 border-emerald-200 text-emerald-800',
+  'Biologi': 'bg-indigo-50 border-indigo-200 text-indigo-800',
 };
 
 function getMapelColor(mapel: string) {

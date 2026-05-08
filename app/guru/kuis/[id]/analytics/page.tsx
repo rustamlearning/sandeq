@@ -128,7 +128,7 @@ export default function KuisAnalyticsPage() {
     <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
-          <button onClick={() => router.push('/guru/analytics')} className="text-emerald-600 text-sm">
+          <button onClick={() => router.push('/guru/analytics')} className="text-indigo-600 text-sm">
             <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Analytics</span>
           </button>
           <div className="flex-1 min-w-0">
@@ -156,7 +156,7 @@ export default function KuisAnalyticsPage() {
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {!analytics || (analytics.total_selesai === 0) ? (
           <div className="bg-white rounded-xl p-12 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
               <BarChart3 size={26} />
             </div>
             <p className="text-gray-600 font-medium">Belum ada siswa yang mengerjakan</p>
@@ -242,7 +242,7 @@ export default function KuisAnalyticsPage() {
                 <div className="space-y-3">
                   {soalStats.map((s, i) => (
                     <div key={s.id} className="border-l-4 pl-3 py-2" style={{
-                      borderColor: s.akurasi >= 70 ? '#10b981' : s.akurasi >= 50 ? '#f59e0b' : '#ef4444'
+                      borderColor: s.akurasi >= 70 ? '#4f46e5' : s.akurasi >= 50 ? '#f59e0b' : '#ef4444'
                     }}>
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex-1 min-w-0">
@@ -337,7 +337,7 @@ export default function KuisAnalyticsPage() {
 function BigStatCard({ label, value, sub, color, icon: Icon }: { label: string; value: string; sub: string; color: string; icon: LucideIcon }) {
   const colorMap: Record<string, string> = {
     blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-emerald-600',
+    green: 'from-green-500 to-indigo-600',
     purple: 'from-purple-500 to-pink-600',
     orange: 'from-orange-500 to-red-500',
   };

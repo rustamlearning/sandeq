@@ -14,7 +14,7 @@ import type { LucideIcon } from 'lucide-react'
 const menuItems: { icon: React.ElementType; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
   { icon: BookOpen, title: 'Materi', description: 'Lanjutkan bahan belajar kelas', path: '/siswa/materi', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
   { icon: ClipboardList, title: 'Kuis', description: 'Kerjakan latihan dan ulangan', path: '/siswa/kuis', color: 'text-violet-700 bg-violet-50 ring-violet-100' },
-  { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai dan rapor', path: '/siswa/nilai', color: 'text-emerald-700 bg-emerald-50 ring-emerald-100' },
+  { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai dan rapor', path: '/siswa/nilai', color: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
   { icon: CalendarDays, title: 'Jadwal', description: 'Lihat pelajaran hari ini', path: '/jadwal', color: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
   { icon: CalendarCheck, title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-700 bg-amber-50 ring-amber-100' },
   { icon: Megaphone, title: 'Pengumuman', description: 'Info penting sekolah', path: '/siswa/pengumuman', color: 'text-rose-700 bg-rose-50 ring-rose-100' },
@@ -26,7 +26,7 @@ const menuItems: { icon: React.ElementType; title: string; description: string; 
   { icon: MessageSquare, title: 'Koding', description: 'Belajar Python dari nol', path: '/siswa/koding', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
   { icon: Bot, title: 'KKA', description: 'Kecerdasan Artifisial', path: '/siswa/kka', color: 'text-purple-700 bg-purple-50 ring-purple-100' },
   { icon: Trophy, title: 'Olimpiade', description: 'Mode kompetisi & lomba', path: '/siswa/olimpiade', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100' },
-  { icon: BookOpen, title: 'Muatan Lokal', description: 'Budaya & potensi Sulsel', path: '/siswa/muatan-lokal', color: 'text-teal-700 bg-teal-50 ring-teal-100' },
+  { icon: BookOpen, title: 'Muatan Lokal', description: 'Budaya & potensi Sulsel', path: '/siswa/muatan-lokal', color: 'text-blue-700 bg-teal-50 ring-blue-100' },
 ]
 
 export default function SiswaDashboardPage() {
@@ -78,7 +78,7 @@ export default function SiswaDashboardPage() {
 
       <div className="min-h-screen bg-[#F4F9FF]">
         {/* Header */}
-        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white">
+        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white">
           <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
@@ -138,7 +138,7 @@ export default function SiswaDashboardPage() {
                 </div>
               </div>
               {user.current_streak > 0 && (
-                <div className="bg-emerald-500/30 border border-emerald-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
+                <div className="bg-indigo-500/30 border border-indigo-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
                   <div className="text-2xl">🔥</div>
                   <div className="text-xs font-bold">{user.current_streak}</div>
                   <div className="text-xs text-white/60">hari</div>

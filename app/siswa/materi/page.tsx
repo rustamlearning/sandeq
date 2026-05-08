@@ -32,11 +32,11 @@ const masteryConfig: Record<string, { label: string; color: string; bg: string; 
   belum_mulai: { label: 'Belum mulai', color: 'text-slate-500', bg: 'bg-slate-100', dot: 'bg-slate-400' },
   familiar:    { label: 'Familiar',    color: 'text-amber-700', bg: 'bg-amber-100', dot: 'bg-amber-400' },
   mahir:       { label: 'Mahir',       color: 'text-blue-700',  bg: 'bg-blue-100',  dot: 'bg-blue-500'  },
-  dikuasai:    { label: 'Dikuasai',    color: 'text-emerald-700', bg: 'bg-emerald-100', dot: 'bg-emerald-500' },
+  dikuasai:    { label: 'Dikuasai',    color: 'text-indigo-700', bg: 'bg-indigo-100', dot: 'bg-indigo-500' },
 };
 
 const difficultyConfig: Record<string, { label: string; color: string }> = {
-  mudah:  { label: 'Mudah',  color: 'text-emerald-600 bg-emerald-50' },
+  mudah:  { label: 'Mudah',  color: 'text-indigo-600 bg-indigo-50' },
   sedang: { label: 'Sedang', color: 'text-amber-600 bg-amber-50'     },
   sulit:  { label: 'Sulit',  color: 'text-red-600 bg-red-50'         },
 };
@@ -184,7 +184,7 @@ export default function SiswaMateriPage() {
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
         {/* Header */}
-        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setSelectedMateri(null)}
@@ -214,7 +214,7 @@ export default function SiswaMateriPage() {
               {m.bab && <span className="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full">{m.bab}</span>}
               {diff && <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${diff.color}`}>{diff.label}</span>}
               {m.estimasi_menit && <span className="inline-flex items-center gap-1 text-xs text-slate-400"><Clock3 size={12} /> {m.estimasi_menit} menit</span>}
-              {isSelesai && <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-medium"><CheckCircle2 size={12} /> Selesai</span>}
+              {isSelesai && <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full font-medium"><CheckCircle2 size={12} /> Selesai</span>}
             </div>
 
             <h1 className="text-2xl font-bold text-slate-900 mb-2 leading-tight">{m.judul}</h1>
@@ -222,7 +222,7 @@ export default function SiswaMateriPage() {
 
             {m.tujuan_pembelajaran && (
               <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400 mt-4">
-                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-800 mb-1.5"><Target size={15} /> Tujuan Pembelajaran</h3>
+                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-800 mb-1.5"><Target size={15} /> Tujuan Pembelajaran</h3>
                 <p className="text-sm text-blue-700 whitespace-pre-line leading-relaxed">{m.tujuan_pembelajaran}</p>
               </div>
             )}
@@ -259,8 +259,8 @@ export default function SiswaMateriPage() {
               onClick={markComplete}
               className={`flex-1 py-3.5 rounded-2xl font-semibold text-sm transition-all ${
                 isSelesai
-                  ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-200'
-                  : 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5'
+                  ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-200'
+                  : 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5'
               }`}
             >
               <span className="inline-flex items-center justify-center gap-2">
@@ -284,7 +284,7 @@ export default function SiswaMateriPage() {
           <>
             <button
               onClick={() => setTutorOpen(true)}
-              className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
+              className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
             >
               <Bot size={19} />
               <span>Tanya Tutor</span>
@@ -306,9 +306,9 @@ export default function SiswaMateriPage() {
     'Bahasa Inggris':          { initials: 'EN', bg: 'bg-sky-50',     color: 'text-sky-600'    },
     'Fisika':                  { initials: 'FS', bg: 'bg-yellow-50',  color: 'text-yellow-600' },
     'Kimia':                   { initials: 'KM', bg: 'bg-green-50',   color: 'text-green-600'  },
-    'Biologi':                 { initials: 'BG', bg: 'bg-emerald-50', color: 'text-emerald-600'},
+    'Biologi':                 { initials: 'BG', bg: 'bg-indigo-50', color: 'text-indigo-600'},
     'Sejarah':                 { initials: 'SJ', bg: 'bg-amber-50',   color: 'text-amber-600'  },
-    'Geografi':                { initials: 'GF', bg: 'bg-teal-50',    color: 'text-teal-600'   },
+    'Geografi':                { initials: 'GF', bg: 'bg-teal-50',    color: 'text-blue-600'   },
     'Ekonomi':                 { initials: 'EK', bg: 'bg-lime-50',    color: 'text-lime-600'   },
     'Sosiologi':               { initials: 'SO', bg: 'bg-pink-50',    color: 'text-pink-600'   },
     'PPKn':                    { initials: 'PK', bg: 'bg-rose-50',    color: 'text-rose-600'   },
@@ -342,7 +342,7 @@ export default function SiswaMateriPage() {
     const items = grouped[openMapel] || [];
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
-        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
             <button
               onClick={() => setOpenMapel(null)}
@@ -364,7 +364,7 @@ export default function SiswaMateriPage() {
           </div>
           <div className="h-1 bg-white/20">
             <div
-              className="h-1 bg-gradient-to-r from-emerald-400 to-teal-400 transition-all"
+              className="h-1 bg-gradient-to-r from-indigo-400 to-blue-400 transition-all"
               style={{ width: `${items.length > 0 ? Math.round(items.filter(m => progress[m.id]?.selesai).length / items.length * 100) : 0}%` }}
             />
           </div>
@@ -387,9 +387,9 @@ export default function SiswaMateriPage() {
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isSelesai ? 'bg-emerald-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
+                      isSelesai ? 'bg-indigo-100' : htmlMode ? 'bg-violet-100' : 'bg-blue-50'
                     }`}>
-                      {isSelesai ? <CheckCircle2 className="text-emerald-600" size={19} /> : htmlMode ? <FileCode2 className="text-violet-700" size={19} /> : <BookOpen className="text-blue-700" size={19} />}
+                      {isSelesai ? <CheckCircle2 className="text-indigo-600" size={19} /> : htmlMode ? <FileCode2 className="text-violet-700" size={19} /> : <BookOpen className="text-blue-700" size={19} />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 mb-2">
@@ -430,7 +430,7 @@ export default function SiswaMateriPage() {
   // ===== MAPEL FOLDER VIEW =====
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/siswa')} className="text-blue-200 hover:text-white text-sm transition">
@@ -449,7 +449,7 @@ export default function SiswaMateriPage() {
         {materiList.length > 0 && (
           <div className="h-1 bg-white/20">
             <div
-              className="h-1 bg-gradient-to-r from-emerald-400 to-teal-400 transition-all"
+              className="h-1 bg-gradient-to-r from-indigo-400 to-blue-400 transition-all"
               style={{ width: `${Math.round(selesaiCount / materiList.length * 100)}%` }}
             />
           </div>
@@ -495,7 +495,7 @@ export default function SiswaMateriPage() {
                       <p className="text-xs text-slate-400 mb-2">{isEmpty ? 'Belum ada materi' : `${items.length} materi · ${selesai} selesai`}</p>
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full transition-all duration-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>

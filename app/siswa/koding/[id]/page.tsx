@@ -188,7 +188,7 @@ export default function KodingDetailPage() {
               <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">{konten.contoh}</pre>
             </div>
             <button onClick={() => setTab('latihan')}
-              className="w-full bg-emerald-600 text-white rounded-xl py-3 font-semibold">
+              className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold">
               Coba Latihan →
             </button>
           </div>
@@ -204,7 +204,7 @@ export default function KodingDetailPage() {
             <textarea
               value={kode}
               onChange={e => setKode(e.target.value)}
-              className="w-full h-48 bg-gray-900 text-green-400 font-mono text-sm p-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+              className="w-full h-48 bg-gray-900 text-green-400 font-mono text-sm p-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               spellCheck={false}
             />
 
@@ -215,7 +215,7 @@ export default function KodingDetailPage() {
             )}
 
             <div className="flex gap-2">
-              <button onClick={jalankan} className="flex-1 bg-emerald-600 text-white rounded-xl py-3 font-semibold text-sm">
+              <button onClick={jalankan} className="flex-1 bg-indigo-600 text-white rounded-xl py-3 font-semibold text-sm">
                 ▶ Jalankan
               </button>
               <button onClick={() => setShowHint(!showHint)} className="px-4 bg-amber-100 text-amber-700 rounded-xl font-medium text-sm">

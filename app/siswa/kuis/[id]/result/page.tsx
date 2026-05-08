@@ -102,7 +102,7 @@ export default function KuisResultPage() {
             isPerfect
               ? 'bg-gradient-to-br from-yellow-500 via-orange-500 to-pink-600'
               : lulus
-              ? 'bg-gradient-to-br from-green-600 to-emerald-700'
+              ? 'bg-gradient-to-br from-green-600 to-indigo-700'
               : 'bg-gradient-to-br from-orange-500 to-red-600'
           }`}
         >
@@ -170,13 +170,13 @@ export default function KuisResultPage() {
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => router.push('/siswa/kuis')}
-            className="flex-1 px-5 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl hover:bg-emerald-50 font-medium"
+            className="flex-1 px-5 py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 font-medium"
           >
             Kembali ke Daftar
           </button>
           <button
             onClick={() => router.push('/siswa')}
-            className="flex-1 px-5 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium"
+            className="flex-1 px-5 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium"
           >
             Ke Dashboard
           </button>

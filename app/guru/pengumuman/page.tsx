@@ -27,7 +27,7 @@ type Kategori = (typeof KATEGORI)[number]
 
 const KATEGORI_CONFIG: Record<Kategori, { label: string; icon: LucideIcon; bg: string; text: string; border: string }> = {
   umum:     { label: 'Umum',     icon: Megaphone,     bg: 'bg-gray-100',   text: 'text-gray-700',   border: 'border-gray-200'   },
-  akademik: { label: 'Akademik', icon: BookOpen,      bg: 'bg-blue-100',   text: 'text-emerald-700',   border: 'border-blue-200'   },
+  akademik: { label: 'Akademik', icon: BookOpen,      bg: 'bg-blue-100',   text: 'text-indigo-700',   border: 'border-blue-200'   },
   kegiatan: { label: 'Kegiatan', icon: Target,        bg: 'bg-green-100',  text: 'text-green-700',  border: 'border-green-200'  },
   darurat:  { label: 'Darurat',  icon: TriangleAlert, bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-300'    },
 }
@@ -106,7 +106,7 @@ export default function PengumumanGuruPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
             <Loader2 className="animate-spin" size={24} />
           </div>
           <p className="text-gray-500">Memuat pengumuman...</p>
@@ -117,7 +117,7 @@ export default function PengumumanGuruPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/guru')}
@@ -192,7 +192,7 @@ export default function PengumumanGuruPage() {
               <div className="flex gap-2 pt-1">
                 <button
                   type="submit" disabled={submitting}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-xl font-semibold text-sm hover:from-emerald-800 hover:to-emerald-700 transition disabled:opacity-50"
+                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-xl font-semibold text-sm hover:from-indigo-800 hover:to-indigo-700 transition disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="animate-spin" size={16} /> : editItem ? <Save size={16} /> : <Send size={16} />}
                   {submitting ? 'Menyimpan...' : editItem ? 'Simpan Perubahan' : 'Publikasikan'}
@@ -263,7 +263,7 @@ export default function PengumumanGuruPage() {
                       </button>
                       <button
                         onClick={() => openEdit(p)}
-                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-blue-100 transition"
+                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-blue-100 transition"
                       >
                         <Edit3 size={13} />
                         Edit

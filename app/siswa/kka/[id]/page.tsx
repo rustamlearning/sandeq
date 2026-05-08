@@ -129,7 +129,7 @@ export default function KKADetailPage() {
 
         {selesai && (
           <button onClick={() => router.push('/siswa/kka')}
-            className="w-full bg-emerald-600 text-white rounded-2xl py-4 font-bold text-lg mt-4">
+            className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-bold text-lg mt-4">
             ✅ Selesai — Modul Berikutnya →
           </button>
         )}

@@ -18,7 +18,7 @@ import { supabase, User, Kelas, UserRole } from '@/lib/supabase'
 
 const ROLE_CONFIG: Record<UserRole, { label: string; bg: string; text: string }> = {
   siswa: { label: 'Siswa', bg: 'bg-blue-100', text: 'text-blue-700' },
-  guru:  { label: 'Guru',  bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  guru:  { label: 'Guru',  bg: 'bg-indigo-100', text: 'text-indigo-700' },
   admin: { label: 'Admin', bg: 'bg-red-100', text: 'text-red-700' },
 }
 

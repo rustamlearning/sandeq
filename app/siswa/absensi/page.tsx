@@ -17,7 +17,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Absensi } from '@/lib/supabase'
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-  hadir: { label: 'Hadir', bg: 'bg-emerald-100', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+  hadir: { label: 'Hadir', bg: 'bg-indigo-100', text: 'text-indigo-700', dot: 'bg-indigo-500' },
   sakit: { label: 'Sakit', bg: 'bg-yellow-100',  text: 'text-yellow-700',  dot: 'bg-yellow-500' },
   izin:  { label: 'Izin',  bg: 'bg-blue-100',    text: 'text-blue-700',    dot: 'bg-blue-500'   },
   alpha: { label: 'Alpha', bg: 'bg-red-100',      text: 'text-red-700',    dot: 'bg-red-500'    },
@@ -73,8 +73,8 @@ export default function AbsensiSiswaPage() {
     alpha: list.filter(r=>r.status==='alpha').length,
   }
   const pct = total > 0 ? Math.round(stats.hadir/total*100) : 0
-  const barColor = pct>=90?'bg-emerald-400':pct>=75?'bg-yellow-400':'bg-red-400'
-  const pctColor = pct>=90?'text-emerald-300':pct>=75?'text-yellow-300':'text-red-300'
+  const barColor = pct>=90?'bg-indigo-400':pct>=75?'bg-yellow-400':'bg-red-400'
+  const pctColor = pct>=90?'text-indigo-300':pct>=75?'text-yellow-300':'text-red-300'
 
   const byMonth: Record<string,Absensi[]> = {}
   const byWeek:  Record<string,Absensi[]> = {}
@@ -125,7 +125,7 @@ export default function AbsensiSiswaPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa')} aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">
@@ -202,7 +202,7 @@ export default function AbsensiSiswaPage() {
                   const cfg = status ? STATUS_CONFIG[status] : null
                   return (
                     <div key={day} className={`bg-white h-12 flex flex-col items-center justify-center relative ${isWeekend?'opacity-50':''}`}>
-                      {isToday && <div className="absolute inset-0.5 rounded-lg bg-emerald-50 border border-emerald-200" />}
+                      {isToday && <div className="absolute inset-0.5 rounded-lg bg-indigo-50 border border-indigo-200" />}
                       <span className={`relative text-xs font-semibold z-10 ${cfg?cfg.text:isToday?'text-blue-600':isWeekend?'text-red-400':'text-slate-600'}`}>{day}</span>
                       {cfg && <div className={`relative w-1.5 h-1.5 rounded-full ${cfg.dot} z-10 mt-0.5`} />}
                     </div>
@@ -240,7 +240,7 @@ export default function AbsensiSiswaPage() {
                     <span>Kehadiran bulan ini</span><span className="font-bold">{mp}%</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${mp>=90?'bg-emerald-400':mp>=75?'bg-yellow-400':'bg-red-400'}`} style={{width:`${mp}%`}} />
+                    <div className={`h-full rounded-full ${mp>=90?'bg-indigo-400':mp>=75?'bg-yellow-400':'bg-red-400'}`} style={{width:`${mp}%`}} />
                   </div>
                 </div>
               )
@@ -274,7 +274,7 @@ export default function AbsensiSiswaPage() {
                       <p className="text-xs text-slate-400">Minggu</p>
                       <p className="text-sm font-bold text-slate-700">{weekLabel(wk)}</p>
                     </div>
-                    <span className={`text-sm font-black px-3 py-1.5 rounded-xl ${wp>=90?'bg-emerald-100 text-emerald-700':wp>=75?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700'}`}>{wp}%</span>
+                    <span className={`text-sm font-black px-3 py-1.5 rounded-xl ${wp>=90?'bg-indigo-100 text-indigo-700':wp>=75?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700'}`}>{wp}%</span>
                   </div>
                   <div className="grid grid-cols-4 gap-2 mb-3">
                     {Object.entries(STATUS_CONFIG).map(([k,cfg]) => (
@@ -285,7 +285,7 @@ export default function AbsensiSiswaPage() {
                     ))}
                   </div>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${wp>=90?'bg-emerald-400':wp>=75?'bg-yellow-400':'bg-red-400'}`} style={{width:`${wp}%`}} />
+                    <div className={`h-full rounded-full ${wp>=90?'bg-indigo-400':wp>=75?'bg-yellow-400':'bg-red-400'}`} style={{width:`${wp}%`}} />
                   </div>
                 </div>
               )
@@ -312,7 +312,7 @@ export default function AbsensiSiswaPage() {
                 <div key={mk} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                   <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                     <p className="text-sm font-bold text-slate-700">{label}</p>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${mp>=90?'bg-emerald-100 text-emerald-700':mp>=75?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700'}`}>{mp}% hadir</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${mp>=90?'bg-indigo-100 text-indigo-700':mp>=75?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700'}`}>{mp}% hadir</span>
                   </div>
                   <div className="divide-y divide-slate-50">
                     {recs.map(a => {

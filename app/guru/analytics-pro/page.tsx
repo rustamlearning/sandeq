@@ -146,7 +146,7 @@ export default function AnalyticsProPage() {
       <div className="flex gap-2 mb-6">
         {(['atrisk', 'heatmap', 'engagement'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${tab === t ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${tab === t ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
             {t === 'atrisk' ? '🚨 At-Risk' : t === 'heatmap' ? '🔥 Heatmap Soal' : '📊 Engagement'}
           </button>
         ))}
@@ -213,7 +213,7 @@ export default function AnalyticsProPage() {
                     <p className="text-xs text-gray-400">Terakhir aktif: {s.last_active === '-' ? 'Belum pernah' : s.last_active}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-emerald-600">{s.total_menit} menit</p>
+                    <p className="text-sm font-bold text-indigo-600">{s.total_menit} menit</p>
                     <p className="text-xs text-gray-400">depth: {s.depth_avg}</p>
                   </div>
                 </div>

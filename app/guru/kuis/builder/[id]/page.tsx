@@ -363,7 +363,7 @@ export default function KuisBuilderPage() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => router.push('/guru/kuis')}
-            className="text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded text-sm"
+            className="text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded text-sm"
           >
             <span className="inline-flex items-center gap-1.5"><ArrowLeft size={15} /> Kembali</span>
           </button>
@@ -383,14 +383,14 @@ export default function KuisBuilderPage() {
           <button
             onClick={() => saveKuis(false)}
             disabled={saving}
-            className="px-4 py-2 border border-blue-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:opacity-50 text-sm font-medium"
+            className="px-4 py-2 border border-blue-600 text-indigo-600 rounded-lg hover:bg-indigo-50 disabled:opacity-50 text-sm font-medium"
           >
             <span className="inline-flex items-center gap-1.5">{saving ? <Loader2 className="animate-spin" size={15} /> : <Save size={15} />}{saving ? 'Menyimpan...' : 'Simpan Draft'}</span>
           </button>
           <button
             onClick={() => saveKuis(true)}
             disabled={saving}
-            className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 text-sm font-medium"
+            className="px-4 py-2 bg-gradient-to-r from-green-600 to-indigo-600 text-white rounded-lg hover:from-green-700 hover:to-indigo-700 disabled:opacity-50 text-sm font-medium"
           >
             <span className="inline-flex items-center gap-1.5">{saving ? <Loader2 className="animate-spin" size={15} /> : <Rocket size={15} />}{saving ? 'Mempublish...' : 'Publish'}</span>
           </button>
@@ -424,7 +424,7 @@ export default function KuisBuilderPage() {
               value={kuis.judul || ''}
               onChange={(e) => setKuis({ ...kuis, judul: e.target.value })}
               placeholder="Contoh: Ulangan Harian - Conjunctions"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -632,7 +632,7 @@ export default function KuisBuilderPage() {
               <button
                 onClick={handleAIGenerate}
                 disabled={aiLoading || !aiTopik.trim()}
-                className="w-full px-4 py-3 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-lg font-medium hover:from-emerald-800 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-lg font-medium hover:from-indigo-800 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="inline-flex items-center justify-center gap-2">
                   {aiLoading ? <Loader2 className="animate-spin" size={16} /> : <Rocket size={16} />}
@@ -713,9 +713,9 @@ export default function KuisBuilderPage() {
               <button
                 key={tipe}
                 onClick={() => addSoal(tipe)}
-                className="w-full flex items-center gap-3 px-3 py-2 hover:bg-emerald-50 rounded-lg text-left transition"
+                className="w-full flex items-center gap-3 px-3 py-2 hover:bg-indigo-50 rounded-lg text-left transition"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-[10px] font-black text-emerald-700">{SOAL_TIPE_LABELS[tipe].slice(0, 2).toUpperCase()}</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-[10px] font-black text-indigo-700">{SOAL_TIPE_LABELS[tipe].slice(0, 2).toUpperCase()}</span>
                 <span className="font-medium text-sm">{SOAL_TIPE_LABELS[tipe]}</span>
               </button>
             ))}

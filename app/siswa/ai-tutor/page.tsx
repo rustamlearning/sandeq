@@ -219,7 +219,7 @@ export default function AITutorPage() {
               <button
                 key={s}
                 onClick={() => handleSend(s)}
-                className="px-3 py-2 bg-white border border-gray-200 text-gray-600 text-xs rounded-xl whitespace-nowrap hover:border-emerald-300 hover:text-emerald-600 transition shadow-sm flex-shrink-0"
+                className="px-3 py-2 bg-white border border-gray-200 text-gray-600 text-xs rounded-xl whitespace-nowrap hover:border-indigo-300 hover:text-indigo-600 transition shadow-sm flex-shrink-0"
               >
                 {s}
               </button>
@@ -239,7 +239,7 @@ export default function AITutorPage() {
             placeholder="Tanya apa saja... (Enter untuk kirim)"
             rows={1}
             disabled={thinking}
-            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none resize-none disabled:bg-gray-50 max-h-32 overflow-y-auto"
+            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-none disabled:bg-gray-50 max-h-32 overflow-y-auto"
             style={{ fieldSizing: 'content' } as React.CSSProperties}
           />
           <button

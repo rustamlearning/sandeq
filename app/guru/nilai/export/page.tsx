@@ -125,7 +125,7 @@ export default function ExportRaporPage() {
     <div className="min-h-screen bg-[#F4F9FF]">
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
-          <button onClick={() => router.push('/guru')} className="text-emerald-600 text-sm">
+          <button onClick={() => router.push('/guru')} className="text-indigo-600 text-sm">
             <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Dashboard</span>
           </button>
           <h1 className="inline-flex items-center gap-2 text-xl font-bold flex-1"><FileText size={20} /> Export Rapor</h1>
@@ -238,7 +238,7 @@ export default function ExportRaporPage() {
                 <div className="space-y-2">
                   {previewData.kuis_per_mapel.map((mapel) => (
                     <div key={mapel.mapel} className="border rounded-lg overflow-hidden">
-                      <div className="bg-emerald-50 px-3 py-2 flex justify-between items-center">
+                      <div className="bg-indigo-50 px-3 py-2 flex justify-between items-center">
                         <span className="font-semibold text-sm text-emerald-900">{mapel.mapel}</span>
                         <span className="text-xs bg-blue-200 text-emerald-900 px-2 py-0.5 rounded-full">
                           Rata: {mapel.rata_rata.toFixed(1)}
@@ -305,7 +305,7 @@ export default function ExportRaporPage() {
               <button
                 onClick={downloadSingle}
                 disabled={generating}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-lg font-medium hover:from-emerald-800 hover:to-emerald-700 disabled:opacity-50"
+                className="flex-1 px-5 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-lg font-medium hover:from-indigo-800 hover:to-indigo-700 disabled:opacity-50"
               >
                 <span className="inline-flex items-center justify-center gap-2">
                   {generating ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
@@ -319,7 +319,7 @@ export default function ExportRaporPage() {
         {/* PER SISWA: Empty state */}
         {!bulkMode && !previewData && (
           <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
               <MousePointer2 size={26} />
             </div>
             <p className="text-gray-600 font-medium">Pilih siswa untuk melihat preview rapor</p>
@@ -349,7 +349,7 @@ export default function ExportRaporPage() {
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 transition-all"
+                    className="h-full bg-indigo-500 transition-all"
                     style={{ width: `${(progress.current / progress.total) * 100}%` }}
                   />
                 </div>
@@ -359,7 +359,7 @@ export default function ExportRaporPage() {
             <button
               onClick={downloadBulk}
               disabled={generating || siswaList.length === 0}
-              className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 disabled:opacity-50"
+              className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-indigo-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-indigo-700 disabled:opacity-50"
             >
               {generating
                 ? <span className="inline-flex items-center justify-center gap-2"><Loader2 className="animate-spin" size={16} /> Generating {progress.current}/{progress.total}...</span>
@@ -390,8 +390,8 @@ export default function ExportRaporPage() {
 
 function PreviewStat({ label, value }: { label: string; value: any }) {
   return (
-    <div className="bg-emerald-50 rounded-lg p-2 text-center">
-      <p className="text-xl font-bold text-emerald-700">{value}</p>
+    <div className="bg-indigo-50 rounded-lg p-2 text-center">
+      <p className="text-xl font-bold text-indigo-700">{value}</p>
       <p className="text-xs text-gray-600">{label}</p>
     </div>
   );

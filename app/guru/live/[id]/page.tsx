@@ -87,7 +87,7 @@ export default function LiveSessionGuruPage() {
           <p className="text-xs text-gray-400">{session.kelas?.nama}</p>
         </div>
         <div className="ml-auto text-center">
-          <p className="text-2xl font-mono font-black text-emerald-600">{session.kode}</p>
+          <p className="text-2xl font-mono font-black text-indigo-600">{session.kode}</p>
           <p className="text-xs text-gray-400">Kode Join</p>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function LiveSessionGuruPage() {
               <div key={p.siswa_id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
                 <span className="text-lg font-black text-gray-400 w-6">{i + 1}</span>
                 <span className="flex-1 text-sm font-medium text-gray-800">{p.nama}</span>
-                <span className="text-sm font-bold text-emerald-600">{p.total_poin} poin</span>
+                <span className="text-sm font-bold text-indigo-600">{p.total_poin} poin</span>
               </div>
             ))}
           </div>

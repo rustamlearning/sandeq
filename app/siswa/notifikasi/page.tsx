@@ -151,7 +151,7 @@ export default function NotifikasiPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
@@ -177,7 +177,7 @@ export default function NotifikasiPage() {
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-emerald-500" />
+            <CheckCircle2 className="mx-auto mb-3 h-11 w-11 text-indigo-500" />
             <p className="font-semibold text-gray-700">Semua beres!</p>
             <p className="text-sm text-gray-400 mt-1">Tidak ada notifikasi baru dalam 7 hari terakhir</p>
           </div>

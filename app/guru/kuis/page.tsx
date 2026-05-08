@@ -152,7 +152,7 @@ export default function KuisListPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
             <Loader2 className="animate-spin" size={24} />
           </div>
           <p className="text-gray-600">Memuat kuis...</p>
@@ -163,7 +163,7 @@ export default function KuisListPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
           <button
             onClick={() => router.push('/guru')}
@@ -245,7 +245,7 @@ export default function KuisListPage() {
 
         {kuisList.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
               <FileQuestion size={30} />
             </div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Belum ada kuis</h2>
@@ -254,7 +254,7 @@ export default function KuisListPage() {
             </p>
             <Link
               href="/guru/kuis/builder/new"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition"
             >
               <Plus size={18} />
               <span>Buat Kuis Pertama</span>
@@ -272,7 +272,7 @@ export default function KuisListPage() {
                 setFilterKelas('all');
                 setFilterStatus('all');
               }}
-              className="mt-3 text-emerald-600 hover:underline text-sm"
+              className="mt-3 text-indigo-600 hover:underline text-sm"
             >
               Reset filter
             </button>
@@ -316,7 +316,7 @@ function KuisCard({
 
       <div className="p-4">
         <div className="flex items-start gap-3 mb-3">
-          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-700">
+          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-black text-indigo-700">
             {mapelInitial}
           </div>
           <div className="flex-1 min-w-0">
@@ -336,7 +336,7 @@ function KuisCard({
 
         <div className="grid grid-cols-3 gap-2 my-3 py-3 border-y border-gray-100">
           <div className="text-center">
-            <div className="text-lg font-bold text-emerald-600">{kuis.jumlah_soal || 0}</div>
+            <div className="text-lg font-bold text-indigo-600">{kuis.jumlah_soal || 0}</div>
             <div className="text-xs text-gray-500">Soal</div>
           </div>
           <div className="text-center">
@@ -360,7 +360,7 @@ function KuisCard({
         <div className="grid grid-cols-2 gap-2 mb-2">
           <Link
             href={`/guru/kuis/builder/${kuis.id}`}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-blue-100 text-emerald-700 rounded-lg text-sm font-medium transition"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-blue-100 text-indigo-700 rounded-lg text-sm font-medium transition"
           >
             <Edit3 size={14} />
             Kelola

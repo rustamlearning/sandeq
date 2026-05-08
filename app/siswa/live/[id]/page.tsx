@@ -124,7 +124,7 @@ export default function LiveSiswaPage() {
   )
 
   if (session.status === 'finished') return (
-    <div className="min-h-screen bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center p-4">
       <div className="text-center text-white">
         <p className="text-6xl mb-4">🏆</p>
         <h1 className="text-2xl font-black mb-2">Selesai!</h1>
@@ -163,7 +163,7 @@ export default function LiveSiswaPage() {
                       ? p === soalAktif.jawaban_benar ? 'bg-green-500 text-white'
                         : p === jawaban ? 'bg-red-400 text-white'
                         : 'bg-gray-100 text-gray-400'
-                      : 'bg-blue-50 text-emerald-800 active:scale-95'
+                      : 'bg-blue-50 text-indigo-800 active:scale-95'
                   }`}>
                   {p}
                 </button>
