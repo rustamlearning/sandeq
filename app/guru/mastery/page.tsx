@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Inbox, Lightbulb, Search, Target } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { PageLoader } from '@/components/ui'
 
 type MasteryLevel = 'belum_mulai' | 'familiar' | 'berkembang' | 'dikuasai';
 
@@ -152,18 +154,11 @@ export default function MasteryTrackerPage() {
   });
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-slate-500 text-sm">Memuat mastery tracker...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">

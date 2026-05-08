@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   AlertTriangle,
-  ArrowLeft,
   BarChart3,
   BookOpen,
   CheckCircle2,
@@ -16,7 +15,9 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { PageLoader } from '@/components/ui'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend
@@ -141,30 +142,16 @@ export default function GuruAnalyticsPage() {
   ] satisfies Array<{ icon: LucideIcon; label: string; value: any; sub: string; accent: string; val: string }> : [];
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push('/guru')}
-              className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
-            >
-              <ArrowLeft size={16} />
-              Dashboard
-            </button>
-            <span className="text-white/30">|</span>
-            <h1 className="inline-flex items-center gap-2 text-lg font-bold"><BarChart3 size={18} /> Analytics Kelas</h1>
-          </div>
-          <select
-            value={selectedKelas}
-            onChange={(e) => setSelectedKelas(e.target.value)}
-            className="bg-white/15 border border-white/25 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30"
-          >
-            {kelasList.map(k => <option key={k.id} value={k.id} className="text-slate-800">{k.nama}</option>)}
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Analytics Kelas" backHref="/guru"
+        actions={
+          <select value={selectedKelas} onChange={e => setSelectedKelas(e.target.value)}
+            className="px-3 py-2 text-sm rounded-xl outline-none"
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text-1)' }}>
+            {kelasList.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}
           </select>
-        </div>
-      </header>
+        }
+      />
 
       <main className="max-w-6xl mx-auto px-4 py-6">
         {/* Stat Cards */}

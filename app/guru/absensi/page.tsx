@@ -13,6 +13,8 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { PageLoader } from '@/components/ui'
 import { supabase, User, Kelas } from '@/lib/supabase'
 
 type Status = 'hadir' | 'sakit' | 'izin' | 'alpha'
@@ -107,64 +109,12 @@ export default function AbsensiGuruPage() {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   })
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700">
-            <Loader2 className="animate-spin" size={24} />
-          </div>
-          <p className="text-gray-500">Memuat absensi...</p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <PageLoader />
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => router.push('/guru')}
-            aria-label="Kembali"
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Absensi Siswa</h1>
-            <p className="text-white/80 text-sm">{tanggalDisplay}</p>
-          </div>
-        </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Absensi Siswa" subtitle={tanggalDisplay} backHref="/guru" />
 
-        {/* Filter bar */}
-        <div className="max-w-3xl mx-auto px-4 pb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-white/70 block mb-1">Kelas</label>
-              <select
-                value={selectedKelas}
-                onChange={(e) => setSelectedKelas(e.target.value)}
-                className="w-full px-3 py-2 bg-white/20 border border-white/30 text-white rounded-lg text-sm focus:outline-none focus:bg-white/30 placeholder-white/50"
-              >
-                <option value="" className="text-gray-800">-- Pilih kelas --</option>
-                {kelasList.map((k) => (
-                  <option key={k.id} value={k.id} className="text-gray-800">{k.nama}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-white/70 block mb-1">Tanggal</label>
-              <input
-                type="date"
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-                className="w-full px-3 py-2 bg-white/20 border border-white/30 text-white rounded-lg text-sm focus:outline-none focus:bg-white/30"
-              />
-            </div>
-          </div>
-        </div>
-      </header>
 
       <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
         {!selectedKelas ? (

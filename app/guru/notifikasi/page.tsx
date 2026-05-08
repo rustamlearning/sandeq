@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
-import { ArrowLeft, Bell, CheckCircle2, ClipboardList, MessageSquare, Timer, TriangleAlert } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { PageLoader } from '@/components/ui'
+import { Bell, CheckCircle2, ClipboardList, MessageSquare, Timer, TriangleAlert } from 'lucide-react'
 
 interface Notif {
   id: string
@@ -144,35 +146,15 @@ export default function GuruNotifikasiPage() {
     setNotifs(result)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Bell className="mx-auto mb-3 h-8 w-8 animate-pulse text-[#1A4A7A]" />
-          <p className="text-gray-500">Memuat notifikasi...</p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <PageLoader />
 
   const urgentCount = notifs.filter((n) => n.urgent).length
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button onClick={() => router.push('/guru')} className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition" aria-label="Kembali ke dashboard guru">
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Notifikasi</h1>
-            <p className="text-white/80 text-sm">{notifs.length} notifikasi{urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}</p>
-          </div>
-          {urgentCount > 0 && (
-            <div className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{urgentCount} urgent</div>
-          )}
-        </div>
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Notifikasi" subtitle={`${notifs.length} notifikasi${urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}`} backHref="/guru"
+        actions={urgentCount > 0 ? <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{urgentCount} urgent</span> : undefined}
+      />
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (

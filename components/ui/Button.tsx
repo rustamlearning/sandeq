@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'warning' | 'warning'
 type Size = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,10 +8,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size
   loading?: boolean
   fullWidth?: boolean
+  icon?: React.ReactNode
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-[#1a4a7a] text-white shadow-[0_14px_28px_rgba(26,74,122,0.20)] hover:bg-[#153f68] disabled:bg-[#8fb0ca] disabled:shadow-none',
+  primary: 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm disabled:bg-indigo-300 disabled:shadow-none',
+  warning: 'bg-amber-500 text-white hover:bg-amber-600 shadow-sm disabled:opacity-50',
   secondary: 'bg-white/86 text-slate-700 border border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-sm disabled:opacity-50',
   ghost: 'bg-transparent text-slate-600 hover:bg-white/70 disabled:opacity-50',
   danger: 'bg-red-600 text-white hover:bg-red-700 shadow-[0_14px_28px_rgba(220,38,38,0.16)] disabled:opacity-50',
@@ -25,7 +27,7 @@ const sizeClasses: Record<Size, string> = {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', loading, fullWidth, children, className = '', disabled, ...props }, ref) => {
+  ({ variant = 'primary', size = 'md', loading, fullWidth, icon, children, className = '', disabled, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -52,7 +54,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             </span>
             <span>{children}</span>
           </>
-        ) : children}
+        ) : (<>{icon && <span className='flex-shrink-0'>{icon}</span>}{children}</>)}
       </button>
     )
   }

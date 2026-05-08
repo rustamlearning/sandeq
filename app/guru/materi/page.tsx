@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/ui/PageHeader';
 import {
   ArrowLeft,
   BookOpen,
@@ -230,35 +231,11 @@ export default function GuruMateriPage() {
   if (!user) return <LoadingState title="Membuka kelola materi" description="Menyiapkan daftar kelas dan materi guru." />;
 
   return (
-    <div className="app-canvas min-h-screen">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-white/70 bg-white/78 text-slate-950 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 md:px-6">
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              onClick={() => router.push('/guru')}
-              aria-label="Kembali"
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/70 bg-white/72 text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
-            >
-              <ArrowLeft size={17} />
-            </button>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-500">Guru</p>
-              <h1 className="truncate text-xl font-semibold leading-tight text-slate-950">Kelola materi</h1>
-            </div>
-          </div>
-          {!showForm && (
-            <Button
-              onClick={() => setShowForm(true)}
-              size="sm"
-              className="flex-shrink-0"
-            >
-              <Plus size={16} />
-              Buat Materi
-            </Button>
-          )}
-        </div>
-      </header>
+      <PageHeader title="Kelola Materi" backHref="/guru"
+        actions={!showForm ? <Button size="sm" icon={<Plus size={15}/>} onClick={() => setShowForm(true)}>Buat Materi</Button> : undefined}
+      />
 
       <main className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
         {showForm ? (
