@@ -28,17 +28,17 @@ interface AlertItem {
 }
 
 const menuItems = [
-  { title: 'Buat Materi', icon: '📖', path: '/guru/materi', iconBg: 'bg-blue-100 text-emerald-600' },
-  { title: 'Buat Kuis', icon: '✏️', path: '/guru/kuis', iconBg: 'bg-violet-100 text-violet-600' },
+  { title: 'Buat Materi', icon: '📖', path: '/guru/materi', iconBg: 'bg-emerald-100 text-emerald-600' },
+  { title: 'Buat Kuis', icon: '✏️', path: '/guru/kuis', iconBg: 'bg-emerald-100 text-emerald-600' },
   { title: 'Absensi', icon: '📋', path: '/guru/absensi', iconBg: 'bg-emerald-100 text-emerald-600' },
   { title: 'Input Nilai', icon: '🏅', path: '/guru/nilai', iconBg: 'bg-amber-100 text-amber-600' },
-  { title: 'Analytics', icon: '📊', path: '/guru/analytics', iconBg: 'bg-blue-100 text-emerald-700' },
+  { title: 'Analytics', icon: '📊', path: '/guru/analytics', iconBg: 'bg-emerald-100 text-emerald-700' },
   { title: 'Mastery', icon: '🎯', path: '/guru/mastery', iconBg: 'bg-orange-100 text-orange-600' },
   { title: 'Pengumuman', icon: '📢', path: '/guru/pengumuman', iconBg: 'bg-rose-100 text-rose-600' },
   { title: 'Export Rapor', icon: '📄', path: '/guru/nilai/export', iconBg: 'bg-teal-100 text-teal-600' },
   { title: 'Forum', icon: '💬', path: '/forum', iconBg: 'bg-sky-100 text-sky-600' },
   { title: 'Jadwal', icon: '📅', path: '/jadwal', iconBg: 'bg-emerald-100 text-emerald-600' },
-  { title: 'Live Quiz', icon: '🎮', path: '/guru/live', iconBg: 'bg-green-100 text-green-600' },
+  { title: 'Live Quiz', icon: '🎮', path: '/guru/live', iconBg: 'bg-emerald-100 text-emerald-600' },
   { title: 'Analytics Pro', icon: '🔬', path: '/guru/analytics-pro', iconBg: 'bg-red-100 text-red-600' },
 ]
 
@@ -184,13 +184,13 @@ export default function GuruDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard icon="👥" label="Total Siswa" value={stats.totalSiswa} color="text-emerald-600" sub="terdaftar" />
           <StatCard icon="✅" label="Hadir Hari Ini" value={stats.hadirHariIni} color="text-green-600" sub="siswa" />
-          <StatCard icon="📊" label="Avg Nilai" value={stats.avgNilaiKelas || '-'} color="text-violet-600" sub="minggu ini" />
+          <StatCard icon="📊" label="Avg Nilai" value={stats.avgNilaiKelas || '-'} color="text-emerald-600" sub="minggu ini" />
           <StatCard icon="⚡" label="Siswa Aktif" value={stats.siswaAktifMingguIni} color="text-orange-600" sub="7 hari terakhir" />
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard icon="📖" label="Materi" value={stats.totalMateri} color="text-emerald-600" sub="dibuat" />
-          <StatCard icon="✏️" label="Kuis" value={stats.totalKuis} color="text-violet-600" sub="dibuat" />
+          <StatCard icon="✏️" label="Kuis" value={stats.totalKuis} color="text-emerald-600" sub="dibuat" />
           <StatCard icon="⏳" label="Essay Pending" value={stats.essayBelumDinilai} color={stats.essayBelumDinilai > 0 ? 'text-red-600' : 'text-gray-400'} sub="belum dinilai" />
           <StatCard icon="⏰" label="Deadline Dekat" value={stats.kuisDeadlineDekat} color={stats.kuisDeadlineDekat > 0 ? 'text-orange-600' : 'text-gray-400'} sub="dalam 3 hari" />
         </div>
@@ -216,10 +216,10 @@ export default function GuruDashboard() {
         <div>
           <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Aksi Cepat</h3>
           <div className="flex gap-2 flex-wrap">
-            <QuickBtn label="+ Materi" onClick={() => router.push('/guru/materi')} color="bg-blue-600" />
-            <QuickBtn label="+ Kuis" onClick={() => router.push('/guru/kuis')} color="bg-violet-600" />
+            <QuickBtn label="+ Materi" onClick={() => router.push('/guru/materi')} color="bg-emerald-600" />
+            <QuickBtn label="+ Kuis" onClick={() => router.push('/guru/kuis')} color="bg-emerald-600" />
             <QuickBtn label="Absensi Sekarang" onClick={() => router.push('/guru/absensi')} color="bg-emerald-600" />
-            <QuickBtn label="🎮 Live Quiz" onClick={() => router.push('/guru/live')} color="bg-green-600" />
+            <QuickBtn label="🎮 Live Quiz" onClick={() => router.push('/guru/live')} color="bg-emerald-600" />
             {stats.essayBelumDinilai > 0 && (
               <QuickBtn label={`Nilai Essay (${stats.essayBelumDinilai})`} onClick={() => router.push('/guru/kuis')} color="bg-red-600" />
             )}
@@ -231,7 +231,7 @@ export default function GuruDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {menuItems.map((item) => (
               <button key={item.path} onClick={() => router.push(item.path)}
-                className="group p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md bg-white border border-slate-100 shadow-sm hover:border-blue-100">
+                className="group p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md bg-white border border-slate-100 shadow-sm hover:border-emerald-100">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-3 ${item.iconBg}`}>
                   {item.icon}
                 </div>
@@ -256,7 +256,7 @@ export default function GuruDashboard() {
                       <span className="text-gray-400">{pct}%</span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div className="h-2 rounded-full bg-blue-400" style={{ width: `${pct}%` }} />
+                      <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 )
