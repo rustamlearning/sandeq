@@ -6,28 +6,54 @@ import { getCurrentUser, logout } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { getLevelInfo } from '@/lib/gamification';
 import { PageLoader } from '@/components/ui/Skeleton';
-import DailyCheckIn from '@/components/DailyCheckIn'
-import React from 'react'
-import { BookOpen, ClipboardList, BarChart3, CalendarDays, CalendarCheck, Megaphone, Bell, Bot, MessageSquare, UserRound, Trophy } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import DailyCheckIn from '@/components/DailyCheckIn';
+import React from 'react';
+import {
+  BookOpen, ClipboardList, BarChart3, CalendarDays, CalendarCheck,
+  Megaphone, Bell, Bot, MessageSquare, UserRound, Trophy, Zap, ChevronRight
+} from 'lucide-react';
 
-const menuItems: { icon: React.ElementType; title: string; description: string; path: string; color: string; highlight?: boolean }[] = [
-  { icon: BookOpen, title: 'Materi', description: 'Lanjutkan bahan belajar kelas', path: '/siswa/materi', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
-  { icon: ClipboardList, title: 'Kuis', description: 'Kerjakan latihan dan ulangan', path: '/siswa/kuis', color: 'text-violet-700 bg-violet-50 ring-violet-100' },
-  { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai dan rapor', path: '/siswa/nilai', color: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
-  { icon: CalendarDays, title: 'Jadwal', description: 'Lihat pelajaran hari ini', path: '/jadwal', color: 'text-indigo-700 bg-indigo-50 ring-indigo-100' },
-  { icon: CalendarCheck, title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', color: 'text-amber-700 bg-amber-50 ring-amber-100' },
-  { icon: Megaphone, title: 'Pengumuman', description: 'Info penting sekolah', path: '/siswa/pengumuman', color: 'text-rose-700 bg-rose-50 ring-rose-100' },
-  { icon: Bell, title: 'Notifikasi', description: 'Deadline dan kabar terbaru', path: '/siswa/notifikasi', color: 'text-orange-700 bg-orange-50 ring-orange-100' },
-  { icon: Bot, title: 'AI Tutor', description: 'Tanya materi saat buntu', path: '/siswa/ai-tutor', color: 'text-purple-700 bg-purple-50 ring-purple-100' },
-  { icon: MessageSquare, title: 'Forum', description: 'Diskusi dengan kelas', path: '/forum', color: 'text-sky-700 bg-sky-50 ring-sky-100' },
-  { icon: UserRound, title: 'Profil & Stats', description: 'XP, level, dan badge', path: '/profil', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100', highlight: true },
-  { icon: Trophy, title: 'Leaderboard', description: 'Peringkat belajar kelas', path: '/siswa/leaderboard', color: 'text-orange-700 bg-orange-50 ring-orange-100', highlight: true },
-  { icon: MessageSquare, title: 'Koding', description: 'Belajar Python dari nol', path: '/siswa/koding', color: 'text-blue-700 bg-blue-50 ring-blue-100' },
-  { icon: Bot, title: 'KKA', description: 'Kecerdasan Artifisial', path: '/siswa/kka', color: 'text-purple-700 bg-purple-50 ring-purple-100' },
-  { icon: Trophy, title: 'Olimpiade', description: 'Mode kompetisi & lomba', path: '/siswa/olimpiade', color: 'text-yellow-700 bg-yellow-50 ring-yellow-100' },
-  { icon: BookOpen, title: 'Muatan Lokal', description: 'Budaya & potensi Sulsel', path: '/siswa/muatan-lokal', color: 'text-blue-700 bg-teal-50 ring-blue-100' },
-]
+const menuGroups = [
+  {
+    label: 'Belajar',
+    color: 'indigo',
+    items: [
+      { icon: BookOpen, title: 'Materi', description: 'Lanjutkan bahan belajar', path: '/siswa/materi', bg: 'bg-indigo-500' },
+      { icon: ClipboardList, title: 'Kuis', description: 'Latihan & ulangan', path: '/siswa/kuis', bg: 'bg-violet-500' },
+      { icon: BarChart3, title: 'Nilai', description: 'Pantau nilai & rapor', path: '/siswa/nilai', bg: 'bg-blue-500' },
+      { icon: Bot, title: 'AI Tutor', description: 'Tanya saat buntu', path: '/siswa/ai-tutor', bg: 'bg-purple-500' },
+    ]
+  },
+  {
+    label: 'Kompetisi',
+    color: 'amber',
+    items: [
+      { icon: Trophy, title: 'Leaderboard', description: 'Peringkat belajar kelas', path: '/siswa/leaderboard', bg: 'bg-amber-500' },
+      { icon: Zap, title: 'Olimpiade', description: 'Mode kompetisi & lomba', path: '/siswa/olimpiade', bg: 'bg-orange-500' },
+      { icon: Bot, title: 'KKA', description: 'Kecerdasan Artifisial', path: '/siswa/kka', bg: 'bg-pink-500' },
+      { icon: MessageSquare, title: 'Koding', description: 'Belajar Python dari nol', path: '/siswa/koding', bg: 'bg-cyan-500' },
+    ]
+  },
+  {
+    label: 'Sekolah',
+    color: 'slate',
+    items: [
+      { icon: CalendarDays, title: 'Jadwal', description: 'Pelajaran hari ini', path: '/jadwal', bg: 'bg-teal-500' },
+      { icon: CalendarCheck, title: 'Absensi', description: 'Riwayat kehadiran', path: '/siswa/absensi', bg: 'bg-green-500' },
+      { icon: Megaphone, title: 'Pengumuman', description: 'Info penting sekolah', path: '/siswa/pengumuman', bg: 'bg-rose-500' },
+      { icon: BookOpen, title: 'Muatan Lokal', description: 'Budaya & potensi Sulsel', path: '/siswa/muatan-lokal', bg: 'bg-emerald-500' },
+    ]
+  },
+  {
+    label: 'Sosial',
+    color: 'sky',
+    items: [
+      { icon: MessageSquare, title: 'Forum', description: 'Diskusi dengan kelas', path: '/forum', bg: 'bg-sky-500' },
+      { icon: Bell, title: 'Notifikasi', description: 'Deadline & kabar terbaru', path: '/siswa/notifikasi', bg: 'bg-red-500' },
+      { icon: UserRound, title: 'Profil & Stats', description: 'XP, level, dan badge', path: '/profil', bg: 'bg-indigo-400' },
+    ]
+  },
+];
 
 export default function SiswaDashboardPage() {
   const router = useRouter();
@@ -65,6 +91,7 @@ export default function SiswaDashboardPage() {
   const levelInfo = getLevelInfo(xp);
   const xpToNext = levelInfo.maxXp - xp;
   const xpProgress = Math.min(100, Math.round(((xp - levelInfo.minXp) / (levelInfo.maxXp - levelInfo.minXp)) * 100)) || 0;
+  const firstName = user.nama?.split(' ')[0] || 'Siswa';
 
   return (
     <>
@@ -76,117 +103,138 @@ export default function SiswaDashboardPage() {
         />
       )}
 
-      <div className="min-h-screen bg-[#F4F9FF]">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white">
-          <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+
+        {/* ── HERO SECTION ── */}
+        <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #3730a3 0%, #4f46e5 50%, #6366f1 100%)' }}>
+          {/* decorative blobs */}
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #a5b4fc, transparent)', transform: 'translate(30%, -30%)' }} />
+          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #06b6d4, transparent)', transform: 'translate(-30%, 30%)' }} />
+
+          {/* Navbar */}
+          <div className="relative max-w-2xl mx-auto px-4 pt-5 pb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center font-black text-white text-sm">S</div>
               <div>
-                <h1 className="font-bold text-lg leading-tight">SANDEQ</h1>
-                <p className="text-blue-200 text-xs">Portal Siswa</p>
+                <p className="font-black text-white text-base leading-none">SANDEQ</p>
+                <p className="text-indigo-300 text-[10px] leading-none mt-0.5">Portal Siswa</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => router.push('/siswa/notifikasi')}
-                aria-label="Notifikasi"
-                className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition border border-white/20"
-              >
+              <button onClick={() => router.push('/siswa/notifikasi')} className="relative w-9 h-9 bg-white/15 hover:bg-white/25 rounded-xl flex items-center justify-center transition-all text-base border border-white/20">
                 🔔
                 {notifCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                     {notifCount > 9 ? '9+' : notifCount}
                   </span>
                 )}
               </button>
-              <button
-                onClick={handleLogout}
-                aria-label="Keluar dari aplikasi"
-                className="px-3 py-1.5 text-sm bg-white/15 hover:bg-white/25 rounded-lg transition border border-white/20"
-              >
+              <button onClick={handleLogout} className="px-3 py-1.5 text-xs font-semibold bg-white/15 hover:bg-white/25 rounded-xl transition border border-white/20 text-white">
                 Keluar
               </button>
             </div>
           </div>
-        </header>
 
-        <main className="max-w-2xl mx-auto px-4 py-6">
-          {/* Gamification Hero Card */}
-          <div className="relative bg-gradient-to-br from-blue-700 via-blue-500 to-indigo-600 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
-            <div className="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full" />
-            <div className="relative flex items-start gap-4">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
-                {levelInfo.emoji}
+          {/* Hero Card */}
+          <div className="relative max-w-2xl mx-auto px-4 pt-4 pb-8">
+            <div className="flex items-center gap-4">
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur border-2 border-white/30 flex items-center justify-center text-3xl shadow-lg">
+                  {levelInfo.emoji}
+                </div>
+                <div className="absolute -bottom-1 -right-1 bg-amber-400 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow">
+                  Lv{levelInfo.level}
+                </div>
               </div>
+
+              {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-white/70 text-xs mb-0.5">Selamat belajar, {user.nama?.split(' ')[0]}!</p>
-                <p className="font-bold text-xl leading-tight">{levelInfo.title}</p>
-                <p className="text-white/80 text-sm">Level {levelInfo.level} · {xp.toLocaleString()} XP</p>
-                <div className="mt-3">
-                  <div className="flex justify-between text-xs text-white/60 mb-1">
-                    <span>Progress ke Level {levelInfo.level + 1}</span>
-                    <span>{xpToNext > 0 ? `${xpToNext} XP lagi` : 'Max!'}</span>
+                <p className="text-indigo-300 text-xs mb-0.5">Selamat belajar 👋</p>
+                <h1 className="text-white font-black text-xl leading-tight truncate">{firstName}</h1>
+                <p className="text-indigo-200 text-xs mt-0.5">{levelInfo.title} · {xp.toLocaleString()} XP</p>
+
+                {/* XP Bar */}
+                <div className="mt-2.5">
+                  <div className="flex justify-between text-[10px] text-indigo-300 mb-1">
+                    <span>Level {levelInfo.level + 1}</span>
+                    <span>{xpToNext > 0 ? `${xpToNext} XP lagi` : '🎉 Max!'}</span>
                   </div>
                   <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-500"
-                      style={{ width: `${xpProgress}%` }}
-                    />
+                    <div className="h-full rounded-full transition-all duration-700" style={{ width: `${xpProgress}%`, background: 'linear-gradient(90deg, #fbbf24, #f97316)' }} />
                   </div>
                 </div>
               </div>
-              {user.current_streak > 0 && (
-                <div className="bg-indigo-500/30 border border-indigo-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
+
+              {/* Streak */}
+              {(user.current_streak || 0) > 0 && (
+                <div className="flex-shrink-0 bg-white/15 border border-white/20 rounded-2xl px-3 py-2.5 text-center backdrop-blur">
                   <div className="text-2xl">🔥</div>
-                  <div className="text-xs font-bold">{user.current_streak}</div>
-                  <div className="text-xs text-white/60">hari</div>
+                  <div className="text-white font-black text-sm leading-none">{user.current_streak}</div>
+                  <div className="text-indigo-300 text-[10px] mt-0.5">hari</div>
                 </div>
               )}
             </div>
+
+            {/* Stat Pills */}
+            <div className="flex gap-2 mt-5">
+              {[
+                { label: 'Materi', value: stats.materiCount, emoji: '📚' },
+                { label: 'Kuis', value: stats.kuisCount, emoji: '✏️' },
+                { label: 'Pengumuman', value: stats.pengumumanCount, emoji: '📢' },
+              ].map(s => (
+                <div key={s.label} className="flex-1 bg-white/10 backdrop-blur border border-white/15 rounded-2xl py-2.5 text-center">
+                  <div className="text-base">{s.emoji}</div>
+                  <div className="text-white font-black text-lg leading-none mt-0.5">{s.value}</div>
+                  <div className="text-indigo-300 text-[10px] mt-0.5">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Stats Row */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            {[
-              { label: 'Materi', value: stats.materiCount, icon: '📚', color: 'text-[#1A4A7A]' },
-              { label: 'Kuis', value: stats.kuisCount, icon: '✏️', color: 'text-[#2E86C1]' },
-              { label: 'Pengumuman', value: stats.pengumumanCount, icon: '📢', color: 'text-[#E74C3C]' },
-            ].map(s => (
-              <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
-                <span className="text-xl">{s.icon}</span>
-                <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
+          {/* Wave */}
+          <svg viewBox="0 0 1440 32" className="w-full block" style={{ marginBottom: -1 }} preserveAspectRatio="none">
+            <path d="M0,20 C360,40 1080,0 1440,20 L1440,32 L0,32 Z" fill="var(--bg)" />
+          </svg>
+        </div>
+
+        {/* ── MENU GROUPS ── */}
+        <main className="max-w-2xl mx-auto px-4 py-5 space-y-6">
+          {menuGroups.map(group => (
+            <section key={group.label}>
+              <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: 'var(--text-3)' }}>
+                {group.label}
+              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {group.items.map(item => (
+                  <button
+                    key={item.path}
+                    onClick={() => router.push(item.path)}
+                    className="group relative flex flex-col gap-3 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-95"
+                    style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}
+                  >
+                    {/* Icon */}
+                    <div className={`w-10 h-10 ${item.bg} rounded-xl flex items-center justify-center text-white shadow-sm`}>
+                      <item.icon size={18} strokeWidth={2.5} />
+                    </div>
+
+                    {/* Text */}
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm leading-tight" style={{ color: 'var(--text-1)' }}>{item.title}</h3>
+                      <p className="text-xs mt-0.5 leading-tight truncate" style={{ color: 'var(--text-3)' }}>{item.description}</p>
+                    </div>
+
+                    {/* Arrow */}
+                    <ChevronRight size={14} className="absolute top-4 right-4 opacity-30 group-hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }} />
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
+            </section>
+          ))}
 
-          {/* Menu */}
-          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Menu</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => router.push(item.path)}
-                aria-label={item.title}
-                className={`group flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
-                  item.highlight
-                    ? 'bg-gradient-to-r from-[#fef3e2] to-[#fef9ee] border-2 border-[#F39C12]/30 shadow-sm'
-                    : 'bg-white border border-slate-100 shadow-sm hover:border-[#2E86C1]/30'
-                }`}
-              >
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${item.color}`}>
-                  <item.icon />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-slate-800 text-sm">{item.title}</h3>
-                  <p className="text-xs text-slate-400 mt-0.5 truncate">{item.description}</p>
-                </div>
-                <span className="ml-auto text-slate-300 group-hover:text-[#2E86C1] transition text-lg">›</span>
-              </button>
-            ))}
-          </div>
+          <p className="text-center text-xs pb-4" style={{ color: 'var(--text-3)' }}>
+            SANDEQ · SMAN 6 Pangkep
+          </p>
         </main>
       </div>
     </>
