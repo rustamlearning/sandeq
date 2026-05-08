@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User, Nilai } from '@/lib/supabase'
 import { ArrowLeft, BarChart3, ChevronDown, Loader2 } from 'lucide-react'
@@ -74,39 +75,8 @@ export default function NilaiSiswaPage() {
   const { grade, color, bar } = getGrade(rataKeseluruhan)
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
-            aria-label="Kembali ke dashboard siswa"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div>
-            <h1 className="text-lg font-bold leading-tight">Nilai Saya</h1>
-            <p className="text-blue-200 text-xs">{grouped.length} mata pelajaran</p>
-          </div>
-        </div>
-
-        {/* Summary card */}
-        <div className="max-w-2xl mx-auto px-4 pb-5">
-          <div className="bg-white/15 rounded-2xl p-4 flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <span className={`text-3xl font-black text-white`}>{grade}</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-blue-200 mb-1">Rata-rata Keseluruhan</p>
-              <p className="text-4xl font-black">{rataKeseluruhan}</p>
-              <div className="mt-2 h-2 bg-white/20 rounded-full overflow-hidden">
-                <div className={`h-full ${bar} rounded-full transition-all duration-700`} style={{ width: `${rataKeseluruhan}%` }} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Nilai Saya" subtitle={`${grouped.length} mata pelajaran`} backHref="/siswa" />
 
       <main className="max-w-2xl mx-auto px-4 py-5">
         {grouped.length === 0 ? (

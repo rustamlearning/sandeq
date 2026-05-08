@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
+import { PageHeader } from '@/components/ui/PageHeader';
 import { ArrowLeft, Flame, Lightbulb, MapPin, Trophy, Waves } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 import { getKelasLeaderboard, LeaderboardEntry, getLevelInfo } from '@/lib/gamification';
@@ -45,40 +46,8 @@ export default function SiswaLeaderboardPage() {
   const rest = leaderboard.slice(3);
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-[#F39C12] to-[#E67E22] text-white shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div>
-            <h1 className="inline-flex items-center gap-2 text-lg font-bold leading-tight"><Trophy size={18} /> Leaderboard</h1>
-            <p className="text-yellow-100 text-xs">{kelas?.nama || 'Kelasmu'} · {leaderboard.length} siswa</p>
-          </div>
-        </div>
-
-        {/* My rank */}
-        {myEntry && (
-          <div className="max-w-2xl mx-auto px-4 pb-4">
-            <div className="bg-white/20 rounded-xl px-4 py-2.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 text-xs font-black">LV</div>
-              <div className="flex-1">
-                <p className="font-bold text-sm">Posisimu: #{myEntry.rank}</p>
-                <p className="text-yellow-100 text-xs">{myEntry.xp.toLocaleString()} XP · Lv {myEntry.level}</p>
-              </div>
-              {myEntry.current_streak > 0 && (
-                <span className="bg-orange-600/50 px-2 py-1 rounded-lg text-xs font-bold">
-                  <span className="inline-flex items-center gap-1"><Flame size={13} /> {myEntry.current_streak}</span>
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Leaderboard" subtitle={`${kelas?.nama || 'Kelasmu'} · ${leaderboard.length} siswa`} backHref="/siswa" />
 
       <main className="max-w-2xl mx-auto px-4 py-5">
         {leaderboard.length === 0 ? (

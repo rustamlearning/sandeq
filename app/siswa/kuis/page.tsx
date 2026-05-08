@@ -125,40 +125,7 @@ export default function KuisSiswaPage() {
     : null
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-            aria-label="Kembali ke dashboard siswa"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Kuis & Ulangan</h1>
-            <p className="text-white/80 text-sm">{kuisList.length} kuis tersedia</p>
-          </div>
-        </div>
-
-        {kuisList.length > 0 && (
-          <div className="max-w-2xl mx-auto px-4 pb-4 grid grid-cols-3 gap-2">
-            {[
-              { label: 'Selesai', value: selesai, icon: CheckCircle2 },
-              { label: 'Belum', value: belum, icon: Clock3 },
-              { label: 'Rata-rata', value: avgSkor !== null ? avgSkor : '–', icon: BarChart3 },
-            ].map((s) => {
-              const Icon = s.icon
-              return (
-              <div key={s.label} className="bg-white/15 rounded-xl px-3 py-2 text-center">
-                <Icon className="mx-auto h-4 w-4" />
-                <p className="text-xl font-bold text-white">{s.value}</p>
-                <p className="text-xs text-white/70">{s.label}</p>
-              </div>
-            )})}
-          </div>
-        )}
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-3">
         {kuisList.length === 0 ? (

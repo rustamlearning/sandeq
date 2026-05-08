@@ -124,47 +124,7 @@ export default function AbsensiSiswaPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.push('/siswa')} aria-label="Kembali"
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-white">Absensi Saya</h1>
-            <p className="text-white/70 text-xs">{total} hari tercatat</p>
-          </div>
-        </div>
-        <div className="max-w-2xl mx-auto px-4 pb-3">
-          <div className="bg-white/15 rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-white/80 text-sm">Kehadiran Keseluruhan</p>
-              <p className={`font-bold text-2xl ${pctColor}`}>{pct}%</p>
-            </div>
-            <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
-              <div className={`h-full ${barColor} rounded-full transition-all duration-700`} style={{width:`${pct}%`}} />
-            </div>
-            <div className="flex gap-3 mt-2 text-xs text-white/70 flex-wrap">
-              <span>{stats.hadir} hadir</span>
-              <span>{stats.sakit} sakit</span>
-              <span>{stats.izin} izin</span>
-              <span>{stats.alpha} alpha</span>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-2xl mx-auto px-4 pb-3 flex gap-2">
-          {(['bulan','minggu','riwayat'] as const).map(tab => (
-            <button key={tab} onClick={()=>setActiveTab(tab)}
-              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition ${activeTab===tab?'bg-white text-blue-700':'bg-white/20 text-white hover:bg-white/30'}`}>
-              <span className="inline-flex items-center justify-center gap-1.5">
-                {tab === 'bulan' ? <CalendarDays size={15} /> : tab === 'minggu' ? <CalendarRange size={15} /> : <ClipboardList size={15} />}
-                {tab === 'bulan' ? 'Bulan' : tab === 'minggu' ? 'Minggu' : 'Riwayat'}
-              </span>
-            </button>
-          ))}
-        </div>
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-4">
 

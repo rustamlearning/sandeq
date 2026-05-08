@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase, User } from '@/lib/supabase'
 import { ArrowLeft, Bell, CheckCircle2, ClipboardList, Megaphone, Timer, TriangleAlert } from 'lucide-react'
@@ -150,29 +151,10 @@ export default function NotifikasiPage() {
   const urgentCount = notifs.filter((n) => n.urgent).length
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-            aria-label="Kembali ke dashboard siswa"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Notifikasi</h1>
-            <p className="text-white/80 text-sm">
-              {notifs.length} notifikasi{urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}
-            </p>
-          </div>
-          {urgentCount > 0 && (
-            <div className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-              {urgentCount} urgent
-            </div>
-          )}
-        </div>
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Notifikasi" subtitle={`${notifs.length} notifikasi${urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}`} backHref="/siswa"
+        actions={urgentCount > 0 ? <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{urgentCount} urgent</span> : undefined}
+      />
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-2">
         {notifs.length === 0 ? (

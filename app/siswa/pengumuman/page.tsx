@@ -52,53 +52,7 @@ export default function PengumumanSiswaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-            aria-label="Kembali ke dashboard siswa"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Pengumuman</h1>
-            <p className="text-white/80 text-sm">{list.length} pengumuman</p>
-          </div>
-        </div>
-
-        {/* Filter kategori */}
-        {list.length > 0 && (
-          <div className="max-w-2xl mx-auto px-4 pb-4">
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              <button
-                onClick={() => setFilterKategori('')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-                  filterKategori === '' ? 'bg-white text-rose-600' : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
-              >
-                Semua ({list.length})
-              </button>
-              {Object.entries(KATEGORI_CONFIG).map(([key, cfg]) => {
-                const count = list.filter((p) => p.kategori === key).length
-                if (count === 0) return null
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setFilterKategori(key)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-                      filterKategori === key ? 'bg-white text-rose-600' : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    {cfg.label} ({count})
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-      </header>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
 
       <main className="max-w-2xl mx-auto px-4 py-5 space-y-4">
         {filtered.length === 0 ? (
