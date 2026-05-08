@@ -36,9 +36,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#eef6fb] text-slate-900">
+    <main className="min-h-dvh bg-[#f0fdf4] text-slate-900">
       <div className="grid min-h-dvh lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="relative flex min-h-[21rem] overflow-hidden bg-[#123d64] px-6 py-7 text-white sm:min-h-[34rem] sm:px-10 sm:py-8 lg:min-h-dvh lg:px-14 lg:py-10">
+        <section className="relative flex min-h-[21rem] overflow-hidden bg-[#064e3b] px-6 py-7 text-white sm:min-h-[34rem] sm:px-10 sm:py-8 lg:min-h-dvh lg:px-14 lg:py-10">
           <div className="absolute inset-0 opacity-35">
             <svg viewBox="0 0 900 700" className="h-full w-full" preserveAspectRatio="none" aria-hidden="true">
               <path d="M-70 520 C130 420 240 610 440 510 C640 410 720 540 970 430" stroke="#f3b45a" strokeWidth="2" fill="none" opacity="0.75" />
@@ -92,9 +92,9 @@ export default function LoginPage() {
         </section>
 
         <section className="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
-          <div className="w-full max-w-[27rem] rounded-lg border border-white/80 bg-white/92 p-6 shadow-[0_24px_70px_rgba(18,61,100,0.16)] backdrop-blur sm:p-8">
+          <div className="w-full max-w-[27rem] rounded-lg border border-white/80 bg-white/92 p-6 shadow-[0_24px_70px_rgba(5,150,105,0.12)] backdrop-blur sm:p-8">
             <div className="mb-8">
-              <p className="mb-3 text-sm font-semibold text-[#1a4a7a]">Akses akun</p>
+              <p className="mb-3 text-sm font-semibold text-[#059669]">Akses akun</p>
               <h2 className="text-3xl font-semibold tracking-[-0.01em] text-slate-950">Masuk</h2>
               <p className="mt-2 text-sm leading-6 text-slate-500">
                 Gunakan username sekolah untuk melanjutkan ke ruang belajar.
@@ -112,7 +112,7 @@ export default function LoginPage() {
                   value={nisNip}
                   onChange={(e) => setNisNip(e.target.value)}
                   required
-                  className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#2e86c1] focus:ring-4 focus:ring-[#2e86c1]/14"
+                  className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#10b981] focus:ring-4 focus:ring-[#10b981]/14"
                   placeholder="Masukkan username"
                 />
               </div>
@@ -128,13 +128,13 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 pr-12 text-slate-900 outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#2e86c1] focus:ring-4 focus:ring-[#2e86c1]/14"
+                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 pr-12 text-slate-900 outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#10b981] focus:ring-4 focus:ring-[#10b981]/14"
                     placeholder="Masukkan password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-slate-400 transition duration-200 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-[#2e86c1]/14"
+                    className="absolute right-2.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-slate-400 transition duration-200 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-[#10b981]/14"
                     aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -152,7 +152,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-[#1a4a7a] px-4 py-3 font-semibold text-white shadow-[0_14px_28px_rgba(26,74,122,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#153f68] active:translate-y-0 disabled:cursor-not-allowed disabled:bg-[#7ca5c8] disabled:shadow-none"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-[#059669] px-4 py-3 font-semibold text-white shadow-[0_14px_28px_rgba(5,150,105,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#047857] active:translate-y-0 disabled:cursor-not-allowed disabled:bg-[#6ee7b7] disabled:shadow-none"
               >
                 {loading ? (
                   <>
