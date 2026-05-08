@@ -47,7 +47,7 @@ export default function KodingPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto">
       <div className="flex items-center gap-3 mb-2">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition"><ArrowLeft size={18}</button>
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition"><ArrowLeft size={18} /></button>
         <div>
           <h1 className="text-xl font-bold text-gray-800">Mapel Koding</h1>
           <p className="text-xs text-gray-400">Python untuk Kelas 10</p>
