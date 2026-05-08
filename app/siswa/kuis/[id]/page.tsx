@@ -356,8 +356,8 @@ export default function KuisAttemptPage() {
                     onClick={() => handleJawaban(soal.id, p)}
                     className={`w-full text-left px-4 py-3 rounded-lg border-2 text-sm transition-all ${
                       jawaban[soal.id] === p
-                        ? 'border-blue-500 bg-blue-50 text-blue-800 font-medium'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                        ? 'border-blue-500 bg-blue-50 text-emerald-800 font-medium'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-emerald-50'
                     }`}
                   >
                     <span className="font-bold mr-2 text-gray-400">
@@ -395,7 +395,7 @@ export default function KuisAttemptPage() {
                 value={(jawaban[soal.id] as string) ?? ''}
                 onChange={e => handleJawaban(soal.id, e.target.value)}
                 placeholder="Ketik jawabanmu..."
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-400"
+                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-emerald-400"
               />
             )}
 
@@ -406,7 +406,7 @@ export default function KuisAttemptPage() {
                   onChange={e => handleJawaban(soal.id, e.target.value)}
                   placeholder="Tulis jawabanmu di sini..."
                   rows={5}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-400 resize-none"
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 resize-none"
                 />
                 <p className="text-xs text-orange-500 mt-1">
                   ✍️ Jawaban essay akan dinilai oleh guru
@@ -441,7 +441,7 @@ export default function KuisAttemptPage() {
                 ? 'bg-gray-400 cursor-not-allowed'
                 : sudahJawab === soalList.length
                 ? 'bg-green-600 hover:bg-green-700 active:scale-95'
-                : 'bg-blue-600 hover:bg-blue-700 active:scale-95'
+                : 'bg-blue-600 hover:bg-emerald-700 active:scale-95'
             }`}
           >
             {submitting ? 'Mengirim...' : sudahJawab === soalList.length ? '✓ Kumpulkan Jawaban' : 'Kumpulkan Sekarang'}
@@ -480,7 +480,7 @@ function MatchingInput({
       <p className="text-xs text-gray-500">Klik kanan untuk mencocokkan dengan kiri</p>
       {pasangan.map((p, i) => (
         <div key={i} className="flex items-center gap-2">
-          <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-sm font-medium text-blue-800">
+          <div className="flex-1 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-sm font-medium text-emerald-800">
             {p.kiri}
           </div>
           <span className="text-gray-400">→</span>
@@ -488,7 +488,7 @@ function MatchingInput({
             <select
               value={getMatch(p.kiri) ?? ''}
               onChange={e => pilih(p.kiri, e.target.value)}
-              className="w-full border-2 border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border-2 border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:border-emerald-400"
             >
               <option value="">-- pilih --</option>
               {shuffledKanan.map((k, j) => (

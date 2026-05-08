@@ -110,7 +110,7 @@ export default function KuisSiswaPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
-        <div className="bg-gradient-to-r from-blue-700 to-blue-500 h-16" />
+        <div className="bg-gradient-to-r from-emerald-700 to-emerald-500 h-16" />
         <div className="max-w-2xl mx-auto px-4 py-5">
           <SkeletonList count={4} />
         </div>
@@ -126,7 +126,7 @@ export default function KuisSiswaPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
@@ -247,7 +247,7 @@ export default function KuisSiswaPage() {
                       <button
                         onClick={() => router.push(`/siswa/kuis/${k.id}`)}
                         aria-label={`Mulai kerjakan ${k.judul}`}
-                        className="w-full py-2.5 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition shadow-sm"
+                        className="w-full py-2.5 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition shadow-sm"
                       >
                         <span className="inline-flex items-center justify-center gap-2">
                           <Play size={15} /> Mulai Kerjakan <ChevronRight size={15} />

@@ -53,7 +53,7 @@ export default function SiswaLeaderboardPage() {
             onClick={() => router.push('/siswa')}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition text-sm font-bold"
           >
-            <ArrowLeft size={17} />
+            <ArrowLeft size={18} />
           </button>
           <div>
             <h1 className="inline-flex items-center gap-2 text-lg font-bold leading-tight"><Trophy size={18} /> Leaderboard</h1>

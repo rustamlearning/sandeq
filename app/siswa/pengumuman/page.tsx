@@ -53,8 +53,8 @@ export default function PengumumanSiswaPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
-        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
+        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center gap-3">
           <button
             onClick={() => router.push('/siswa')}
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
@@ -70,7 +70,7 @@ export default function PengumumanSiswaPage() {
 
         {/* Filter kategori */}
         {list.length > 0 && (
-          <div className="max-w-3xl mx-auto px-4 pb-4">
+          <div className="max-w-2xl mx-auto px-4 pb-4">
             <div className="flex gap-2 overflow-x-auto pb-1">
               <button
                 onClick={() => setFilterKategori('')}
@@ -100,7 +100,7 @@ export default function PengumumanSiswaPage() {
         )}
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-5 space-y-4">
+      <main className="max-w-2xl mx-auto px-4 py-5 space-y-4">
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
             <Inbox className="mx-auto mb-3 h-10 w-10 text-slate-300" />

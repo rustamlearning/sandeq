@@ -90,7 +90,7 @@ export default function KuisResultPage() {
       <header className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa/kuis')} className="text-blue-600 text-sm">
-            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Daftar Kuis</span>
+            <span className="inline-flex items-center gap-1.5"><ArrowLeft size={18} /> Daftar Kuis</span>
           </button>
           <h1 className="text-lg font-bold truncate">Hasil: {kuis.judul}</h1>
         </div>
@@ -170,13 +170,13 @@ export default function KuisResultPage() {
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => router.push('/siswa/kuis')}
-            className="flex-1 px-5 py-3 border-2 border-blue-600 text-blue-600 rounded-xl hover:bg-blue-50 font-medium"
+            className="flex-1 px-5 py-3 border-2 border-emerald-600 text-emerald-600 rounded-xl hover:bg-emerald-50 font-medium"
           >
             Kembali ke Daftar
           </button>
           <button
             onClick={() => router.push('/siswa')}
-            className="flex-1 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium"
+            className="flex-1 px-5 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium"
           >
             Ke Dashboard
           </button>

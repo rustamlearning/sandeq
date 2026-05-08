@@ -78,8 +78,8 @@ export default function SiswaDashboardPage() {
 
       <div className="min-h-screen bg-[#F4F9FF]">
         {/* Header */}
-        <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
-          <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
+        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white">
+          <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg font-bold">S</div>
               <div>
@@ -111,7 +111,7 @@ export default function SiswaDashboardPage() {
           </div>
         </header>
 
-        <main className="max-w-3xl mx-auto px-4 py-6">
+        <main className="max-w-2xl mx-auto px-4 py-6">
           {/* Gamification Hero Card */}
           <div className="relative bg-gradient-to-br from-blue-700 via-blue-500 to-indigo-600 text-white rounded-3xl p-6 mb-5 shadow-xl overflow-hidden">
             <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full" />
@@ -138,7 +138,7 @@ export default function SiswaDashboardPage() {
                 </div>
               </div>
               {user.current_streak > 0 && (
-                <div className="bg-orange-500/30 border border-orange-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
+                <div className="bg-emerald-500/30 border border-emerald-400/30 px-3 py-2 rounded-xl text-center flex-shrink-0">
                   <div className="text-2xl">🔥</div>
                   <div className="text-xs font-bold">{user.current_streak}</div>
                   <div className="text-xs text-white/60">hari</div>

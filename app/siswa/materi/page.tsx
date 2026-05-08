@@ -184,14 +184,14 @@ export default function SiswaMateriPage() {
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
         {/* Header */}
-        <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setSelectedMateri(null)}
               aria-label="Kembali ke daftar materi"
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={18} />
               Kembali
             </button>
             <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export default function SiswaMateriPage() {
 
             {m.tujuan_pembelajaran && (
               <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400 mt-4">
-                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-800 mb-1.5"><Target size={15} /> Tujuan Pembelajaran</h3>
+                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-800 mb-1.5"><Target size={15} /> Tujuan Pembelajaran</h3>
                 <p className="text-sm text-blue-700 whitespace-pre-line leading-relaxed">{m.tujuan_pembelajaran}</p>
               </div>
             )}
@@ -284,7 +284,7 @@ export default function SiswaMateriPage() {
           <>
             <button
               onClick={() => setTutorOpen(true)}
-              className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-700 to-blue-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
+              className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-emerald-700 to-emerald-500 text-white px-5 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center gap-2 font-medium"
             >
               <Bot size={19} />
               <span>Tanya Tutor</span>
@@ -342,14 +342,14 @@ export default function SiswaMateriPage() {
     const items = grouped[openMapel] || [];
     return (
       <div className="min-h-screen bg-[#F4F9FF]">
-        <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-20 shadow-lg">
+        <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
             <button
               onClick={() => setOpenMapel(null)}
               aria-label="Kembali ke daftar mapel"
               className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={18} />
               Kembali
             </button>
             <span className="text-white/30">|</span>
@@ -430,11 +430,11 @@ export default function SiswaMateriPage() {
   // ===== MAPEL FOLDER VIEW =====
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/siswa')} className="text-blue-200 hover:text-white text-sm transition">
-              <span className="inline-flex items-center gap-1.5"><ArrowLeft size={16} /> Dashboard</span>
+              <span className="inline-flex items-center gap-1.5"><ArrowLeft size={18} /> Dashboard</span>
             </button>
             <span className="text-white/30">|</span>
             <h1 className="font-bold text-lg">Materi Pelajaran</h1>

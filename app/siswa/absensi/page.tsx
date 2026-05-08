@@ -125,7 +125,7 @@ export default function AbsensiSiswaPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F9FF]">
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-500 shadow-lg">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => router.push('/siswa')} aria-label="Kembali"
             className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition">
@@ -202,7 +202,7 @@ export default function AbsensiSiswaPage() {
                   const cfg = status ? STATUS_CONFIG[status] : null
                   return (
                     <div key={day} className={`bg-white h-12 flex flex-col items-center justify-center relative ${isWeekend?'opacity-50':''}`}>
-                      {isToday && <div className="absolute inset-0.5 rounded-lg bg-blue-50 border border-blue-200" />}
+                      {isToday && <div className="absolute inset-0.5 rounded-lg bg-emerald-50 border border-emerald-200" />}
                       <span className={`relative text-xs font-semibold z-10 ${cfg?cfg.text:isToday?'text-blue-600':isWeekend?'text-red-400':'text-slate-600'}`}>{day}</span>
                       {cfg && <div className={`relative w-1.5 h-1.5 rounded-full ${cfg.dot} z-10 mt-0.5`} />}
                     </div>

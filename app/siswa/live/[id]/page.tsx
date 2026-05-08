@@ -163,7 +163,7 @@ export default function LiveSiswaPage() {
                       ? p === soalAktif.jawaban_benar ? 'bg-green-500 text-white'
                         : p === jawaban ? 'bg-red-400 text-white'
                         : 'bg-gray-100 text-gray-400'
-                      : 'bg-blue-50 text-blue-800 active:scale-95'
+                      : 'bg-blue-50 text-emerald-800 active:scale-95'
                   }`}>
                   {p}
                 </button>
