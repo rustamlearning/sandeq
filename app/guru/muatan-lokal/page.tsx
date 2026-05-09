@@ -1,5 +1,7 @@
 'use client'
 
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Button } from '@/components/ui'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -52,19 +54,11 @@ export default function GuruMuatanLokalPage() {
   if (loading) return <div className="p-8 text-center text-gray-400">Loading...</div>
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Muatan Lokal</h1>
-          <p className="text-xs text-gray-400">Kelola konten Sulawesi Selatan</p>
-        </div>
-        <button
-          onClick={() => router.push('/guru/muatan-lokal/buat')}
-          className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold"
-        >
-          + Buat
-        </button>
-      </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Muatan Lokal" subtitle="Kelola konten Sulawesi Selatan" backHref="/guru"
+        actions={<Button onClick={() => router.push('/guru/muatan-lokal/buat')}>+ Buat</Button>}
+      />
+      <div className="max-w-2xl mx-auto px-4 py-5">
 
       {items.length === 0 ? (
         <div className="bg-white rounded-2xl p-10 text-center shadow-sm">
@@ -119,6 +113,7 @@ export default function GuruMuatanLokalPage() {
           })}
         </div>
       )}
+    </div>
     </div>
   )
 }
