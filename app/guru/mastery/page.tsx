@@ -160,28 +160,6 @@ export default function MasteryTrackerPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-600 transition-colors">
-              <ArrowLeft size={18} />
-            </button>
-            <div>
-              <h1 className="inline-flex items-center gap-2 text-lg font-bold text-slate-800"><Target size={18} /> Mastery Tracker</h1>
-              <p className="text-xs text-slate-500">Status penguasaan materi per siswa</p>
-            </div>
-          </div>
-          <select
-            value={selectedKelas}
-            onChange={(e) => setSelectedKelas(e.target.value)}
-            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          >
-            {kelasList.map((k) => (
-              <option key={k.id} value={k.id}>{k.nama}</option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       <div className="max-w-screen-xl mx-auto px-6 py-6 space-y-6">
 

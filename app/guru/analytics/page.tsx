@@ -169,7 +169,7 @@ export default function GuruAnalyticsPage() {
         )}
 
         {/* Chart */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-5">
+        <div className="rounded-2xl p-5 mb-5" style={{ background: 'var(--surface)', border: '1px solid var(--border))' }}>
           <h3 className="inline-flex items-center gap-2 font-semibold text-slate-800 mb-1"><LineChart size={17} /> Siswa Aktif 7 Hari Terakhir</h3>
           <p className="text-xs text-slate-400 mb-4">Jumlah siswa yang aktif belajar per hari</p>
           <ResponsiveContainer width="100%" height={200}>
@@ -204,7 +204,7 @@ export default function GuruAnalyticsPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
               }`}
             >
