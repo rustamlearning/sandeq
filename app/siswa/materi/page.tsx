@@ -323,33 +323,7 @@ export default function SiswaMateriPage() {
     const items = grouped[openMapel] || [];
     return (
       <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
-          <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-            <button
-              onClick={() => setOpenMapel(null)}
-              aria-label="Kembali ke daftar mapel"
-              className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
-            >
-              <ArrowLeft size={18} />
-              Kembali
-            </button>
-            <span className="text-white/30">|</span>
-            <h1 className="font-bold text-lg truncate">{openMapel}</h1>
-            <div className="ml-auto text-right flex-shrink-0">
-              <p className="text-sm font-bold">
-                {items.filter(m => progress[m.id]?.selesai).length}
-                <span className="text-blue-300 font-normal">/{items.length}</span>
-              </p>
-              <p className="text-blue-200 text-xs">selesai</p>
-            </div>
-          </div>
-          <div className="h-1 bg-white/20">
-            <div
-              className="h-1 bg-gradient-to-r from-indigo-400 to-blue-400 transition-all"
-              style={{ width: `${items.length > 0 ? Math.round(items.filter(m => progress[m.id]?.selesai).length / items.length * 100) : 0}%` }}
-            />
-          </div>
-        </header>
+        <PageHeader title={openMapel} backHref="/siswa/materi" />
         <main className="max-w-3xl mx-auto px-4 py-6">
           <div className="space-y-3">
             {items.map((m) => {

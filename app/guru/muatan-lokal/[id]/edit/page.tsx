@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/ui/PageHeader'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -60,11 +61,9 @@ export default function EditMuatanLokalPage() {
   if (loading) return <div className="p-8 text-center text-gray-400">Loading...</div>
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto pb-32">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="text-gray-500 text-xl">←</button>
-        <h1 className="text-xl font-bold text-gray-800">Edit Konten</h1>
-      </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Edit Konten" backHref="/guru/muatan-lokal" />
+      <div className="max-w-2xl mx-auto px-4 py-5 pb-32">
 
       <div className="bg-white rounded-2xl p-4 shadow-sm mb-4 space-y-3">
         <div>
@@ -125,6 +124,7 @@ export default function EditMuatanLokalPage() {
           {saving ? 'Menyimpan...' : '✅ Simpan Perubahan'}
         </button>
       </div>
+    </div>
     </div>
   )
 }
