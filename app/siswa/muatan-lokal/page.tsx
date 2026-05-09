@@ -1,5 +1,5 @@
 'use client'
-import { ArrowLeft } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -41,13 +41,7 @@ export default function MuatanLokalPage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition"><ArrowLeft size={18} /></button>
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Muatan Lokal</h1>
-          <p className="text-xs text-gray-400">Budaya & Potensi Sulawesi Selatan</p>
-        </div>
-      </div>
+      <PageHeader title="Muatan Lokal" subtitle="Budaya & Potensi Sulawesi Selatan" backHref="/siswa" />
 
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {['semua', 'budaya', 'bahasa', 'potensi_lokal', 'sejarah'].map(k => (

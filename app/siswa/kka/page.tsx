@@ -1,5 +1,5 @@
 'use client'
-import { ArrowLeft } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 import { useRouter } from 'next/navigation'
 
@@ -16,13 +16,7 @@ export default function KKAPage() {
   const router = useRouter()
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <div className="flex items-center gap-3 mb-2">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition"><ArrowLeft size={18} /></button>
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Mapel KKA</h1>
-          <p className="text-xs text-gray-400">Kecerdasan Artifisial — Kelas 10</p>
-        </div>
-      </div>
+      <PageHeader title="Mapel KKA" subtitle="Kecerdasan Artifisial — Kelas 10" backHref="/siswa" />
 
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-5 mb-5 text-white">
         <p className="text-3xl mb-2">🤖</p>
