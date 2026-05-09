@@ -3,6 +3,7 @@ import React from 'react';
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/ui/PageHeader';
 import {
   ArrowLeft,
   BookOpen,
@@ -182,29 +183,9 @@ export default function SiswaMateriPage() {
     const htmlMode = isHtmlKonten(m.konten);
 
     return (
-      <div className="min-h-screen bg-[#F4F9FF]">
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
         {/* Header */}
-        <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
-          <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-            <button
-              onClick={() => setSelectedMateri(null)}
-              aria-label="Kembali ke daftar materi"
-              className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm transition"
-            >
-              <ArrowLeft size={18} />
-              Kembali
-            </button>
-            <div className="flex items-center gap-2">
-              {htmlMode && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/15 rounded-full text-xs font-semibold"><Globe2 size={12} /> HTML</span>
-              )}
-              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${mconf.bg} ${mconf.color}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${mconf.dot}`} />
-                {mconf.label}
-              </div>
-            </div>
-          </div>
-        </header>
+        <PageHeader title="Materi Pelajaran" backHref="/siswa" />
 
         <main className="max-w-3xl mx-auto px-4 py-6">
           {/* Meta card */}
@@ -341,7 +322,7 @@ export default function SiswaMateriPage() {
   if (openMapel) {
     const items = grouped[openMapel] || [];
     return (
-      <div className="min-h-screen bg-[#F4F9FF]">
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
         <header className="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white sticky top-0 z-20 shadow-lg">
           <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
             <button
