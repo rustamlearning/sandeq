@@ -79,7 +79,7 @@ export default function LiveSessionGuruPage() {
   const isFinished = session.status === 'finished'
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="flex items-center gap-3 mb-4">
         <button onClick={() => router.push('/guru/live')} className="text-gray-500">←</button>
         <div>

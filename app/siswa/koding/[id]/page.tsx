@@ -162,7 +162,7 @@ export default function KodingDetailPage() {
   if (!konten) return <div className="p-8 text-center">Modul tidak ditemukan</div>
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-lg mx-auto">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="flex items-center gap-3 p-4 bg-white border-b border-gray-100">
         <button onClick={() => router.push('/siswa/koding')} className="text-gray-500">←</button>
         <h1 className="text-lg font-bold text-gray-800 flex-1">{konten.judul}</h1>

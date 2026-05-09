@@ -78,7 +78,7 @@ export default function KKADetailPage() {
   const quizItem = konten.isi.find(i => i.tipe === 'quiz')
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-lg mx-auto">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="flex items-center gap-3 p-4 bg-white border-b border-gray-100">
         <button onClick={() => router.push('/siswa/kka')} className="text-gray-500">←</button>
         <span className="text-2xl">{konten.emoji}</span>

@@ -1,8 +1,9 @@
 'use client';
 
+import { PageHeader } from '@/components/ui/PageHeader'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, GraduationCap, Inbox, Loader2, PartyPopper, UserRound } from 'lucide-react';
+import { GraduationCap, Inbox, Loader2, PartyPopper, UserRound } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -94,23 +95,7 @@ export default function JadwalPage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <header className="bg-gradient-to-r from-indigo-600 to-blue-500 shadow-lg">
-        <div className="max-w-3xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button
-            onClick={() => router.push(backPath)}
-            aria-label="Kembali"
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Jadwal Pelajaran</h1>
-            <p className="text-white/80 text-sm">
-              {user?.role === 'siswa' ? 'Jadwal kelas kamu' : 'Jadwal mengajarmu'}
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageHeader title="Jadwal Pelajaran" subtitle={user?.role === 'siswa' ? 'Jadwal kelas kamu' : 'Jadwal mengajarmu'} backHref={backPath} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
         {/* Pilih hari */}

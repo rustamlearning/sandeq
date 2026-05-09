@@ -145,7 +145,7 @@ export default function LiveSiswaPage() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-sm text-gray-500">Soal {session.soal_aktif_index + 1}/{soalList.length}</span>
         <span className="font-bold text-blue-600">{totalPoin} poin</span>

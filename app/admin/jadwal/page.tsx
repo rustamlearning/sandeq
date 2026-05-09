@@ -1,8 +1,10 @@
 'use client'
 
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Button } from '@/components/ui'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Inbox, Loader2, Plus, Save, X } from 'lucide-react'
+import { Inbox, Loader2, Plus, Save, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { getCurrentUser } from '@/lib/auth'
 import { useToast } from '@/components/ui/Toast'
@@ -127,45 +129,9 @@ export default function AdminJadwalPage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <header className="bg-gradient-to-r from-indigo-700 to-slate-700 shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-5 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/admin')}
-            aria-label="Kembali"
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Kelola Jadwal</h1>
-            <p className="text-white/70 text-sm">{selectedKelasNama ? `Kelas ${selectedKelasNama} · ${jadwalList.length} pelajaran` : 'Pilih kelas'}</p>
-          </div>
-          <button
-            onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(!showForm) }}
-            className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition"
-          >
-            {showForm ? <X size={15} /> : <Plus size={15} />}
-            {showForm ? 'Tutup' : 'Tambah'}
-          </button>
-        </div>
-
-        {/* Kelas selector in header */}
-        <div className="max-w-4xl mx-auto px-4 pb-4">
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {kelasList.map((k) => (
-              <button
-                key={k.id}
-                onClick={() => setSelectedKelas(k.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-                  selectedKelas === k.id ? 'bg-white text-indigo-700' : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
-              >
-                {k.nama}
-              </button>
-            ))}
-          </div>
-        </div>
-      </header>
+      <PageHeader title="Kelola Jadwal" subtitle={selectedKelasNama ? `Kelas ${selectedKelasNama} · ${jadwalList.length} pelajaran` : 'Pilih kelas'} backHref="/admin"
+        actions={<Button variant={showForm ? 'secondary' : 'primary'} size="sm" icon={showForm ? <X size={14}/> : <Plus size={14}/>} onClick={() => { setForm((f) => ({ ...f, kelas_id: selectedKelas, guru_id: guruList[0]?.id || '' })); setShowForm(!showForm) }}>{showForm ? 'Tutup' : 'Tambah'}</Button>}
+      />
 
       <main className="max-w-4xl mx-auto px-4 py-5 space-y-4">
         {/* Form tambah jadwal */}
