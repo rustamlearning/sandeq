@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/ui/PageHeader'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -72,11 +73,9 @@ export default function BuatKokurikulerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-lg mx-auto pb-32">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="text-gray-500 text-xl">←</button>
-        <h1 className="text-xl font-bold text-gray-800">Buat Kegiatan Kokurikuler</h1>
-      </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Buat Kegiatan Kokurikuler" backHref="/guru/kokurikuler" />
+      <div className="max-w-2xl mx-auto px-4 py-5 pb-32">
 
       {/* Template PBL */}
       <div className="bg-white rounded-2xl p-4 shadow-sm mb-4">
@@ -151,6 +150,7 @@ export default function BuatKokurikulerPage() {
           {saving ? 'Menyimpan...' : '✅ Simpan Kegiatan'}
         </button>
       </div>
+    </div>
     </div>
   )
 }

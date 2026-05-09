@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/ui/PageHeader'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -137,11 +138,9 @@ export default function AnalyticsProPage() {
   if (loading) return <div className="p-8 text-center">Loading...</div>
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 max-w-2xl mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.push('/guru')} className="text-gray-500">←</button>
-        <h1 className="text-xl font-bold text-gray-800">Analytics Pro</h1>
-      </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Analytics Pro" backHref="/guru" />
+      <div className="max-w-2xl mx-auto px-4 py-5">
 
       <div className="flex gap-2 mb-6">
         {(['atrisk', 'heatmap', 'engagement'] as const).map(t => (
@@ -222,6 +221,7 @@ export default function AnalyticsProPage() {
           })}
         </div>
       )}
+    </div>
     </div>
   )
 }
