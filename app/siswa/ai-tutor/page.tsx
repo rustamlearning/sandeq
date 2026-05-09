@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { ArrowLeft, Bot, Loader2, Send } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
@@ -115,33 +116,16 @@ export default function AITutorPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-purple-600 to-violet-600 shadow-lg flex-shrink-0">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/siswa')}
-            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition"
-          >
-            <ArrowLeft size={18} />
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
+      <PageHeader title="Tutor SANDEQ" subtitle="AI · Siap bantu belajar 24/7" backHref="/siswa"
+        actions={messages.length > 1 ? (
+          <button onClick={() => { setMessages([]); setGreeted(false) }}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+            Reset
           </button>
-          <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-            <Bot size={19} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-white leading-tight">Tutor SANDEQ</h1>
-            <p className="text-white/70 text-xs">AI · Siap bantu belajar 24/7</p>
-          </div>
-          {messages.length > 1 && (
-            <button
-              onClick={() => { setMessages([]); setGreeted(false) }}
-              className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs transition"
-            >
-              Reset
-            </button>
-          )}
-        </div>
-      </header>
+        ) : undefined}
+      />
 
       {/* Messages */}
       <main className="flex-1 overflow-y-auto max-w-2xl w-full mx-auto px-4 py-4 space-y-4">
