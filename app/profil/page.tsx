@@ -100,7 +100,7 @@ export default function SiswaProfilPage() {
   const userBadgeIds = new Set(stats.badges.map((b: any) => b.badge_id));
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="bg-gradient-to-br from-blue-700 to-blue-500 text-white shadow-lg">
         <div className="max-w-2xl mx-auto px-4 pt-4 flex items-center gap-3">

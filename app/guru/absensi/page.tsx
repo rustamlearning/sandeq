@@ -208,7 +208,7 @@ export default function AbsensiGuruPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="inline-flex w-full items-center justify-center gap-2 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-xl font-semibold hover:from-indigo-800 hover:to-blue-700 transition disabled:opacity-50 shadow-sm"
+                  className="inline-flex w-full items-center justify-center gap-2 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition disabled:opacity-50 shadow-sm"
                 >
                   {saving ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
                   {saving ? 'Menyimpan...' : 'Simpan Absensi'}

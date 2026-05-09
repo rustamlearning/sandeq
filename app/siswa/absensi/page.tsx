@@ -113,7 +113,7 @@ export default function AbsensiSiswaPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F9FF]">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
       <div className="text-center">
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
           <Loader2 className="animate-spin" size={24} />

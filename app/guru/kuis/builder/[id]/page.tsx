@@ -357,7 +357,7 @@ export default function KuisBuilderPage() {
   const totalPoin = soalList.reduce((sum, s) => sum + (s.poin || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF] pb-32">
+    <div className="min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-30 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -632,7 +632,7 @@ export default function KuisBuilderPage() {
               <button
                 onClick={handleAIGenerate}
                 disabled={aiLoading || !aiTopik.trim()}
-                className="w-full px-4 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-lg font-medium hover:from-indigo-800 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="inline-flex items-center justify-center gap-2">
                   {aiLoading ? <Loader2 className="animate-spin" size={16} /> : <Rocket size={16} />}

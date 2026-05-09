@@ -163,7 +163,7 @@ export default function PengumumanGuruPage() {
               <div className="flex gap-2 pt-1">
                 <button
                   type="submit" disabled={submitting}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-xl font-semibold text-sm hover:from-indigo-800 hover:to-indigo-700 transition disabled:opacity-50"
+                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="animate-spin" size={16} /> : editItem ? <Save size={16} /> : <Send size={16} />}
                   {submitting ? 'Menyimpan...' : editItem ? 'Simpan Perubahan' : 'Publikasikan'}

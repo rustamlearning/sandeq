@@ -85,7 +85,7 @@ export default function KuisResultPage() {
   const ungradedCount = jawaban.filter((j) => j.benar === null).length;
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF] animate-fade-in-up">
+    <div className="min-h-screen animate-fade-in-up" style={{ background: 'var(--bg)' }}>
       <Confetti active={showConfetti} />
       <header className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">

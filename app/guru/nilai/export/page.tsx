@@ -122,7 +122,7 @@ export default function ExportRaporPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <header className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-3 flex-wrap">
           <button onClick={() => router.push('/guru')} className="text-indigo-600 text-sm">
@@ -305,7 +305,7 @@ export default function ExportRaporPage() {
               <button
                 onClick={downloadSingle}
                 disabled={generating}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-lg font-medium hover:from-indigo-800 hover:to-indigo-700 disabled:opacity-50"
+                className="flex-1 px-5 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50"
               >
                 <span className="inline-flex items-center justify-center gap-2">
                   {generating ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}

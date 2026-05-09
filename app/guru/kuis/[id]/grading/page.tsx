@@ -171,7 +171,7 @@ export default function EssayGradingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">

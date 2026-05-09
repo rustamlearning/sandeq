@@ -109,8 +109,8 @@ export default function KuisSiswaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F9FF]">
-        <div className="bg-gradient-to-r from-indigo-700 to-indigo-500 h-16" />
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+        <div className="h-16 bg-indigo-600" />
         <div className="max-w-2xl mx-auto px-4 py-5">
           <SkeletonList count={4} />
         </div>
@@ -214,7 +214,7 @@ export default function KuisSiswaPage() {
                       <button
                         onClick={() => router.push(`/siswa/kuis/${k.id}`)}
                         aria-label={`Mulai kerjakan ${k.judul}`}
-                        className="w-full py-2.5 bg-gradient-to-r from-indigo-700 to-indigo-500 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-blue-600 transition shadow-sm"
+                        className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition shadow-sm"
                       >
                         <span className="inline-flex items-center justify-center gap-2">
                           <Play size={15} /> Mulai Kerjakan <ChevronRight size={15} />

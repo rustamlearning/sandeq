@@ -72,7 +72,7 @@ export default function KelolaKelasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F9FF]">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <header className="bg-gradient-to-r from-blue-700 to-blue-500 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
